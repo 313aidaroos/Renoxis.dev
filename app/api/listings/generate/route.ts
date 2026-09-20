@@ -1,3 +1,4 @@
+import { aiError } from "@/lib/renoxis/ai-error";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
@@ -93,6 +94,7 @@ Write compelling listing copy (3-4 paragraphs) that highlights the property's be
     const response = await anthropic.messages.create({
       model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
       max_tokens: 1024,
+      thinking: { type: "disabled" },
       system: LISTING_SYSTEM_PROMPT,
       messages: [
         {
@@ -102,8 +104,8 @@ Write compelling listing copy (3-4 paragraphs) that highlights the property's be
       ],
     });
 
-    const listingCopy = response.content[0];
-    if (listingCopy.type !== "text") {
+    const listingCopy = response.content.find(block => block.type === "text");
+    if (!listingCopy || listingCopy.type !== "text") {
       throw new Error("Unexpected response type");
     }
 
@@ -111,11 +113,6 @@ Write compelling listing copy (3-4 paragraphs) that highlights the property's be
 
     return NextResponse.json({ listing: listingCopy.text });
   } catch (error) {
-    console.error("Listing generation error:", error);
-    // TODO: Release the Ixis reservation on failure
-    return NextResponse.json(
-      { error: "Failed to generate listing" },
-      { status: 500 }
-    );
+    return aiError(error);
   }
 }

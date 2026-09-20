@@ -200,7 +200,7 @@ export function ListingForm() {
           disabled={loading}
           className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 px-8 rounded-lg transition-colors"
         >
-          {loading ? "Generating..." : "Generate Listing · 1,000 Ixis"}
+          {loading ? "Generating..." : "Generate listing copy"}
         </button>
       </form>
 

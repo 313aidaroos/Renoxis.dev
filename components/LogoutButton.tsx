@@ -1,24 +1,17 @@
 "use client";
-
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-
 export function LogoutButton() {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  };
-
-  return (
-    <button
-      onClick={handleLogout}
-      className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-    >
-      Logout
-    </button>
-  );
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  return <><button disabled={busy} onClick={async () => {
+    setBusy(true); setError("");
+    try {
+      const { error } = await createClient().auth.signOut();
+      if (error) throw error;
+      // A full navigation discards private customer state held in client components.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign("/");
+    } catch { setError("Could not sign out. Please retry."); setBusy(false); }
+  }}>{busy ? "Signing out…" : "Sign out"}</button>{error && <p role="alert">{error}</p>}</>;
 }

@@ -52,6 +52,9 @@ export async function POST(request: Request) {
     }
 
     const data: ListingRequest = await request.json();
+    if (!data || typeof data.address !== 'string' || !data.address.trim() || typeof data.price !== 'string' || !data.price.trim() || Object.values(data).some(v => typeof v !== 'string' || v.length > 10000)) {
+      return NextResponse.json({ error: 'Enter a valid address and price; text fields must be under 10,000 characters.' }, { status: 400 });
+    }
 
     if (!process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json(
@@ -63,6 +66,10 @@ export async function POST(request: Request) {
     // TODO: Call Apixis Wallet API to reserve 1,000 Ixis before generation
     // POST /api/v1/quotes → /reservations → capture on success / release on failure
     // For now, proceeding without actual redemption (waiting on Wallet integration docs)
+
+    const { data: allowed, error: limitError } = await supabase.rpc('renoxis_take_ai_slot');
+    if (limitError) return NextResponse.json({error:'AI request limits are unavailable. Please retry later.'},{status:503});
+    if (!allowed) return NextResponse.json({error:'AI limit reached (10 per minute / 100 per day). Please try again later.'},{status:429});
 
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
@@ -84,7 +91,7 @@ ${data.highlights ? `\nNeighborhood:\n${data.highlights}` : ""}
 Write compelling listing copy (3-4 paragraphs) that highlights the property's best features while being 100% fair-housing compliant.`;
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
       max_tokens: 1024,
       system: LISTING_SYSTEM_PROMPT,
       messages: [

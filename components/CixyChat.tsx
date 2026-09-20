@@ -45,7 +45,8 @@ export function CixyChat() {
       });
 
       if (!response.ok) {
-        throw new Error("Chat API unavailable");
+        const problem = await response.json();
+        throw new Error(problem.error || "Cixy is temporarily unavailable.");
       }
 
       const data = await response.json();
@@ -58,7 +59,7 @@ export function CixyChat() {
         ...prev,
         {
           role: "assistant",
-          content: "I apologize, but I'm having trouble connecting right now. Please try again later.",
+          content: error instanceof Error ? error.message : "Cixy is temporarily unavailable. Please try again.",
         },
       ]);
     } finally {
@@ -84,7 +85,7 @@ export function CixyChat() {
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
                 msg.role === "user"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "bg-zinc-200 dark:bg-zinc-800 text-foreground"
               }`}
             >
@@ -117,7 +118,7 @@ export function CixyChat() {
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold px-6 py-2 rounded-lg transition-colors text-sm"
+            className="bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-bold px-6 py-2 rounded-lg transition-colors text-sm"
           >
             Send
           </button>

@@ -1,25 +1,26 @@
-import type { Metadata } from "next";
-import { Special_Elite } from "next/font/google";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-
-const specialElite = Special_Elite({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-special-elite",
-});
-
 export const metadata: Metadata = {
-  title: "Renoxis — Real Estate Personal Assistant",
-  description: "AI-powered assistant for real estate agents, buyers, and sellers.",
+  title: "Renoxis — Your Real Estate Workspace",
+  description:
+    "People. Properties. A brighter tomorrow. Meet Cixy, your real estate assistant.",
+  applicationName: "Renoxis",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Renoxis" },
+  icons: { icon: "/app-icon.svg", apple: "/icon-180.png" },
 };
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#075e4b",
+};
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${specialElite.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }

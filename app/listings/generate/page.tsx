@@ -31,13 +31,13 @@ export default async function ListingGenerator() {
           <div>
             <h1 className="text-4xl font-bold mb-2">Listing Copy Generator</h1>
             <p className="text-zinc-600 dark:text-zinc-400">
-              Generate fair-housing compliant listing copy powered by AI
+              Draft listing copy with AI. Review accuracy and applicable requirements before publishing.
             </p>
           </div>
 
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>Cost:</strong> 1,000 Ixis · $10 per listing (metered AI job)
+              Wallet billing is not connected. No Ixis charge is made by this page.
             </p>
           </div>
 

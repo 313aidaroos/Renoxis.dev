@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function AuthError() {
   return (
     <div className="min-h-screen flex items-center justify-center p-8">
@@ -6,12 +7,12 @@ export default function AuthError() {
         <p className="text-zinc-600 dark:text-zinc-400">
           Something went wrong. Please try again.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block mt-8 text-blue-600 hover:text-blue-700"
         >
           Return to Home
-        </a>
+        </Link>
       </div>
     </div>
   );

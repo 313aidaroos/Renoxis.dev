@@ -13,21 +13,14 @@ export function LoginForm() {
     setLoading(true);
     setMessage("");
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOtp({ email, options: {emailRedirectTo: `${window.location.origin}/auth/callback`} });
+      setMessage(error ? error.message : "Check your email for the login link!");
+    } catch {
+      setMessage("Unable to connect. Please check your connection and try again.");
+    } finally { setLoading(false); }
 
-    setLoading(false);
-
-    if (error) {
-      setMessage(error.message);
-    } else {
-      setMessage("Check your email for the login link!");
-    }
   };
 
   return (
@@ -50,7 +43,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-bold py-3 px-8 rounded-lg transition-colors"
       >
         {loading ? "Sending..." : "Send Magic Link"}
       </button>

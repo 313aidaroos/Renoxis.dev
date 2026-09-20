@@ -91,7 +91,7 @@ ${data.highlights ? `\nNeighborhood:\n${data.highlights}` : ""}
 Write compelling listing copy (3-4 paragraphs) that highlights the property's best features while being 100% fair-housing compliant.`;
 
     const response = await anthropic.messages.create({
-      model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
+      model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
       max_tokens: 1024,
       system: LISTING_SYSTEM_PROMPT,
       messages: [

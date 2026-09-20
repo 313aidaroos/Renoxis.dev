@@ -44,4 +44,8 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 - PWA is online-first, not an App Store binary. No private offline cache or push notifications.
 - Supabase advisor: server-only connections table intentionally has RLS with no customer policies and no customer grants. Existing leaked-password protection setting is disabled; the UI uses magic-link login.
 
-Deployment confirmation will be recorded against the final GitHub commit/check, and the live site should be checked before sending the 9 a.m. brief.
+## Production verification
+
+Vercel reported a successful deployment for commit `b7040368188caaacba568d01707cd7b8ca0c597b`. The production URL returned the new manifest and passed unauthenticated API denial, authenticated records read and same-origin task create/delete checks. Live desktop/mobile browser navigation, FAQs, customization persistence and no-horizontal-overflow checks also passed with no browser page errors. Production reports database connected and AI configured; Google is not configured and wallet is disabled.
+
+A final AI maintenance fix replaces the retired Sonnet 4 model default with Anthropic’s recommended `claude-sonnet-4-6` replacement, bounds chat/context size, and limits workspace context to relevant non-document fields. Source: https://platform.claude.com/docs/en/about-claude/model-deprecations . The morning brief should inspect the latest GitHub/Vercel check for the final follow-up commit.

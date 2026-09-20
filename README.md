@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Renoxis
 
-## Getting Started
+Real-estate workspace with Cixy. Live: https://renoxis.vercel.app
 
-First, run the development server:
+Emerald command desk, account-scoped CRM, appointments, tasks, private documents, commission forecasts, FAQs and an animated/customizable assistant. One shared frontend serves `/` and `/dashboard`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Development
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. `npm ci`
+2. Copy `.env.example` to `.env.local` and set the Supabase public URL/key. Never commit credentials.
+3. `npm run dev` (or `npx next dev --hostname 127.0.0.1` in restricted runtimes).
+4. Verify with `npm run lint`, `npx tsc --noEmit`, `node --experimental-strip-types --test tests/records.test.ts`, and `npm run build`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The Renoxis Supabase schema has been provisioned. `supabase/schema.sql` and `supabase/ai_limits.sql` document it; do not blindly rerun policy creation on an existing database. Every customer record uses RLS. Provider refresh tokens are encrypted server-side and inaccessible to customer roles.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Handoff
 
-## Learn More
+- [Launch status and verification](docs/LAUNCH_STATUS.md)
+- [Provider connection setup](docs/CIXY_CONNECTIONS.md)
+- [Cixy customization and Ixis catalog](docs/CIXY_CUSTOMIZATION.md)
+- [App version and mobile handoff](docs/APP_VERSION.md)
+- [Command desk behavior](docs/COMMAND_DESK.md)
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Included customization is free. Premium assets have no prices yet and cannot be purchased. Google requires the owner’s OAuth setup. No automated email/social outreach, wallet charges or cross-company customer sharing is enabled.

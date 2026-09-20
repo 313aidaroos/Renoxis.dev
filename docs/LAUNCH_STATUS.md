@@ -30,7 +30,7 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 ## Requires owner/provider setup
 
 1. Google OAuth credentials and consent/verification for Renoxis, canonical APP_URL, service-role key and 32-byte encryption key in Vercel. See `docs/CIXY_CONNECTIONS.md` and `.env.example`. Code is implemented; real Google authorization/refresh/revocation/calendar writes have not been end-to-end tested without those credentials.
-2. Verify production `ANTHROPIC_API_KEY` and desired model in Connections. Paid AI generation was not exercised in this build's tests; configured is not the same as a verified provider response.
+2. Add API credits or complete billing for the Anthropic account behind production `ANTHROPIC_API_KEY`. A live Cixy request reached the provider but was blocked by insufficient credits/billing. The app now returns a clear 503 explanation; saved workspace features remain available. AI is not yet operational.
 3. Verify Supabase email delivery and redirect allowlist includes `https://renoxis.vercel.app/auth/callback` and any intended custom domain. No test email was sent. Existing auth settings were not changed.
 4. Awad supplies premium Ixis prices and chooses outfit/office/background assets. Wallet purchases remain disabled until server-side billing and entitlements are integrated.
 5. Outlook, MLS feeds, external CRM sync, email sending, social publishing, renovation image generation and shared cross-company Cixy memory need their provider/API contracts. These are not represented as active features.
@@ -46,6 +46,6 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 
 ## Production verification
 
-Vercel reported a successful deployment for commit `b7040368188caaacba568d01707cd7b8ca0c597b`. The production URL returned the new manifest and passed unauthenticated API denial, authenticated records read and same-origin task create/delete checks. Live desktop/mobile browser navigation, FAQs, customization persistence and no-horizontal-overflow checks also passed with no browser page errors. Production reports database connected and AI configured; Google is not configured and wallet is disabled.
+Vercel reported a successful deployment for commit `23d368791a73050dc29c9f4ad09642a69f4ced9d`. The production URL returned the new manifest and passed unauthenticated API denial, authenticated records read and same-origin task create/delete checks. Live desktop/mobile browser navigation, FAQs, customization persistence and no-horizontal-overflow checks also passed with no browser page errors. Production reports database connected and AI configured; Google is not configured and wallet is disabled.
 
-A final AI maintenance fix replaces the retired Sonnet 4 model default with Anthropic’s recommended `claude-sonnet-4-6` replacement, bounds chat/context size, and limits workspace context to relevant non-document fields. Source: https://platform.claude.com/docs/en/about-claude/model-deprecations . The morning brief should inspect the latest GitHub/Vercel check for the final follow-up commit.
+A final AI maintenance fix replaces the retired Sonnet 4 model default with Anthropic’s recommended `claude-sonnet-4-6` replacement, bounds chat/context size, and limits workspace context to relevant non-document fields. Source: https://platform.claude.com/docs/en/about-claude/model-deprecations . The follow-up deployment succeeded. A real production AI request confirmed the billing blocker above; no successful AI generation is claimed. Temporary QA accounts, sessions, records and uploaded files were removed after verification.

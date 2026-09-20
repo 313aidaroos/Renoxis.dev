@@ -2,6 +2,7 @@
 import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import CixySetup from "./CixySetup";
 import "./command-desk.css";
 
 const Chat = dynamic(() => import("./CixyChat").then((m) => m.CixyChat), {
@@ -574,6 +575,7 @@ export default function CommandDesk({
             {preview ? <button onClick={ask}>Sign in →</button> : account}
           </span>
         </div>
+        {board === "Connections" ? <CixySetup account={account} /> : null}
         <div className="workspace-toolbar">
           <nav aria-label="Workspace shortcuts">
             {(
@@ -1112,8 +1114,12 @@ export default function CommandDesk({
           A little help.
           <br />A lot more possibility.
         </h3>
-        <p>Open your schedule, explore a listing, or give me a task.</p>
+        <p>
+          Let’s get started. I’ll guide you through your email, calendar, and
+          listing links.
+        </p>
         <div className="actions">
+          <button onClick={() => go("Connections")}>Let’s get started →</button>
           <button className="primary" onClick={ask}>
             Chat with Cixy
           </button>

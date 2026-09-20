@@ -50,9 +50,12 @@ export default async function Dashboard() {
                 <p className="text-zinc-600 dark:text-zinc-400 mb-4">
                   1,000 Ixis · $10
                 </p>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                  Redeem · 1,000 Ixis
-                </button>
+                <Link
+                  href="/listings/generate"
+                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-center"
+                >
+                  Generate Listing
+                </Link>
               </div>
 
               <div className="border border-zinc-300 dark:border-zinc-700 p-6 rounded-lg">

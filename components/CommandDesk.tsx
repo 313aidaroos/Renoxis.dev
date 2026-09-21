@@ -49,6 +49,7 @@ import {
   markActivated,
   markSeatMonth,
   parseEntitlement,
+  redeemSkuPendingCopy,
   renewCopy,
   renewWalletHref,
   seatStatus,
@@ -404,9 +405,11 @@ export default function CommandDesk({
       if (billingIntent === "activate" || billingIntent === "renew") {
         setBoard("Connections");
         setNotice(
-          billingIntent === "activate"
-            ? "Returned from Apixis Wallet. Confirm Activate below after your pack is credited (redeem SKU pending Wallet Lead)."
-            : "Returned from Apixis Wallet. Confirm Keep running below after your pack is credited (monthly SKU pending Wallet Lead).",
+          "Returned from Apixis Wallet. " +
+            redeemSkuPendingCopy(
+              billingIntent === "activate" ? "activate" : "renew",
+            ) +
+            " Confirm soft-launch below only after your pack is credited.",
         );
       }
     } catch {}

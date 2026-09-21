@@ -3,8 +3,9 @@
  * Cash buy stays on Apixis Wallet. No Renoxis Stripe.
  * Activate + monthly seat: 5000 Ixis ($50) each per Awad lock 2026-09-21.
  * Heavy Cixy SKUs remain on the office ledger (see ixis.ts).
- * Wallet catalog SKUs (renoxis.activate / monthly @ 5000) are hub/Wallet Lead;
- * until redeem lands, flags are local soft-launch entitlements only.
+ * Wallet SKUs locked by hub: renoxis.activate + renoxis.agent.monthly @ 5000
+ * (do NOT invent Wallet balances; revise monthly off 30000 — no new seat.monthly key).
+ * Until redeem lands, CTAs buy packs; redeem UI shows honest “SKU pending”.
  */
 
 import { RENOXIS_APP_ORIGIN, walletBuyUrl } from "./wallet-link.ts";
@@ -14,10 +15,17 @@ export const MONTHLY_IXIS = 5000;
 export const ACTIVATE_USD = 50;
 export const MONTHLY_USD = 50;
 
-/** Intended Wallet product keys (Wallet Lead must price at 5000). */
+/** Locked Wallet product keys (Wallet Lead prices at 5000). */
 export const WALLET_SKU = {
   activate: "renoxis.activate",
-  monthly: "renoxis.seat.monthly",
+  /** Existing catalog key — revise to 5000/mo; do not invent renoxis.seat.monthly. */
+  monthly: "renoxis.agent.monthly",
+} as const;
+
+/** Hub aliases for the same SKUs. */
+export const WALLET_SKU_ALIAS = {
+  activate: "renoxis-activate",
+  monthly: "renoxis-monthly",
 } as const;
 
 export type SeatStatus =
@@ -129,4 +137,28 @@ export function activateCopy() {
 
 export function renewCopy() {
   return `Keep running · ${MONTHLY_IXIS.toLocaleString()} Ixis / mo ($${MONTHLY_USD})`;
+}
+
+/** Soft-launch copy when Wallet redeem SKUs are not live yet. */
+export function redeemSkuPendingCopy(intent: "activate" | "renew") {
+  const sku =
+    intent === "activate" ? WALLET_SKU.activate : WALLET_SKU.monthly;
+  return `SKU pending: ${sku} at ${intent === "activate" ? ACTIVATE_IXIS : MONTHLY_IXIS} Ixis. Buy packs on Wallet now; redeem lands when Wallet Lead marks the SKU live.`;
+}
+
+/**
+ * Idempotency keys for Wallet redeem (hub lock).
+ * activate: renoxis-{userId}-activate
+ * monthly: renoxis-{userId}-seat-{YYYY-MM}
+ */
+export function redeemIdempotencyKey(
+  userId: string,
+  intent: "activate" | "renew",
+  at = new Date(),
+) {
+  const id = userId.trim() || "unknown";
+  if (intent === "activate") return `renoxis-${id}-activate`;
+  const y = at.getUTCFullYear();
+  const m = String(at.getUTCMonth() + 1).padStart(2, "0");
+  return `renoxis-${id}-seat-${y}-${m}`;
 }

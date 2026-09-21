@@ -3,6 +3,8 @@ import { test } from "node:test";
 import {
   ACTIVATE_IXIS,
   MONTHLY_IXIS,
+  WALLET_SKU,
+  WALLET_SKU_ALIAS,
   activateWalletHref,
   canUseCixyChat,
   canUseWorkspace,
@@ -10,6 +12,8 @@ import {
   markActivated,
   markSeatMonth,
   parseEntitlement,
+  redeemIdempotencyKey,
+  redeemSkuPendingCopy,
   renewWalletHref,
   seatStatus,
 } from "../lib/renoxis/billing.ts";
@@ -17,6 +21,13 @@ import {
 test("pricing lock is 5000 Ixis activate and monthly", () => {
   assert.equal(ACTIVATE_IXIS, 5000);
   assert.equal(MONTHLY_IXIS, 5000);
+});
+
+test("Wallet SKUs are activate + agent.monthly (not seat.monthly)", () => {
+  assert.equal(WALLET_SKU.activate, "renoxis.activate");
+  assert.equal(WALLET_SKU.monthly, "renoxis.agent.monthly");
+  assert.equal(WALLET_SKU_ALIAS.activate, "renoxis-activate");
+  assert.equal(WALLET_SKU_ALIAS.monthly, "renoxis-monthly");
 });
 
 test("seatStatus gates preview / inactive / lapsed / active", () => {
@@ -46,6 +57,23 @@ test("Wallet CTAs are product=renoxis buy with billing return", () => {
   assert.match(a.searchParams.get("return_url") || "", /billing=activate/);
   const r = new URL(renewWalletHref());
   assert.match(r.searchParams.get("return_url") || "", /billing=renew/);
+});
+
+test("idempotency keys follow hub lock", () => {
+  assert.equal(
+    redeemIdempotencyKey("user-1", "activate"),
+    "renoxis-user-1-activate",
+  );
+  assert.equal(
+    redeemIdempotencyKey("user-1", "renew", new Date("2026-09-21T12:00:00Z")),
+    "renoxis-user-1-seat-2026-09",
+  );
+});
+
+test("redeem pending copy names the locked SKU", () => {
+  assert.match(redeemSkuPendingCopy("activate"), /renoxis\.activate/);
+  assert.match(redeemSkuPendingCopy("renew"), /renoxis\.agent\.monthly/);
+  assert.match(redeemSkuPendingCopy("activate"), /SKU pending/);
 });
 
 test("parseEntitlement ignores invented balances", () => {

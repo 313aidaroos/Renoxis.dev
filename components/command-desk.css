@@ -2105,3 +2105,11 @@
 .wardrobe-list small {
   color: #5d7366;
 }
+
+.catalog-card .owned-tag {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  background: color-mix(in srgb, #075d4b 14%, white);
+  color: #075d4b;
+  border: 1px solid color-mix(in srgb, #075d4b 28%, transparent);
+}

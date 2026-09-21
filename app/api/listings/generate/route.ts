@@ -1,32 +1,11 @@
 import { aiError } from "@/lib/renoxis/ai-error";
+import {
+  buildListingUserPrompt,
+  LISTING_SYSTEM_PROMPT,
+} from "@/lib/renoxis/cixy-prompts";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-
-const LISTING_SYSTEM_PROMPT = `You are an expert real estate listing copywriter.
-
-CRITICAL FAIR HOUSING COMPLIANCE:
-You MUST NOT include ANY language that implies:
-- Familial status (NO "perfect for families", "great for kids", etc.)
-- Religion (NO "walk to church/temple/mosque", etc.)
-- Race or national origin (NO "diverse neighborhood", ethnic references)
-- Disability (NO "quiet", "active lifestyle", accessibility features presented as selling points)
-- Age (NO "mature", "young professionals", "retirees")
-
-BANNED PHRASES (never use):
-- "master bedroom" (use "primary bedroom")
-- "perfect for families" / "great for kids"
-- "quiet neighborhood" / "peaceful" (implies disability/age)
-- "walk to [religious building]"
-- Any reference to ideal buyer demographics
-
-ALLOWED:
-- Factual property features (square footage, bedrooms, materials)
-- Location proximity to transit, shopping, parks (NO demographic implications)
-- Condition and finishes
-- Utilities and systems
-
-Generate compelling, benefit-focused listing copy that is 100% fair-housing compliant.`;
 
 interface ListingRequest {
   address: string;
@@ -76,20 +55,7 @@ export async function POST(request: Request) {
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    const prompt = `Generate fair-housing compliant listing copy for:
-
-Address: ${data.address}
-Price: ${data.price}
-${data.propertyType ? `Type: ${data.propertyType}` : ""}
-${data.bedrooms ? `Bedrooms: ${data.bedrooms}` : ""}
-${data.bathrooms ? `Bathrooms: ${data.bathrooms}` : ""}
-${data.sqft ? `Square Feet: ${data.sqft}` : ""}
-${data.lotSize ? `Lot Size: ${data.lotSize}` : ""}
-${data.yearBuilt ? `Year Built: ${data.yearBuilt}` : ""}
-${data.features ? `\nKey Features:\n${data.features}` : ""}
-${data.highlights ? `\nNeighborhood:\n${data.highlights}` : ""}
-
-Write compelling listing copy (3-4 paragraphs) that highlights the property's best features while being 100% fair-housing compliant.`;
+    const prompt = buildListingUserPrompt(data);
 
     const response = await anthropic.messages.create({
       model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",

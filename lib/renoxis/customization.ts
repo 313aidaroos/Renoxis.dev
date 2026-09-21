@@ -143,7 +143,7 @@ export function catalogPriceLabel(price: number | null): string {
 export const ESSENTIALS_ID = "basics";
 export const DEFAULT_CIXY_NAME = "Cixy";
 
-/** Per-user Cixy prefs: Combo A look + display name + wardrobe ownership. */
+/** Per-user Cixy prefs: signature look + display name + wardrobe ownership. */
 export type CixyPrefs = {
   look: Look;
   displayName: string;

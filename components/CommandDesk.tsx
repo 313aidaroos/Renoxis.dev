@@ -771,12 +771,12 @@ export default function CommandDesk({
     <div className="customize-box">
       <div className="section-title">
         <h3>Make {cixyName} yours</h3>
-        <p>Combo A signature · Essentials included · saved on this device</p>
+        <p>Signature artwork · Essentials included · saved on this device</p>
       </div>
       <p className="muted">
-        Same face as Combo A (green blazer, dark hair, executive office). Skin,
-        hair, eyes, and blazer tint the signature artwork. Hair and office are
-        variants of that painting — never a new face or SVG.
+        Skin, hair, eyes, and blazer tint the signature painting. Hair style and
+        office palette are variants of the same face — never a new character or
+        SVG.
       </p>
       <label className="field">
         Display name
@@ -851,53 +851,6 @@ export default function CommandDesk({
         />
         Cycle through activities
       </label>
-      <div className="wardrobe-box">
-        <div className="section-title">
-          <h3>{cixyName}&apos;s wardrobe</h3>
-          <p>Equip what you own. Unowned opens Apixis Wallet.</p>
-        </div>
-        <ul className="wardrobe-list">
-          {catalog.map((item) => {
-            const owned = ownsCatalogItem(wardrobe, item.id);
-            return (
-              <li key={item.id} className={owned ? "owned" : "locked"}>
-                <div>
-                  <strong>{item.name}</strong>
-                  <small>
-                    {owned
-                      ? item.id === ESSENTIALS_ID
-                        ? "Equipped · always owned"
-                        : "Owned"
-                      : "Not owned"}
-                  </small>
-                </div>
-                {owned ? (
-                  <button
-                    type="button"
-                    className="small-button"
-                    onClick={() => {
-                      if (item.id === ESSENTIALS_ID) setLook(defaultLook);
-                      setNotice(
-                        item.id === ESSENTIALS_ID
-                          ? "Essentials equipped on " + cixyName + "."
-                          : item.name + " is owned. Layered PNG pack lands next.",
-                      );
-                    }}
-                  >
-                    Equip
-                  </button>
-                ) : item.price == null ? (
-                  <span className="coming-soon">Coming soon</span>
-                ) : (
-                  <a className="catalog-buy" href={walletHref}>
-                    Buy on Wallet
-                  </a>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
       <div className="actions">
         <button className="primary" onClick={saveLook}>
           Save {cixyName}
@@ -1748,9 +1701,10 @@ export default function CommandDesk({
                 <span className="eyebrow">THE CIXY COLLECTION</span>
                 <h2>A workspace with your personality.</h2>
                 <p>
-                  Wallet buy lands in {cixyName}&apos;s wardrobe, then you equip
-                  here. Premium stays Coming soon until an Ixis price is set.
-                  Essentials are always owned. This page does not charge a card.
+                  Essentials are always owned — customize tints above. Premium
+                  collections stay Coming soon until an Ixis price is set. Buy
+                  Ixis once below for packs in Apixis Wallet; this page does not
+                  charge a card.
                 </p>
                 <WalletLinks href={walletHref} />
               </div>
@@ -1768,23 +1722,31 @@ export default function CommandDesk({
                     <p>{item.description}</p>
                     <strong>{catalogPriceLabel(item.price)}</strong>
                     {ownsCatalogItem(wardrobe, item.id) ? (
-                      <button
-                        onClick={() => {
-                          setCustom(true);
-                          document
-                            .getElementById("cixy-settings")
-                            ?.scrollIntoView({ behavior: "smooth" });
-                        }}
-                      >
-                        {item.id === ESSENTIALS_ID ? "Customize now" : "Equip from wardrobe"}
-                      </button>
-                    ) : item.price == null ? (
                       <>
-                        <span className="coming-soon">Coming soon</span>
-                        <a className="catalog-buy" href={walletHref}>
-                          Buy Ixis
-                        </a>
+                        <span className="tag owned-tag">Owned</span>
+                        <button
+                          onClick={() => {
+                            if (item.id === ESSENTIALS_ID) {
+                              document
+                                .getElementById("cixy-settings")
+                                ?.scrollIntoView({ behavior: "smooth" });
+                            } else {
+                              setNotice(
+                                item.name +
+                                  " is in " +
+                                  cixyName +
+                                  "'s wardrobe. Layered PNG pack lands next.",
+                              );
+                            }
+                          }}
+                        >
+                          {item.id === ESSENTIALS_ID
+                            ? "Customize Essentials"
+                            : "In wardrobe"}
+                        </button>
                       </>
+                    ) : item.price == null ? (
+                      <span className="coming-soon">Coming soon</span>
                     ) : (
                       <a className="catalog-buy" href={walletHref}>
                         Buy on Wallet

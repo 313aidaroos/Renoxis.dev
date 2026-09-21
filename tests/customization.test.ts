@@ -8,11 +8,13 @@ import {
   DEFAULT_THEME,
   ESSENTIALS_ID,
   defaultLook,
+  nearestTheme,
   normalizeLook,
   normalizePrefs,
   normalizeTheme,
   ownsCatalogItem,
   paintedSignatureLook,
+  syncThemeAndCoat,
   themes,
   validLook,
 } from "../lib/renoxis/customization.ts";
@@ -228,4 +230,18 @@ test("desk themes map coat and persist on prefs", () => {
     motion: true,
   });
   assert.equal(legacy.theme, "emerald");
+});
+
+
+test("syncThemeAndCoat snaps blazer to nearest theme both ways", () => {
+  assert.equal(nearestTheme("#b91c1c"), "red");
+  assert.equal(nearestTheme("#aa2222"), "red");
+  assert.equal(nearestTheme("#0a6050"), "emerald");
+  assert.equal(nearestTheme("#1e40af"), "night");
+  const fromPicker = syncThemeAndCoat(defaultLook, "#cc3333");
+  assert.equal(fromPicker.theme, "red");
+  assert.equal(fromPicker.look.outfit, themes.red.coat);
+  const fromTheme = syncThemeAndCoat(defaultLook, "sunset");
+  assert.equal(fromTheme.theme, "sunset");
+  assert.equal(fromTheme.look.outfit, themes.sunset.coat);
 });

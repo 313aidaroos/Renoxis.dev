@@ -162,6 +162,42 @@ export function applyThemeCoat(look: Look, theme: DeskTheme): Look {
   return { ...look, outfit: themes[theme].coat };
 }
 
+function hexToRgb(hex: string): [number, number, number] {
+  const n = Number.parseInt(hex.replace("#", "").slice(0, 6), 16);
+  if (Number.isNaN(n)) return [0, 0, 0];
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+/** Exact coat match, else nearest theme coat by RGB distance. */
+export function nearestTheme(hex: string): DeskTheme {
+  const exact = themeFromOutfit(hex);
+  if (themes[exact].coat === hex.toLowerCase()) return exact;
+  const [r, g, b] = hexToRgb(hex);
+  let best: DeskTheme = DEFAULT_THEME;
+  let bestDist = Number.POSITIVE_INFINITY;
+  for (const spec of Object.values(themes)) {
+    const [tr, tg, tb] = hexToRgb(spec.coat);
+    const d = (r - tr) ** 2 + (g - tg) ** 2 + (b - tb) ** 2;
+    if (d < bestDist) {
+      bestDist = d;
+      best = spec.id;
+    }
+  }
+  return best;
+}
+
+/** Theme + coat always match: snap outfit to the theme coat. */
+export function syncThemeAndCoat(
+  look: Look,
+  themeOrHex: DeskTheme | string,
+): { look: Look; theme: DeskTheme } {
+  const theme =
+    typeof themeOrHex === "string" && !(themeOrHex in themes)
+      ? nearestTheme(themeOrHex)
+      : normalizeTheme(themeOrHex);
+  return { theme, look: applyThemeCoat(look, theme) };
+}
+
 const HEX = /^#[0-9a-f]{6}$/i;
 
 /**

@@ -20,6 +20,7 @@ import {
   ESSENTIALS_ID,
   normalizePrefs,
   ownsCatalogItem,
+  syncThemeAndCoat,
   themes,
   type DeskTheme,
   type Look,
@@ -361,10 +362,11 @@ export default function CommandDesk({
         localStorage.getItem("renoxis-cixy-v2:" + account) || "null",
       );
       const prefs = normalizePrefs(saved);
-      setLook(prefs.look);
+      const synced = syncThemeAndCoat(prefs.look, prefs.theme);
+      setLook(synced.look);
       setCixyName(prefs.displayName);
       setWardrobe(prefs.wardrobe);
-      setTheme(prefs.theme);
+      setTheme(synced.theme);
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -783,7 +785,7 @@ export default function CommandDesk({
       <p className="muted">
         Skin, hair, eyes, and blazer tint the signature painting. Hair style and
         office palette are variants of the same face — never a new character or
-        SVG. Desk theme in the sidebar sets the blazer coat so they stay matched.
+        SVG. Blazer follows desk theme (and the other way around).
       </p>
       <label className="field">
         Display name
@@ -803,11 +805,20 @@ export default function CommandDesk({
               aria-label={cixyName + " " + k + " color"}
               type="color"
               value={look[k]}
-              onChange={(e) => setLook({ ...look, [k]: e.target.value })}
+              onChange={(e) => {
+                if (k !== "outfit") {
+                  setLook({ ...look, [k]: e.target.value });
+                  return;
+                }
+                const synced = syncThemeAndCoat(look, e.target.value);
+                setTheme(synced.theme);
+                setLook(synced.look);
+              }}
             />
           </label>
         ))}
       </div>
+      <p className="muted">Blazer follows desk theme.</p>
       <div className="form-grid">
         <label className="field">
           Hair style

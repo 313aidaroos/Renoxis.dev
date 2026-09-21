@@ -1,62 +1,69 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { test } from "node:test";
 import {
   APIXIS_WALLET_HOME,
   FALLBACK_WALLET_HREF,
   RENOXIS_APP_ORIGIN,
   allowlistedReturnUrl,
+  studioReturnUrl,
   walletEntryUrl,
 } from "../lib/renoxis/wallet.ts";
 
-const previous = process.env.APP_URL;
-
-afterEach(() => {
-  if (previous === undefined) delete process.env.APP_URL;
-  else process.env.APP_URL = previous;
-});
-
-test("wallet entry uses the home URL with origin and a canonical return", () => {
-  delete process.env.APP_URL;
-  const href = walletEntryUrl();
+function returnTarget(href: string) {
   const url = new URL(href);
+  const back = url.searchParams.get("return_url");
+  assert.ok(back);
+  return { url, back: new URL(back) };
+}
+
+test("buy link is /buy with product=renoxis and a studio return", () => {
+  const href = walletEntryUrl();
+  const { url, back } = returnTarget(href);
   assert.equal(url.origin, APIXIS_WALLET_HOME);
-  assert.equal(url.pathname, "/");
-  assert.equal(url.searchParams.get("origin"), "renoxis");
-  assert.equal(url.searchParams.get("return_url"), RENOXIS_APP_ORIGIN);
+  assert.equal(url.pathname, "/buy");
+  assert.equal(url.searchParams.get("product"), "renoxis");
+  assert.equal(url.searchParams.get("origin"), null);
+  assert.equal(back.origin, RENOXIS_APP_ORIGIN);
+  assert.equal(back.hostname, "renoxis.vercel.app");
+  assert.equal(back.protocol, "https:");
+  assert.equal(back.searchParams.get("board"), "Cixy Studio");
   assert.equal(FALLBACK_WALLET_HREF, href);
+  assert.equal(studioReturnUrl(), back.toString());
 });
 
-test("APP_URL origin is allowlisted when it is https or loopback", () => {
-  process.env.APP_URL = "https://renoxis-preview.vercel.app/dashboard";
-  assert.equal(
-    allowlistedReturnUrl(process.env.APP_URL),
-    "https://renoxis-preview.vercel.app",
-  );
-  assert.equal(
-    new URL(walletEntryUrl(process.env.APP_URL)).searchParams.get("return_url"),
-    "https://renoxis-preview.vercel.app",
-  );
+test("only https://renoxis.vercel.app is an allowlisted return", () => {
+  const studio = allowlistedReturnUrl("https://renoxis.vercel.app/dashboard");
+  const parsed = new URL(studio);
+  assert.equal(parsed.hostname, "renoxis.vercel.app");
+  assert.equal(parsed.pathname, "/dashboard");
+  assert.equal(parsed.protocol, "https:");
 
-  process.env.APP_URL = "http://localhost:3000";
-  assert.equal(allowlistedReturnUrl(), "http://localhost:3000");
-
-  process.env.APP_URL = "http://127.0.0.1:3000/";
-  assert.equal(allowlistedReturnUrl(), "http://127.0.0.1:3000");
+  const withBoard = walletEntryUrl("https://renoxis.vercel.app/dashboard");
+  const { back } = returnTarget(withBoard);
+  assert.equal(back.pathname, "/dashboard");
+  assert.equal(back.searchParams.get("board"), "Cixy Studio");
 });
 
-test("untrusted return targets fall back to renoxis.vercel.app", () => {
-  process.env.APP_URL = "https://renoxis.vercel.app";
+test("preview, localhost, and other hosts fall back to Cixy Studio", () => {
   for (const bad of [
+    "https://renoxis-preview.vercel.app/dashboard",
+    "https://renoxis-git-main.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000/",
     "https://evil.example",
     "http://evil.example",
     "javascript:alert(1)",
     "https://user:pass@renoxis.vercel.app",
+    "https://renoxis.vercel.app:444/buy",
     "not a url",
     "",
   ]) {
-    assert.equal(allowlistedReturnUrl(bad), RENOXIS_APP_ORIGIN);
+    const { url, back } = returnTarget(walletEntryUrl(bad));
+    assert.equal(url.pathname, "/buy");
+    assert.equal(url.searchParams.get("product"), "renoxis");
+    assert.equal(back.hostname, "renoxis.vercel.app");
+    assert.equal(back.protocol, "https:");
+    assert.equal(back.port, "");
+    assert.equal(back.searchParams.get("board"), "Cixy Studio");
   }
-
-  process.env.APP_URL = "http://evil.example";
-  assert.equal(allowlistedReturnUrl(), RENOXIS_APP_ORIGIN);
 });

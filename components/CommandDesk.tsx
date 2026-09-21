@@ -12,9 +12,12 @@ import CixySetup, { type Connections } from "./CixySetup";
 import CixyAvatar, { moods, type Mood } from "./CixyAvatar";
 import {
   catalog,
-  currency,
+  catalogPriceLabel,
   defaultLook,
-  validLook,
+  DEFAULT_CIXY_NAME,
+  ESSENTIALS_ID,
+  normalizePrefs,
+  ownsCatalogItem,
   type Look,
 } from "@/lib/renoxis/customization";
 import {
@@ -174,11 +177,11 @@ const faqs = [
   ],
   [
     "How do I customize Cixy?",
-    "Use the Customize button below Cixy or open Cixy Studio. Signature mode uses the reference-style animated artwork. Illustrated mode supports live skin, hair, eye, blazer and hairstyle changes. The basics are included. Preferences save on this device.",
+    "Use the Customize button below Cixy or open Cixy Studio. Skin, hair, eyes, blazer, and the office palette tint the signature artwork. Essentials are included. Preferences save on this device.",
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits are still unpriced. Buy Ixis opens Apixis Wallet. Renoxis does not capture cards or credit the office ledger from a purchase.",
+    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
   ],
   [
     "How do I install the app?",
@@ -221,6 +224,8 @@ export default function CommandDesk({
   const [connections, setConnections] = useState<Connections | null>(null);
   const [mobile, setMobile] = useState(false);
   const [look, setLook] = useState<Look>(defaultLook);
+  const [cixyName, setCixyName] = useState(DEFAULT_CIXY_NAME);
+  const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
   const [mood, setMood] = useState<Mood>("Smile");
   const [autoMood, setAutoMood] = useState(true);
   const [custom, setCustom] = useState(false);
@@ -350,7 +355,10 @@ export default function CommandDesk({
       const saved = JSON.parse(
         localStorage.getItem("renoxis-cixy-v2:" + account) || "null",
       );
-      if (validLook(saved)) setLook(saved);
+      const prefs = normalizePrefs(saved);
+      setLook(prefs.look);
+      setCixyName(prefs.displayName);
+      setWardrobe(prefs.wardrobe);
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -549,8 +557,21 @@ export default function CommandDesk({
   };
   const saveLook = () => {
     try {
-      localStorage.setItem("renoxis-cixy-v2:" + account, JSON.stringify(look));
-      setNotice("Cixy appearance saved on this device.");
+      const name = cixyName.trim().slice(0, 40) || DEFAULT_CIXY_NAME;
+      setCixyName(name);
+      const owned = wardrobe.includes(ESSENTIALS_ID)
+        ? wardrobe
+        : [ESSENTIALS_ID, ...wardrobe];
+      setWardrobe(owned);
+      localStorage.setItem(
+        "renoxis-cixy-v2:" + account,
+        JSON.stringify({
+          look,
+          displayName: name,
+          wardrobe: owned,
+        }),
+      );
+      setNotice(name + " appearance and wardrobe saved on this device.");
     } catch {
       setNotice("Your browser could not save preferences.");
     }
@@ -749,36 +770,33 @@ export default function CommandDesk({
   const customization = (
     <div className="customize-box">
       <div className="section-title">
-        <h3>Make Cixy yours</h3>
-        <p>Essentials included · saved on this device</p>
+        <h3>Make {cixyName} yours</h3>
+        <p>Combo A signature · Essentials included · saved on this device</p>
       </div>
-      <label className="field">
-        Avatar style
-        <select
-          value={look.style}
-          onChange={(e) =>
-            setLook({ ...look, style: e.target.value as Look["style"] })
-          }
-        >
-          <option value="signature">Signature artwork</option>
-          <option value="illustrated">Customizable illustration</option>
-        </select>
-      </label>
       <p className="muted">
-        Color and hairstyle controls use the customizable illustration.
-        Signature artwork keeps its original appearance.
+        Same face as Combo A (green blazer, dark hair, executive office). Skin,
+        hair, eyes, and blazer tint the signature artwork. Hair and office are
+        variants of that painting — never a new face or SVG.
       </p>
+      <label className="field">
+        Display name
+        <input
+          aria-label="Cixy display name"
+          maxLength={40}
+          value={cixyName}
+          onChange={(e) => setCixyName(e.target.value)}
+          placeholder={DEFAULT_CIXY_NAME}
+        />
+      </label>
       <div className="color-controls">
         {(["skin", "hair", "eyes", "outfit"] as const).map((k) => (
           <label key={k}>
             {k === "outfit" ? "Blazer" : k}
             <input
-              aria-label={"Cixy " + k + " color"}
+              aria-label={cixyName + " " + k + " color"}
               type="color"
               value={look[k]}
-              onChange={(e) =>
-                setLook({ ...look, style: "illustrated", [k]: e.target.value })
-              }
+              onChange={(e) => setLook({ ...look, [k]: e.target.value })}
             />
           </label>
         ))}
@@ -791,7 +809,6 @@ export default function CommandDesk({
             onChange={(e) =>
               setLook({
                 ...look,
-                style: "illustrated",
                 hairstyle: e.target.value as Look["hairstyle"],
               })
             }
@@ -808,7 +825,6 @@ export default function CommandDesk({
             onChange={(e) =>
               setLook({
                 ...look,
-                style: "illustrated",
                 room: e.target.value as Look["room"],
               })
             }
@@ -825,7 +841,7 @@ export default function CommandDesk({
           checked={look.motion}
           onChange={(e) => setLook({ ...look, motion: e.target.checked })}
         />
-        Animate Cixy
+        Animate {cixyName}
       </label>
       <label className="check-label">
         <input
@@ -835,11 +851,66 @@ export default function CommandDesk({
         />
         Cycle through activities
       </label>
+      <div className="wardrobe-box">
+        <div className="section-title">
+          <h3>{cixyName}&apos;s wardrobe</h3>
+          <p>Equip what you own. Unowned opens Apixis Wallet.</p>
+        </div>
+        <ul className="wardrobe-list">
+          {catalog.map((item) => {
+            const owned = ownsCatalogItem(wardrobe, item.id);
+            return (
+              <li key={item.id} className={owned ? "owned" : "locked"}>
+                <div>
+                  <strong>{item.name}</strong>
+                  <small>
+                    {owned
+                      ? item.id === ESSENTIALS_ID
+                        ? "Equipped · always owned"
+                        : "Owned"
+                      : "Not owned"}
+                  </small>
+                </div>
+                {owned ? (
+                  <button
+                    type="button"
+                    className="small-button"
+                    onClick={() => {
+                      if (item.id === ESSENTIALS_ID) setLook(defaultLook);
+                      setNotice(
+                        item.id === ESSENTIALS_ID
+                          ? "Essentials equipped on " + cixyName + "."
+                          : item.name + " is owned. Layered PNG pack lands next.",
+                      );
+                    }}
+                  >
+                    Equip
+                  </button>
+                ) : item.price == null ? (
+                  <span className="coming-soon">Coming soon</span>
+                ) : (
+                  <a className="catalog-buy" href={walletHref}>
+                    Buy on Wallet
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <div className="actions">
         <button className="primary" onClick={saveLook}>
-          Save my Cixy
+          Save {cixyName}
         </button>
-        <button onClick={() => setLook(defaultLook)}>Reset look</button>
+        <button
+          onClick={() => {
+            setLook(defaultLook);
+            setCixyName(DEFAULT_CIXY_NAME);
+            setWardrobe([ESSENTIALS_ID]);
+          }}
+        >
+          Reset look
+        </button>
       </div>
       <button className="text-button" onClick={() => go("Cixy Studio")}>
         Explore the future collection ↗
@@ -850,7 +921,7 @@ export default function CommandDesk({
     <section className="cixy-office">
       <header>
         <h2>
-          Cixy <span>— Your AI Real Estate Manager</span>
+          {cixyName} <span>— Your AI Real Estate Manager</span>
         </h2>
         <span className="status-pill">
           <i />
@@ -892,7 +963,7 @@ export default function CommandDesk({
       </div>
       <div className="cixy-actions">
         <button className="primary" onClick={ask}>
-          ✦ Talk to Cixy
+          ✦ Talk to {cixyName}
         </button>
         <button onClick={() => add("task")}>▤ Give a task</button>
         <button aria-expanded={custom} onClick={() => board === "Cixy Studio" ? document.getElementById("cixy-settings")?.scrollIntoView({behavior:"smooth"}) : setCustom(!custom)}>
@@ -1677,8 +1748,9 @@ export default function CommandDesk({
                 <span className="eyebrow">THE CIXY COLLECTION</span>
                 <h2>A workspace with your personality.</h2>
                 <p>
-                  Premium collections are being prepared. Prices are not set.
-                  Buy Ixis opens Apixis Wallet. This page does not charge a card.
+                  Wallet buy lands in {cixyName}&apos;s wardrobe, then you equip
+                  here. Premium stays Coming soon until an Ixis price is set.
+                  Essentials are always owned. This page does not charge a card.
                 </p>
                 <WalletLinks href={walletHref} />
               </div>
@@ -1694,22 +1766,29 @@ export default function CommandDesk({
                     <span className="tag">{item.category}</span>
                     <h3>{item.name}</h3>
                     <p>{item.description}</p>
-                    <strong>
-                      {item.price === 0
-                        ? "Included · 0 " + currency
-                        : "Price to be set · " + currency}
-                    </strong>
-                    {item.status === "included" ? (
+                    <strong>{catalogPriceLabel(item.price)}</strong>
+                    {ownsCatalogItem(wardrobe, item.id) ? (
                       <button
                         onClick={() => {
                           setCustom(true);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
+                          document
+                            .getElementById("cixy-settings")
+                            ?.scrollIntoView({ behavior: "smooth" });
                         }}
                       >
-                        Customize now
+                        {item.id === ESSENTIALS_ID ? "Customize now" : "Equip from wardrobe"}
                       </button>
+                    ) : item.price == null ? (
+                      <>
+                        <span className="coming-soon">Coming soon</span>
+                        <a className="catalog-buy" href={walletHref}>
+                          Buy Ixis
+                        </a>
+                      </>
                     ) : (
-                      <span className="coming-soon">Coming soon</span>
+                      <a className="catalog-buy" href={walletHref}>
+                        Buy on Wallet
+                      </a>
                     )}
                   </article>
                 ))}
@@ -2008,7 +2087,7 @@ export default function CommandDesk({
             {loginForm}
           </>
         ) : activeChat ? (
-          <Chat />
+          <Chat key={cixyName} assistantName={cixyName} />
         ) : null}
       </dialog>
     </div>

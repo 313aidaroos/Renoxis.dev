@@ -6,7 +6,7 @@ export const catalog = [
     name: "Cixy Essentials",
     category: "basics",
     description:
-      "Illustrated avatar: skin, eyes, hair, blazer colors and three hairstyles.",
+      "Signature Cixy: skin, eyes, hair, and blazer tints on the original artwork, plus office palettes.",
     price: 0,
     status: "included",
   },
@@ -68,8 +68,8 @@ export const catalog = [
     status: "coming-soon",
   },
 ] as const;
+
 export type Look = {
-  style: "signature" | "illustrated";
   skin: string;
   hair: string;
   eyes: string;
@@ -78,26 +78,138 @@ export type Look = {
   room: "mint" | "sunset" | "night";
   motion: boolean;
 };
+
+/** Painted signature cut. Reset and first visit stay on the unmodified sprite. */
 export const defaultLook: Look = {
-  style: "signature",
   skin: "#dca580",
   hair: "#503021",
   eyes: "#654224",
   outfit: "#075d4b",
-  hairstyle: "bun",
+  hairstyle: "long",
   room: "mint",
   motion: true,
 };
+
+const HEX = /^#[0-9a-f]{6}$/i;
+
+/**
+ * Accept a saved look, including a legacy `style` of signature or illustrated.
+ * Illustrated used to swap in a different drawing. It now loads as this look
+ * and renders on the signature sprite. Any other style is rejected.
+ */
+export function normalizeLook(v: unknown): Look | null {
+  if (!v || typeof v !== "object") return null;
+  const x = v as Record<string, unknown>;
+  if (
+    "style" in x &&
+    x.style != null &&
+    x.style !== "signature" &&
+    x.style !== "illustrated"
+  )
+    return null;
+  const skin = String(x.skin ?? "");
+  const hair = String(x.hair ?? "");
+  const eyes = String(x.eyes ?? "");
+  const outfit = String(x.outfit ?? "");
+  if (![skin, hair, eyes, outfit].every((c) => HEX.test(c))) return null;
+  if (x.hairstyle !== "bun" && x.hairstyle !== "long" && x.hairstyle !== "short")
+    return null;
+  if (x.room !== "mint" && x.room !== "sunset" && x.room !== "night") return null;
+  if (typeof x.motion !== "boolean") return null;
+  return {
+    skin: skin.toLowerCase(),
+    hair: hair.toLowerCase(),
+    eyes: eyes.toLowerCase(),
+    outfit: outfit.toLowerCase(),
+    hairstyle: x.hairstyle,
+    room: x.room,
+    motion: x.motion,
+  };
+}
+
 export function validLook(v: unknown): v is Look {
-  if (!v || typeof v !== "object") return false;
-  const x = v as Look;
-  return (
-    ["signature", "illustrated"].includes(x.style) &&
-    ["skin", "hair", "eyes", "outfit"].every((k) =>
-      /^#[a-f\d]{6}$/i.test(String(x[k as keyof Look])),
-    ) &&
-    ["bun", "long", "short"].includes(x.hairstyle) &&
-    ["mint", "sunset", "night"].includes(x.room) &&
-    typeof x.motion === "boolean"
-  );
+  return normalizeLook(v) !== null;
+}
+
+/** Null and non-integers stay unpriced. Zero is the free essentials line. */
+export function catalogPriceLabel(price: number | null): string {
+  if (price === 0) return `Included · 0 ${currency}`;
+  if (price == null || !Number.isInteger(price) || price < 0)
+    return `Price to be set · ${currency}`;
+  return `${price} ${currency}`;
+}
+
+
+export const ESSENTIALS_ID = "basics";
+export const DEFAULT_CIXY_NAME = "Cixy";
+
+/** Per-user Cixy prefs: Combo A look + display name + wardrobe ownership. */
+export type CixyPrefs = {
+  look: Look;
+  displayName: string;
+  wardrobe: string[];
+};
+
+export function defaultWardrobe(): string[] {
+  return [ESSENTIALS_ID];
+}
+
+export function normalizeDisplayName(v: unknown): string {
+  const s = String(v ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, 40);
+  return s || DEFAULT_CIXY_NAME;
+}
+
+export function normalizeWardrobe(v: unknown): string[] {
+  const ids = new Set<string>([ESSENTIALS_ID]);
+  if (Array.isArray(v)) {
+    for (const id of v) {
+      if (typeof id !== "string") continue;
+      if (catalog.some((item) => item.id === id)) ids.add(id);
+    }
+  }
+  return [...ids];
+}
+
+export function ownsCatalogItem(wardrobe: string[], id: string): boolean {
+  if (id === ESSENTIALS_ID) return true;
+  return wardrobe.includes(id);
+}
+
+/**
+ * Load prefs. A bare legacy Look (with or without style) becomes Essentials-only
+ * wardrobe and the default display name "Cixy". Paid ownership is never invented.
+ */
+export function normalizePrefs(v: unknown): CixyPrefs {
+  const bare = normalizeLook(v);
+  if (bare) {
+    return {
+      look: bare,
+      displayName: DEFAULT_CIXY_NAME,
+      wardrobe: defaultWardrobe(),
+    };
+  }
+  if (!v || typeof v !== "object") {
+    return {
+      look: defaultLook,
+      displayName: DEFAULT_CIXY_NAME,
+      wardrobe: defaultWardrobe(),
+    };
+  }
+  const o = v as Record<string, unknown>;
+  return {
+    look: normalizeLook(o.look) ?? defaultLook,
+    displayName: normalizeDisplayName(o.displayName ?? o.cixyName),
+    wardrobe: normalizeWardrobe(o.wardrobe),
+  };
+}
+
+export function defaultPrefs(): CixyPrefs {
+  return {
+    look: defaultLook,
+    displayName: DEFAULT_CIXY_NAME,
+    wardrobe: defaultWardrobe(),
+  };
 }

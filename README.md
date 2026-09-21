@@ -22,4 +22,4 @@ The Renoxis Supabase schema has been provisioned. `supabase/schema.sql` and `sup
 - [Command desk behavior](docs/COMMAND_DESK.md)
 - [Brokerage v1 team workspace](docs/BROKERAGE_V1.md)
 
-Included customization is free. Premium assets have no prices yet and cannot be purchased. Google requires the owner’s OAuth setup. No automated email/social outreach, wallet charges or cross-company customer sharing is enabled.
+Included customization tints the signature Cixy sprite and is free. Premium assets have no prices yet. Buy Ixis opens Apixis Wallet and does not unlock them here. Google requires the owner’s OAuth setup. No automated email/social outreach, wallet charges or cross-company customer sharing is enabled.

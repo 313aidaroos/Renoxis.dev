@@ -4,11 +4,11 @@ Product direction: Cixy is one recognizable assistant across Apixis companies, w
 
 ## Included today: 0 Ixis
 
-- Signature artwork, derived from the approved female green-blazer design: smile, wave, sleep, snack and coffee states, each with two animation frames. This is an illustrated sprite animation, not a generated video.
-- Illustrated avatar mode: live skin, hair, iris and blazer colors; updo, long and short hair; morning, afternoon and evening office palettes.
+- Signature artwork only (`public/cixy-sprites.png`): smile, wave, sleep, snack and coffee states, each with two animation frames. This is the sprite sheet, not a generated video and not an SVG person.
+- Essentials tint that same painting: skin, hair, iris and blazer colors; updo, long and short hair color coverage; morning, afternoon and evening office palettes. There is no second character.
+- Hair style colors the painted hair. It does not draw a new cut. A true wardrobe silhouette needs layered raster assets.
 - Manual activities, automatic activity cycling, motion switch, reduced-motion support, local save and reset.
-- Color controls explicitly switch to the editable illustration. The signature raster artwork cannot be selectively recolored by these controls.
-- Preferences are stored on-device under the signed-in account name. Cross-device sync is not implemented.
+- Preferences are stored on-device under the signed-in account name. A saved `style: "illustrated"` still loads and renders on the signature sprite. Cross-device sync is not implemented.
 
 ## Authoritative catalog
 
@@ -16,7 +16,7 @@ Product direction: Cixy is one recognizable assistant across Apixis companies, w
 
 | Catalog ID | Collection | Assets to create | Ixis price |
 |---|---|---|---|
-| basics | Cixy Essentials | Current editable illustration and activity states | 0 — included |
+| basics | Cixy Essentials | Signature sprite tints and activity states | 0 — included |
 | outfits-professional | The Professional Collection | Tailored suits, modest coordinated sets, brokerage looks | Owner to set |
 | outfits-casual | Off-Duty Cixy | Sweaters, casual layers, weekend looks | Owner to set |
 | office-city | City View Office | Detroit skyline, modern broker office, executive desk | Owner to set |
@@ -38,7 +38,7 @@ Keep consistent character proportions, face and lighting. Deliver named transpar
 5. Provide purchase history, owned-item filtering, balance from the wallet API, insufficient-points errors and refund/revocation handling.
 6. Enable checkout only after wallet sandbox integration and concurrent-purchase tests pass.
 
-Never mark premium items owned in localStorage, invent a balance, or enable a fake purchase button. The current site intentionally shows Coming soon.
+Never mark premium items owned in localStorage, invent a balance, or enable a fake purchase button. While `price` is null the card stays Coming soon. **Buy Ixis** opens `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=…` and returns to Cixy Studio. It does not unlock the collection on this device.
 
 ## Native Cixy operator prompts
 

@@ -20,5 +20,6 @@ The Renoxis Supabase schema has been provisioned. `supabase/schema.sql` and `sup
 - [Cixy customization and Ixis catalog](docs/CIXY_CUSTOMIZATION.md)
 - [App version and mobile handoff](docs/APP_VERSION.md)
 - [Command desk behavior](docs/COMMAND_DESK.md)
+- [Brokerage v1 team workspace](docs/BROKERAGE_V1.md)
 
 Included customization is free. Premium assets have no prices yet and cannot be purchased. Google requires the owner’s OAuth setup. No automated email/social outreach, wallet charges or cross-company customer sharing is enabled.

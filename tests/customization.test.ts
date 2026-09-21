@@ -2,13 +2,18 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
+  applyThemeCoat,
   catalog,
   DEFAULT_CIXY_NAME,
+  DEFAULT_THEME,
   ESSENTIALS_ID,
   defaultLook,
   normalizeLook,
   normalizePrefs,
+  normalizeTheme,
   ownsCatalogItem,
+  paintedSignatureLook,
+  themes,
   validLook,
 } from "../lib/renoxis/customization.ts";
 import {
@@ -45,11 +50,14 @@ test("legacy illustrated looks load as signature preferences", () => {
   assert.deepEqual(normalizeLook({ ...defaultLook }), defaultLook);
 });
 
-test("default look is the unmodified signature sprite", () => {
+test("default look is red coat; painted sheet stays emerald natural", () => {
   assert.equal(defaultLook.hairstyle, "long");
-  assert.equal(isNaturalSignature(defaultLook), true);
+  assert.equal(defaultLook.outfit, "#b91c1c");
+  assert.equal(DEFAULT_THEME, "red");
+  assert.equal(isNaturalSignature(defaultLook), false);
+  assert.equal(isNaturalSignature(paintedSignatureLook), true);
   assert.equal(
-    isNaturalSignature({ ...defaultLook, hairstyle: "bun" }),
+    isNaturalSignature({ ...paintedSignatureLook, hairstyle: "bun" }),
     false,
   );
   assert.equal(catalog[0].price, 0);
@@ -191,4 +199,33 @@ test("prefs migrate legacy look and keep Essentials owned", () => {
   assert.ok(named.wardrobe.includes("outfits-professional"));
   assert.equal(named.wardrobe.includes("fake-sku"), false);
   assert.equal(normalizePrefs({ displayName: "" }).displayName, DEFAULT_CIXY_NAME);
+});
+
+
+test("desk themes map coat and persist on prefs", () => {
+  assert.equal(themes.red.coat, "#b91c1c");
+  assert.equal(themes.emerald.coat, "#075d4b");
+  assert.equal(normalizeTheme("sunset"), "sunset");
+  assert.equal(normalizeTheme("nope"), "red");
+  const coated = applyThemeCoat(defaultLook, "night");
+  assert.equal(coated.outfit, themes.night.coat);
+  const prefs = normalizePrefs({
+    look: coated,
+    displayName: "Cixy",
+    wardrobe: [ESSENTIALS_ID],
+    theme: "night",
+  });
+  assert.equal(prefs.theme, "night");
+  assert.equal(prefs.look.outfit, themes.night.coat);
+  const legacy = normalizePrefs({
+    style: "signature",
+    skin: "#dca580",
+    hair: "#503021",
+    eyes: "#654224",
+    outfit: "#075d4b",
+    hairstyle: "long",
+    room: "mint",
+    motion: true,
+  });
+  assert.equal(legacy.theme, "emerald");
 });

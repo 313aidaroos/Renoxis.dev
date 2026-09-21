@@ -49,7 +49,7 @@ import {
   markActivated,
   markSeatMonth,
   parseEntitlement,
-  redeemSkuPendingCopy,
+  redeemAwaitingCaptureCopy,
   renewCopy,
   renewWalletHref,
   seatStatus,
@@ -406,10 +406,10 @@ export default function CommandDesk({
         setBoard("Connections");
         setNotice(
           "Returned from Apixis Wallet. " +
-            redeemSkuPendingCopy(
+            redeemAwaitingCaptureCopy(
               billingIntent === "activate" ? "activate" : "renew",
             ) +
-            " Confirm soft-launch below only after your pack is credited.",
+            " Soft Confirm below is device-only until capture.",
         );
       }
     } catch {}
@@ -1275,9 +1275,10 @@ export default function CommandDesk({
                 </a>
               </div>
               <p className="muted">
-                Soft launch: after Wallet credits your pack, confirm here. Full
-                redeem/entitlement callback lands with Wallet Lead — Renoxis
-                never takes a card.
+                Wallet catalog is live. Seat unlocks after redeem capture —
+                until then entitlements stay empty (no invented balances).
+                Soft Confirm is device-only until capture lands. Renoxis never
+                takes a card.
               </p>
               <div className="actions">
                 {seat === "signed_inactive" ? (
@@ -1288,7 +1289,7 @@ export default function CommandDesk({
                       const next = markSeatMonth(markActivated(entitlement));
                       persistEntitlement(next);
                       setNotice(
-                        "Soft-launch activate + first month marked on this device. Wallet redeem will replace this flag.",
+                        "Soft-launch activate + first month marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
                       );
                     }}
                   >
@@ -1302,7 +1303,7 @@ export default function CommandDesk({
                       const next = markSeatMonth(entitlement);
                       persistEntitlement(next);
                       setNotice(
-                        "Soft-launch monthly seat renewed on this device. Wallet redeem will replace this flag.",
+                        "Soft-launch monthly seat marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
                       );
                     }}
                   >
@@ -2007,7 +2008,7 @@ export default function CommandDesk({
                             : markSeatMonth(entitlement);
                         persistEntitlement(next);
                         setNotice(
-                          "Soft-launch seat marked on this device. Wallet redeem will replace this flag.",
+                          "Soft-launch seat marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
                         );
                       }}
                     >

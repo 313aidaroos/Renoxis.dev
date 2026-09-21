@@ -13,7 +13,7 @@ import {
   markSeatMonth,
   parseEntitlement,
   redeemIdempotencyKey,
-  redeemSkuPendingCopy,
+  redeemAwaitingCaptureCopy,
   renewWalletHref,
   seatStatus,
 } from "../lib/renoxis/billing.ts";
@@ -70,10 +70,12 @@ test("idempotency keys follow hub lock", () => {
   );
 });
 
-test("redeem pending copy names the locked SKU", () => {
-  assert.match(redeemSkuPendingCopy("activate"), /renoxis\.activate/);
-  assert.match(redeemSkuPendingCopy("renew"), /renoxis\.agent\.monthly/);
-  assert.match(redeemSkuPendingCopy("activate"), /SKU pending/);
+test("redeem awaiting-capture copy names live SKUs", () => {
+  assert.match(redeemAwaitingCaptureCopy("activate"), /renoxis\.activate/);
+  assert.match(redeemAwaitingCaptureCopy("renew"), /renoxis\.agent\.monthly/);
+  assert.match(redeemAwaitingCaptureCopy("activate"), /catalog is live/);
+  assert.match(redeemAwaitingCaptureCopy("activate"), /empty until then/);
+  assert.doesNotMatch(redeemAwaitingCaptureCopy("activate"), /SKU pending/);
 });
 
 test("parseEntitlement ignores invented balances", () => {

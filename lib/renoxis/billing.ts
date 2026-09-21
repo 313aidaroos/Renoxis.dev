@@ -5,7 +5,8 @@
  * Heavy Cixy SKUs remain on the office ledger (see ixis.ts).
  * Wallet SKUs locked by hub: renoxis.activate + renoxis.agent.monthly @ 5000
  * (do NOT invent Wallet balances; revise monthly off 30000 — no new seat.monthly key).
- * Until redeem lands, CTAs buy packs; redeem UI shows honest “SKU pending”.
+ * Wallet catalog SKUs are LIVE (activate + agent.monthly @ 5000).
+ * Entitlements stay empty until redeem capture — do not invent balances.
  */
 
 import { RENOXIS_APP_ORIGIN, walletBuyUrl } from "./wallet-link.ts";
@@ -139,11 +140,15 @@ export function renewCopy() {
   return `Keep running · ${MONTHLY_IXIS.toLocaleString()} Ixis / mo ($${MONTHLY_USD})`;
 }
 
-/** Soft-launch copy when Wallet redeem SKUs are not live yet. */
-export function redeemSkuPendingCopy(intent: "activate" | "renew") {
+/** Copy after Wallet return — catalog live; entitlement empty until capture. */
+export function redeemAwaitingCaptureCopy(intent: "activate" | "renew") {
   const sku =
     intent === "activate" ? WALLET_SKU.activate : WALLET_SKU.monthly;
-  return `SKU pending: ${sku} at ${intent === "activate" ? ACTIVATE_IXIS : MONTHLY_IXIS} Ixis. Buy packs on Wallet now; redeem lands when Wallet Lead marks the SKU live.`;
+  const amount = intent === "activate" ? ACTIVATE_IXIS : MONTHLY_IXIS;
+  return (
+    `Wallet catalog is live (${sku} · ${amount.toLocaleString()} Ixis). ` +
+    "Seat unlocks after redeem capture — entitlements stay empty until then (no invented balances)."
+  );
 }
 
 /**

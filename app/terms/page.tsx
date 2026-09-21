@@ -78,9 +78,10 @@ export default function TermsOfService() {
         Outlook, MLS feeds, and external CRM sync are not part of this beta.
       </p>
       <p>
-        Apixis Wallet, Stripe, and other checkout are not live. No purchase is
-        completed in the product, and no Ixis or card charge is made. A price
-        marked “to be set” or “coming soon” is not an offer.
+        Buy Ixis and Wallet open Apixis Wallet. Renoxis does not run checkout,
+        store card details, or credit Ixis from a card payment. Cash credit
+        happens only on Apixis Wallet. No purchase is completed inside Renoxis.
+        A price marked “to be set” or “coming soon” is not an offer.
       </p>
 
       <h2>No professional advice</h2>

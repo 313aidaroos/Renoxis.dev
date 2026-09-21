@@ -36,9 +36,11 @@ export function quoteDebit(balance: number, sku: IxisSku): DebitQuote {
 }
 
 export function insufficientMessage(cost: number, balance: number | null) {
+  const buy =
+    "Buy Ixis opens Apixis Wallet. Cash credit stays there; this office ledger changes only by grant or debit.";
   if (balance === null)
-    return `The office does not have enough Ixis for this action (${cost}). Billed to office. Wallet top-up is not connected.`;
-  return `The office has ${balance} Ixis. This action costs ${cost}. Wallet top-up is not connected.`;
+    return `The office does not have enough Ixis for this action (${cost}). Billed to office. ${buy}`;
+  return `The office has ${balance} Ixis. This action costs ${cost}. ${buy}`;
 }
 
 /** 500 bps of a closed-deal fee. Pending only: nothing is captured. */

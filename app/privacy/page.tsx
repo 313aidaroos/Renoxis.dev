@@ -82,9 +82,11 @@ export default function PrivacyPolicy() {
         one is added later, would have to wait for your explicit approval.
       </p>
       <p>
-        Apixis Wallet, Stripe, and other checkout are not connected. No Ixis
-        purchase or card charge is made. Licensed MLS feeds, Outlook, external
-        CRM sync, social publishing, and renovation image generation are not
+        Buy Ixis leaves this site for Apixis Wallet. The link sends
+        origin=renoxis and a return address for this site. It does not send
+        your records, email, or office balance. Renoxis does not receive card
+        numbers and does not complete a purchase. Licensed MLS feeds, Outlook,
+        external CRM sync, social publishing, and renovation image generation are not
         connected. A public listing link you save is only the link you typed.
         Commission figures are numbers you enter, not a cash balance.
       </p>

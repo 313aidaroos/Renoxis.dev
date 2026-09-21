@@ -14,7 +14,7 @@ export async function GET() {
         email: c?.email || null,
         scopes: c?.scopes || "",
       },
-      wallet: false,
+      wallet: false, // Buy Ixis is an outbound link. This app does not read Wallet balances.
     });
   } catch (e) {
     return failure(e);

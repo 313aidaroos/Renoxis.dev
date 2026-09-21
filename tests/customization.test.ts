@@ -3,8 +3,12 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
   catalog,
+  DEFAULT_CIXY_NAME,
+  ESSENTIALS_ID,
   defaultLook,
   normalizeLook,
+  normalizePrefs,
+  ownsCatalogItem,
   validLook,
 } from "../lib/renoxis/customization.ts";
 import {
@@ -158,4 +162,33 @@ test("avatar and desk do not render an illustrated svg person", () => {
   assert.equal(css.includes("illustrated-avatar"), false);
   assert.match(avatar, /cixy-sprites\.png/);
   assert.match(avatar, /data-cixy="signature"/);
+});
+
+
+test("prefs migrate legacy look and keep Essentials owned", () => {
+  const legacy = normalizePrefs({
+    style: "illustrated",
+    skin: "#dca580",
+    hair: "#503021",
+    eyes: "#654224",
+    outfit: "#075d4b",
+    hairstyle: "long",
+    room: "mint",
+    motion: true,
+  });
+  assert.equal(legacy.displayName, DEFAULT_CIXY_NAME);
+  assert.deepEqual(legacy.wardrobe, [ESSENTIALS_ID]);
+  assert.equal(ownsCatalogItem(legacy.wardrobe, ESSENTIALS_ID), true);
+  assert.equal(ownsCatalogItem(legacy.wardrobe, "outfits-professional"), false);
+
+  const named = normalizePrefs({
+    look: defaultLook,
+    displayName: "  Nora  ",
+    wardrobe: ["outfits-professional", "fake-sku"],
+  });
+  assert.equal(named.displayName, "Nora");
+  assert.ok(named.wardrobe.includes(ESSENTIALS_ID));
+  assert.ok(named.wardrobe.includes("outfits-professional"));
+  assert.equal(named.wardrobe.includes("fake-sku"), false);
+  assert.equal(normalizePrefs({ displayName: "" }).displayName, DEFAULT_CIXY_NAME);
 });

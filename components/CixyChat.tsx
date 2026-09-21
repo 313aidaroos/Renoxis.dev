@@ -7,11 +7,16 @@ type Message = {
   content: string;
 };
 
-export function CixyChat() {
+export function CixyChat({
+  assistantName = "Cixy",
+}: {
+  assistantName?: string;
+}) {
+  const name = (assistantName || "Cixy").trim() || "Cixy";
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "As-salamu alaykum. I'm Cixy, your real estate assistant. How can I help you today?",
+      content: `As-salamu alaykum. I'm ${name}, your real estate assistant. How can I help you today?`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -46,7 +51,7 @@ export function CixyChat() {
 
       if (!response.ok) {
         const problem = await response.json();
-        throw new Error(problem.error || "Cixy is temporarily unavailable.");
+        throw new Error(problem.error || name + " is temporarily unavailable.");
       }
 
       const data = await response.json();
@@ -59,7 +64,7 @@ export function CixyChat() {
         ...prev,
         {
           role: "assistant",
-          content: error instanceof Error ? error.message : "Cixy is temporarily unavailable. Please try again.",
+          content: error instanceof Error ? error.message : name + " is temporarily unavailable. Please try again.",
         },
       ]);
     } finally {
@@ -70,7 +75,7 @@ export function CixyChat() {
   return (
     <div className="flex flex-col h-[600px]">
       <div className="bg-zinc-100 dark:bg-zinc-900 p-4 border-b border-zinc-300 dark:border-zinc-700">
-        <h3 className="font-bold">Chat with Cixy</h3>
+        <h3 className="font-bold">Chat with {name}</h3>
         <p className="text-xs text-zinc-600 dark:text-zinc-400">
           Your halal-conscious real estate expert
         </p>
@@ -97,7 +102,7 @@ export function CixyChat() {
           <div className="flex justify-start">
             <div className="bg-zinc-200 dark:bg-zinc-800 rounded-lg p-3">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Cixy is typing...
+                {name} is typing...
               </p>
             </div>
           </div>

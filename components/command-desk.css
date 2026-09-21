@@ -2068,3 +2068,40 @@
   font-size: 12px;
 }
 .greeting{min-width:0}.greeting>div{min-width:0}.greeting h1{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:650px){.greeting{flex:1}.greeting h1{max-width:130px}.top-actions{flex-shrink:0}}
+
+
+.wardrobe-box {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid color-mix(in srgb, var(--desk-line, #c5d5c8) 80%, transparent);
+}
+.wardrobe-box .section-title {
+  margin-bottom: 0.65rem;
+}
+.wardrobe-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+.wardrobe-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, #edf5ef 70%, white);
+  border: 1px solid color-mix(in srgb, #c5d5c8 70%, transparent);
+}
+.wardrobe-list li.locked {
+  opacity: 0.92;
+}
+.wardrobe-list strong {
+  display: block;
+  font-size: 0.92rem;
+}
+.wardrobe-list small {
+  color: #5d7366;
+}

@@ -138,3 +138,78 @@ export function catalogPriceLabel(price: number | null): string {
     return `Price to be set · ${currency}`;
   return `${price} ${currency}`;
 }
+
+
+export const ESSENTIALS_ID = "basics";
+export const DEFAULT_CIXY_NAME = "Cixy";
+
+/** Per-user Cixy prefs: Combo A look + display name + wardrobe ownership. */
+export type CixyPrefs = {
+  look: Look;
+  displayName: string;
+  wardrobe: string[];
+};
+
+export function defaultWardrobe(): string[] {
+  return [ESSENTIALS_ID];
+}
+
+export function normalizeDisplayName(v: unknown): string {
+  const s = String(v ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, 40);
+  return s || DEFAULT_CIXY_NAME;
+}
+
+export function normalizeWardrobe(v: unknown): string[] {
+  const ids = new Set<string>([ESSENTIALS_ID]);
+  if (Array.isArray(v)) {
+    for (const id of v) {
+      if (typeof id !== "string") continue;
+      if (catalog.some((item) => item.id === id)) ids.add(id);
+    }
+  }
+  return [...ids];
+}
+
+export function ownsCatalogItem(wardrobe: string[], id: string): boolean {
+  if (id === ESSENTIALS_ID) return true;
+  return wardrobe.includes(id);
+}
+
+/**
+ * Load prefs. A bare legacy Look (with or without style) becomes Essentials-only
+ * wardrobe and the default display name "Cixy". Paid ownership is never invented.
+ */
+export function normalizePrefs(v: unknown): CixyPrefs {
+  const bare = normalizeLook(v);
+  if (bare) {
+    return {
+      look: bare,
+      displayName: DEFAULT_CIXY_NAME,
+      wardrobe: defaultWardrobe(),
+    };
+  }
+  if (!v || typeof v !== "object") {
+    return {
+      look: defaultLook,
+      displayName: DEFAULT_CIXY_NAME,
+      wardrobe: defaultWardrobe(),
+    };
+  }
+  const o = v as Record<string, unknown>;
+  return {
+    look: normalizeLook(o.look) ?? defaultLook,
+    displayName: normalizeDisplayName(o.displayName ?? o.cixyName),
+    wardrobe: normalizeWardrobe(o.wardrobe),
+  };
+}
+
+export function defaultPrefs(): CixyPrefs {
+  return {
+    look: defaultLook,
+    displayName: DEFAULT_CIXY_NAME,
+    wardrobe: defaultWardrobe(),
+  };
+}

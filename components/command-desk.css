@@ -2123,7 +2123,7 @@
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #c8ddd2;
   margin-bottom: 6px;
   font-weight: 700;
 }
@@ -2139,10 +2139,13 @@
   padding: 6px 8px;
   font-size: 12px;
   border-radius: 8px;
-  background: #fff;
-  border: 1px solid var(--line);
-  color: var(--ink);
+  background: #ffffff14;
+  border: 1px solid #ffffff28;
+  color: #f3faf6;
   font-weight: 600;
+}
+.theme-swatch:hover {
+  background: #ffffff22;
 }
 .theme-swatch .swatch-dot {
   width: 12px;
@@ -2161,6 +2164,7 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 25%, transparent);
 }
 
+/* Desk + full left rail themes. Emerald = base .sidebar greens. */
 .renoxis[data-theme="red"] {
   --green: #b91c1c;
   --dark: #7f1d1d;
@@ -2182,14 +2186,40 @@
   background: #fee2e2;
   color: #991b1b;
 }
-.renoxis[data-theme="red"] .sidebar nav button.current {
-  background: #fee2e2;
-  color: #7f1d1d;
-}
 .renoxis[data-theme="red"] .catalog-card .owned-tag {
   background: color-mix(in srgb, #b91c1c 14%, white);
   color: #b91c1c;
   border-color: color-mix(in srgb, #b91c1c 28%, transparent);
+}
+.renoxis[data-theme="red"] .sidebar {
+  background:
+    radial-gradient(at 0 0, #b91c1c88, transparent 60%),
+    linear-gradient(150deg, #7f1d1d, #450a0a);
+}
+.renoxis[data-theme="red"] .brand svg { color: #fca5a5; }
+.renoxis[data-theme="red"] .brand small { color: #fecaca; }
+.renoxis[data-theme="red"] .sidebar nav button { color: #fee2e2; }
+.renoxis[data-theme="red"] .sidebar nav button span { color: #fecaca; }
+.renoxis[data-theme="red"] .sidebar nav button:hover { background: #ffffff14; }
+.renoxis[data-theme="red"] .sidebar nav button.current {
+  background: linear-gradient(90deg, #dc2626, #991b1b);
+  color: #fff;
+  box-shadow: inset 3px 0 #fca5a5;
+}
+.renoxis[data-theme="red"] .sidebar-quote {
+  background: linear-gradient(150deg, #991b1b66, #7f1d1d40);
+  border-color: #fca5a540;
+}
+.renoxis[data-theme="red"] .sidebar-quote > span { color: #fee2e2; }
+.renoxis[data-theme="red"] .sidebar-quote hr { border-top-color: #f87171; }
+.renoxis[data-theme="red"] .sidebar-quote small { color: #fecaca; }
+.renoxis[data-theme="red"] .sidebar-account button {
+  border-color: #f8717188 !important;
+}
+.renoxis[data-theme="red"] .sidebar-theme .theme-label { color: #fecaca; }
+.renoxis[data-theme="red"] .theme-swatch.current {
+  border-color: #fca5a5;
+  box-shadow: 0 0 0 2px #fca5a544;
 }
 
 .renoxis[data-theme="sunset"] {
@@ -2213,9 +2243,35 @@
   background: #ffedd5;
   color: #9a3412;
 }
+.renoxis[data-theme="sunset"] .sidebar {
+  background:
+    radial-gradient(at 0 0, #ea580c88, transparent 60%),
+    linear-gradient(150deg, #9a3412, #431407);
+}
+.renoxis[data-theme="sunset"] .brand svg { color: #fdba74; }
+.renoxis[data-theme="sunset"] .brand small { color: #fed7aa; }
+.renoxis[data-theme="sunset"] .sidebar nav button { color: #ffedd5; }
+.renoxis[data-theme="sunset"] .sidebar nav button span { color: #fed7aa; }
+.renoxis[data-theme="sunset"] .sidebar nav button:hover { background: #ffffff14; }
 .renoxis[data-theme="sunset"] .sidebar nav button.current {
-  background: #ffedd5;
-  color: #9a3412;
+  background: linear-gradient(90deg, #f97316, #c2410c);
+  color: #fff;
+  box-shadow: inset 3px 0 #fdba74;
+}
+.renoxis[data-theme="sunset"] .sidebar-quote {
+  background: linear-gradient(150deg, #c2410c66, #9a341240);
+  border-color: #fdba7440;
+}
+.renoxis[data-theme="sunset"] .sidebar-quote > span { color: #ffedd5; }
+.renoxis[data-theme="sunset"] .sidebar-quote hr { border-top-color: #fb923c; }
+.renoxis[data-theme="sunset"] .sidebar-quote small { color: #fed7aa; }
+.renoxis[data-theme="sunset"] .sidebar-account button {
+  border-color: #fb923c88 !important;
+}
+.renoxis[data-theme="sunset"] .sidebar-theme .theme-label { color: #fed7aa; }
+.renoxis[data-theme="sunset"] .theme-swatch.current {
+  border-color: #fdba74;
+  box-shadow: 0 0 0 2px #fdba7444;
 }
 
 .renoxis[data-theme="night"] {
@@ -2239,9 +2295,45 @@
   background: #dbeafe;
   color: #1e3a8a;
 }
+.renoxis[data-theme="night"] .sidebar {
+  background:
+    radial-gradient(at 0 0, #1d4ed888, transparent 60%),
+    linear-gradient(150deg, #1e3a8a, #0f172a);
+}
+.renoxis[data-theme="night"] .brand svg { color: #93c5fd; }
+.renoxis[data-theme="night"] .brand small { color: #bfdbfe; }
+.renoxis[data-theme="night"] .sidebar nav button { color: #dbeafe; }
+.renoxis[data-theme="night"] .sidebar nav button span { color: #bfdbfe; }
+.renoxis[data-theme="night"] .sidebar nav button:hover { background: #ffffff14; }
 .renoxis[data-theme="night"] .sidebar nav button.current {
-  background: #dbeafe;
-  color: #1e3a8a;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  color: #fff;
+  box-shadow: inset 3px 0 #93c5fd;
+}
+.renoxis[data-theme="night"] .sidebar-quote {
+  background: linear-gradient(150deg, #1e40af66, #1e3a8a40);
+  border-color: #93c5fd40;
+}
+.renoxis[data-theme="night"] .sidebar-quote > span { color: #dbeafe; }
+.renoxis[data-theme="night"] .sidebar-quote hr { border-top-color: #60a5fa; }
+.renoxis[data-theme="night"] .sidebar-quote small { color: #bfdbfe; }
+.renoxis[data-theme="night"] .sidebar-account button {
+  border-color: #60a5fa88 !important;
+}
+.renoxis[data-theme="night"] .sidebar-theme .theme-label { color: #bfdbfe; }
+.renoxis[data-theme="night"] .theme-swatch.current {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 2px #93c5fd44;
 }
 
-/* emerald keeps the base .renoxis tokens */
+/* Emerald keeps the painted green rail (.sidebar base). Explicit for clarity. */
+.renoxis[data-theme="emerald"] .sidebar {
+  background:
+    radial-gradient(at 0 0, #12624a, transparent 60%),
+    linear-gradient(150deg, #053c32, #022c28);
+}
+.renoxis[data-theme="emerald"] .sidebar nav button.current {
+  background: linear-gradient(90deg, #128868, #13705a);
+  color: white;
+  box-shadow: inset 3px 0 #77e4b9;
+}

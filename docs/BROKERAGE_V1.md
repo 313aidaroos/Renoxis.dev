@@ -20,6 +20,14 @@
 | Real outbound | **Awad Approve** only — drafts OK; no silent send |
 | Wallet capture | Hub-deferred (Developer Bot) until server contracts |
 
+## UI theme (hard rule)
+
+Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
+
+- Reuse emerald CommandDesk, `components/command-desk.css`, and the existing Cixy office/avatar surfaces.
+- No new visual system, no alternate design language, no restyle of Apixis marketing sites.
+- Team invites, rollups, firm Ixis balance, and private notes are new *flows* inside the same desk chrome — not a separate app shell.
+
 ## Out of v1
 
 - Multi-office hierarchies

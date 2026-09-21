@@ -79,6 +79,20 @@
 .renoxis .primary:hover {
   background: #084c3d;
 }
+.renoxis a.primary {
+  display: inline-block;
+  border: 1px solid #09654f;
+  border-radius: 8px;
+  padding: 8px 13px;
+  background: linear-gradient(135deg, #09735a, #04543e);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 10px #0a5c4320;
+}
+.renoxis a.primary:hover {
+  background: #084c3d;
+  color: white;
+}
 .renoxis .soft-button {
   display: inline-block;
   padding: 8px 12px;
@@ -1149,6 +1163,9 @@
   color: var(--muted);
   margin-top: 6px;
   max-width: 650px;
+}
+.section-title .actions {
+  margin-top: 12px;
 }
 .customize-box {
   padding: 14px;

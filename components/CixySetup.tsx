@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { RecordItem, Values } from "@/lib/renoxis/records";
+import { WalletLinks } from "./WalletLinks";
 export type Connections = {
   storage: boolean;
   ai: boolean;
@@ -19,6 +20,7 @@ export default function CixySetup({
   save,
   refresh,
   preview,
+  walletHref,
 }: {
   account: string;
   settings?: RecordItem;
@@ -26,6 +28,7 @@ export default function CixySetup({
   save: (values: Values) => Promise<void>;
   refresh: () => Promise<void>;
   preview: boolean;
+  walletHref: string;
 }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -78,13 +81,17 @@ export default function CixySetup({
                 ? "Ready to connect"
                 : "Owner setup pending",
           ],
-          ["Apixis Wallet", "Coming soon · no charges"],
         ].map(([name, label]) => (
           <article className="connection-card" key={name}>
             <strong>{name}</strong>
             <span>{label}</span>
           </article>
         ))}
+        <article className="connection-card">
+          <strong>Apixis Wallet</strong>
+          <span>Buy Ixis · cash credit on Wallet</span>
+          <WalletLinks href={walletHref} />
+        </article>
       </div>
       <div className="actions">
         <button
@@ -109,7 +116,8 @@ export default function CixySetup({
       <p className="muted">
         Google access is per account. Inbox access is read-only. Calendar writes
         require your review and do not invite attendees. Outlook, MLS and
-        external CRMs are not connected yet.
+        external CRMs are not connected yet. Buy Ixis opens Apixis Wallet.
+        Renoxis does not take a card.
       </p>
       <form
         key={settings?.id || "new"}

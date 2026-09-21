@@ -80,6 +80,19 @@ Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
 - Before costly Cixy actions, confirm SKU cost against firm balance
 - Commission forecast / close flow: surface 5% platform cut as pending, not collected until hub wallet exists
 
+## Apixis Wallet entry (buy)
+
+Cash Ixis is bought only on Apixis Wallet (`https://apixis-wallet.vercel.app`). Renoxis does not run Stripe Checkout and does not credit the firm ledger from a card payment.
+
+`docs/WALLET_EMBED.md` is not published in ApixisWallet, and no buy deep link is documented. Until it is, **Buy Ixis** and **Wallet** open the wallet home with:
+
+- `origin=renoxis`
+- `return_url` allowlisted to `https://renoxis.vercel.app`, or the configured `APP_URL` origin when that origin is https (localhost `APP_URL` is allowed for local development)
+
+Owners and brokers see the firm balance and those CTAs on the Team board. Agents still see “billed to office,” not a personal balance. The overview Ixis tile, Connections, and the footer Wallet link are the global entries. Manual grants and SKU debits stay on the office ledger.
+
+Follow-up: point the link at the embed contract when `WALLET_EMBED` lands, then show `GET /api/v1/wallet` only if that doc defines CORS and a session exchange. Do not invent a balance before then.
+
 ## Implementation order (when “start build”)
 
 1. Schema migration + RLS policies on Supabase `renoxis` (`loyjbfqpanskcecvpolt`)
@@ -92,7 +105,7 @@ Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
 
 ## Non-goals reminder
 
-Do not restyle Apixis marketing sites. Do not enable Wallet/Stripe/MLS/send-mail until server contracts exist. Honest empty states — no fake DEMO deals.
+Do not restyle Apixis marketing sites. Do not add Stripe keys, a Renoxis checkout page, MLS, or live send-mail. Buy Ixis is an outbound link to Apixis Wallet. Honest empty states — no fake DEMO deals.
 
 ## Owners
 

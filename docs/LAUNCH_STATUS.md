@@ -7,7 +7,7 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 
 - Existing site rebuilt around the approved emerald/white design and central female Cixy office; no duplicate frontend or repository.
 - Cixy smile, wave, sleep, snack and coffee sprite animations. Motion controls, activity cycling, reduced-motion support and an editable illustrated avatar with skin/hair/eye/blazer colors, hairstyles and office palettes.
-- Cixy Studio catalog: basic controls included at 0 Ixis; premium collections marked Coming soon with null prices for Awad to set. No wallet charges or invented balances.
+- Cixy Studio catalog: basic controls included at 0 Ixis; premium collections marked Coming soon with null prices for Awad to set. Buy Ixis opens Apixis Wallet. Renoxis does not charge a card or invent a balance.
 - Saved leads, clients, properties, transactions, tasks, appointments, renovation briefs, social drafts, document links and workspace preferences.
 - Zero-state dashboard: pipeline and commission forecast calculated from the signed-in account’s records; no fixed sample revenue or deals.
 - Private file upload, listing, deletion and short-lived download links. Supported PDF/PNG/JPG/text files up to 4 MB.
@@ -33,7 +33,7 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 1. Google OAuth credentials and consent/verification for Renoxis, canonical APP_URL, service-role key and 32-byte encryption key in Vercel. See `docs/CIXY_CONNECTIONS.md` and `.env.example`. Code is implemented; real Google authorization/refresh/revocation/calendar writes have not been end-to-end tested without those credentials.
 2. Add API credits or complete billing for the Anthropic account behind production `ANTHROPIC_API_KEY`. A live Cixy request reached the provider but was blocked by insufficient credits/billing. The app now returns a clear 503 explanation; saved workspace features remain available. AI is not yet operational.
 3. Verify Supabase email delivery and redirect allowlist includes `https://renoxis.vercel.app/auth/callback` and any intended custom domain. No test email was sent. Existing auth settings were not changed.
-4. Awad supplies premium Ixis prices and chooses outfit/office/background assets. Wallet purchases remain disabled until server-side billing and entitlements are integrated.
+4. Awad supplies premium Ixis prices and chooses outfit/office/background assets. Buy Ixis already opens Apixis Wallet. Outfit checkout and Wallet balance display stay off until `docs/WALLET_EMBED.md` and server-side entitlements exist.
 5. Outlook, MLS feeds, external CRM sync, email sending, social publishing, renovation image generation and shared cross-company Cixy memory need their provider/API contracts. These are not represented as active features.
 
 ## Known practical limits

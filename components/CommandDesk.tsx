@@ -29,6 +29,8 @@ import {
 } from "@/lib/renoxis/records";
 import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
+import { WalletLinks } from "./WalletLinks";
+import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import "./command-desk.css";
 const Chat = dynamic(() => import("./CixyChat").then((m) => m.CixyChat), {
   loading: () => <p>Opening Cixy…</p>,
@@ -176,7 +178,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits are still unpriced. There is no Stripe or wallet capture.",
+    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits are still unpriced. Buy Ixis opens Apixis Wallet. Renoxis does not capture cards or credit the office ledger from a purchase.",
   ],
   [
     "How do I install the app?",
@@ -200,11 +202,13 @@ export default function CommandDesk({
   account = "Your account",
   accountControl,
   loginForm,
+  walletHref = FALLBACK_WALLET_HREF,
 }: {
   preview?: boolean;
   account?: string;
   accountControl?: ReactNode;
   loginForm?: ReactNode;
+  walletHref?: string;
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -1260,10 +1264,7 @@ export default function CommandDesk({
                   <strong>{stats.tasks} open</strong>
                   <span>View your next steps ↗</span>
                 </button>
-                <button
-                  className="forecast wallet"
-                  onClick={() => go(firm?.office ? "Team" : "Cixy Studio")}
-                >
+                <div className="forecast wallet">
                   <small>✦ Apixis · Ixis</small>
                   <strong>
                     {firm?.office
@@ -1272,10 +1273,17 @@ export default function CommandDesk({
                         : "Billed to office"
                       : "Cixy Essentials"}
                   </strong>
-                  <span>
+                  <button
+                    type="button"
+                    className="text-button"
+                    onClick={() => go(firm?.office ? "Team" : "Cixy Studio")}
+                  >
                     {firm?.office ? "Office ledger ↗" : "Explore customization ↗"}
+                  </button>
+                  <span>
+                    <a href={walletHref}>Buy Ixis</a>
                   </span>
-                </button>
+                </div>
               </section>
             </>
           ) : null}
@@ -1669,9 +1677,10 @@ export default function CommandDesk({
                 <span className="eyebrow">THE CIXY COLLECTION</span>
                 <h2>A workspace with your personality.</h2>
                 <p>
-                  Premium collections are being prepared. You’ll choose how to
-                  spend your Ixis once prices and wallet checkout are available.
+                  Premium collections are being prepared. Prices are not set.
+                  Buy Ixis opens Apixis Wallet. This page does not charge a card.
                 </p>
+                <WalletLinks href={walletHref} />
               </div>
               <div className="catalog-grid">
                 {catalog.map((item, i) => (
@@ -1737,6 +1746,7 @@ export default function CommandDesk({
                   await reload(officeId, scope);
                 })();
               }}
+              walletHref={walletHref}
             />
           )}
           {board === "Connections" && (
@@ -1747,6 +1757,7 @@ export default function CommandDesk({
                 status={connections}
                 preview={preview}
                 refresh={refreshConnections}
+                walletHref={walletHref}
                 save={async (v) => {
                   await write("settings", v, settings);
                 }}
@@ -1791,6 +1802,7 @@ export default function CommandDesk({
               <Link href="/terms">Terms</Link>
               <button onClick={() => go("FAQs")}>FAQs</button>
               <button onClick={() => go("Connections")}>Connections</button>
+              <a href={walletHref}>Wallet</a>
               <button onClick={() => setInstallMessage(!installMessage)}>
                 Install app ↗
               </button>

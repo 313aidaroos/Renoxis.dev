@@ -8,6 +8,7 @@ import {
 } from "@/lib/renoxis/access";
 import type { Office } from "@/lib/renoxis/brokerage";
 import { IXIS_SKU } from "@/lib/renoxis/ixis";
+import { WalletLinks } from "./WalletLinks";
 
 export type FirmDesk = {
   ready: boolean;
@@ -85,6 +86,7 @@ export function TeamDesk({
   onNotice,
   onScope,
   onOffice,
+  walletHref,
 }: {
   preview: boolean;
   firm: FirmDesk | null;
@@ -94,6 +96,7 @@ export function TeamDesk({
   onNotice: (message: string) => void;
   onScope: (view: "book" | "team") => void;
   onOffice: (id: string) => void;
+  walletHref: string;
 }) {
   const [pending, setPending] = useState(false);
   const [inviteLink, setInviteLink] = useState("");
@@ -193,10 +196,10 @@ export function TeamDesk({
         <p className="muted">
           Your role is {office.role}.{" "}
           {balance
-            ? `Office balance: ${office.balance ?? 0} Ixis.`
-            : "Billed to office."}{" "}
-          Wallet top-up and Stripe capture are not connected.
+            ? `Office balance: ${office.balance ?? 0} Ixis. Buy Ixis opens Apixis Wallet. Cash credit stays on Wallet. This office still spends its firm ledger.`
+            : "Billed to office. Card checkout is not on this desk."}
         </p>
+        {balance && <WalletLinks href={walletHref} />}
         {canRollup(office.role) && (
           <div className="filter-row">
             <button

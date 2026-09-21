@@ -14,6 +14,7 @@ Repository: https://github.com/313aidaroos/Renoxis.dev
 - Search, record editing/deletion, follow-up tasks, export, FAQ tab, account actions, responsive mobile menu, PWA manifest/icons and install instructions.
 - Google OAuth/backend wiring, encrypted credential storage, read-only inbox, calendar fetch, reviewed idempotent appointment creation and disconnect. Requires provider configuration below.
 - Existing Cixy chat and listing-copy generation retained. Cixy receives a limited read-only workspace snapshot. AI request limits: 10/minute and 100/day/account, enforced atomically in the database.
+- Native Cixy prompts now include wholesale contract-sale expertise (assignable interest, deal package, buyers list, disposition cadence, assignment fee and title deposit, double close, clean exit) plus brokerage, labeled underwriting estimates, high-level development, and a Section 8/HCV landlord path that defers to the local PHA. Hard limits: no invented comps or legal bans, no steering, and refusals for fraud, straw buyers, hidden required disclosures, fake proof of funds, non-assignable assignments, and universal unlicensed-brokerage coaching. No wallet charge or live outreach was added. See `docs/CIXY_CUSTOMIZATION.md`.
 - App-version handoff: `docs/APP_VERSION.md`. Customization catalog and asset plan: `docs/CIXY_CUSTOMIZATION.md`; live catalog source: `lib/renoxis/customization.ts`.
 
 ## Verified before deployment

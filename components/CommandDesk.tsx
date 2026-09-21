@@ -27,6 +27,8 @@ import {
   type Values,
   type RecordItem,
 } from "@/lib/renoxis/records";
+import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
+import { TeamDesk, type FirmDesk } from "./TeamDesk";
 import "./command-desk.css";
 const Chat = dynamic(() => import("./CixyChat").then((m) => m.CixyChat), {
   loading: () => <p>Opening Cixy…</p>,
@@ -45,6 +47,7 @@ const boards = [
   "Analytics",
   "Cixy Studio",
   "Connections",
+  "Team",
   "FAQs",
 ] as const;
 type Board = (typeof boards)[number];
@@ -62,6 +65,7 @@ const symbols = [
   "↗",
   "♡",
   "⚙",
+  "⚑",
   "?",
 ];
 const boardKind: Partial<Record<Board, Kind>> = {
@@ -164,7 +168,7 @@ const faqs = [
   ],
   [
     "Can Cixy send messages or act on her own?",
-    "Cixy chat can answer questions and draft text. It does not autonomously send email, place calls, publish posts, spend points or edit your calendar. Follow-up buttons create tasks. You review calendar publishing yourself.",
+    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Office drafts on the Team board debit the firm balance and wait for Approve. Approve does not send mail.",
   ],
   [
     "How do I customize Cixy?",
@@ -172,7 +176,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the native points unit planned for the Apixis economy. Premium outfits, office templates and backgrounds are coming soon. Prices have not been set by the owner. No purchase or wallet debit is enabled.",
+    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits are still unpriced. There is no Stripe or wallet capture.",
   ],
   [
     "How do I install the app?",
@@ -180,7 +184,7 @@ const faqs = [
   ],
   [
     "Is my workspace private?",
-    "Saved records and private documents are scoped to your signed-in account. Google credentials are encrypted on the server when configured. Documents open using short-lived links. Keep access to your device and email account secure.",
+    "Personal records stay on your account. Inside an office, firm records are shared with members. Another agent's book and your private notes stay hidden unless you share a note or an owner or broker reviews the office.",
   ],
   [
     "Can I import MLS listings automatically?",
@@ -231,6 +235,9 @@ export default function CommandDesk({
   >([]);
   const [files, setFiles] = useState<{ name: string; id: string }[]>([]);
   const [userId, setUserId] = useState("");
+  const [firm, setFirm] = useState<FirmDesk | null>(null);
+  const [officeId, setOfficeId] = useState<string | null>(null);
+  const [scope, setScope] = useState<"book" | "team">("book");
   const [formKind, setFormKind] = useState<Kind>("task");
   const [editing, setEditing] = useState<RecordItem | null>(null);
   const [formError, setFormError] = useState("");
@@ -238,23 +245,43 @@ export default function CommandDesk({
   const editor = useRef<HTMLDialogElement>(null);
   const chatDialog = useRef<HTMLDialogElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
-  const reload = useCallback(async () => {
-    if (preview) return;
-    setLoading(true);
-    try {
-      const d = await request("/api/records");
-      setRecords(d.records);
-      setError(
-        d.truncated
-          ? "Showing the newest 1,000 records. Export is limited to this view."
-          : "",
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to load.");
-    } finally {
-      setLoading(false);
-    }
-  }, [preview]);
+  const reload = useCallback(
+    async (id?: string | null, view?: "book" | "team") => {
+      if (preview) return;
+      const brokerageId = id === undefined ? officeId : id;
+      const list = view || scope;
+      setLoading(true);
+      try {
+        const q = brokerageId
+          ? `?brokerageId=${encodeURIComponent(brokerageId)}&view=${list}`
+          : "";
+        const d = await request("/api/records" + q);
+        setRecords(d.records);
+        setError(
+          d.truncated
+            ? "Showing the newest 1,000 records. Export is limited to this view."
+            : "",
+        );
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Unable to load.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [preview, officeId, scope],
+  );
+  const loadFirm = useCallback(
+    async (id?: string | null) => {
+      if (preview) return null;
+      const q = id ? `?brokerageId=${encodeURIComponent(id)}` : "";
+      const payload = (await request("/api/brokerage" + q)) as FirmDesk;
+      setFirm(payload);
+      if (payload.userId) setUserId(payload.userId);
+      setOfficeId(payload.office?.id || null);
+      return payload;
+    },
+    [preview],
+  );
   const refreshConnections = useCallback(async () => {
     if (preview) return;
     try {
@@ -266,7 +293,39 @@ export default function CommandDesk({
   // Hydrate browser-only preferences and initial network state after mount.
   /* eslint-disable react-hooks/set-state-in-effect -- Hydrate browser-only preferences and fetch account data after mount. */
   useEffect(() => {
-    void reload();
+    void (async () => {
+      let listId: string | null = null;
+      let listView: "book" | "team" = "book";
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const invite = params.get("invite");
+        let payload = await loadFirm();
+        if (invite) {
+          try {
+            const accepted = await request("/api/brokerage/invites/accept", {
+              method: "POST",
+              body: JSON.stringify({ token: invite }),
+            });
+            setNotice(accepted.message || "You joined the office.");
+            payload = await loadFirm(accepted.brokerageId);
+            setBoard("Team");
+            window.history.replaceState(null, "", "?board=Team");
+          } catch (error) {
+            setNotice(
+              error instanceof Error ? error.message : "Invite was not accepted.",
+            );
+          }
+        }
+        const office = payload?.office;
+        if (office && (office.role === "owner" || office.role === "broker"))
+          listView = "team";
+        listId = office?.id || null;
+        if (office) setScope(listView);
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "Office check failed.");
+      }
+      await reload(listId, listView);
+    })();
     void refreshConnections();
     const params = new URLSearchParams(window.location.search);
     const b = params.get("board");
@@ -291,7 +350,9 @@ export default function CommandDesk({
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
-  }, [reload, refreshConnections, account]);
+    // Firm and record loads are started once. Later office changes call reload directly.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, preview]);
   /* eslint-enable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (
@@ -334,6 +395,7 @@ export default function CommandDesk({
       method: r ? "PATCH" : "POST",
       body: JSON.stringify({
         ...clean,
+        ...(officeId && !r ? { brokerageId: officeId } : {}),
         ...(r ? { id: r.id, version: r.version } : {}),
       }),
     });
@@ -342,7 +404,7 @@ export default function CommandDesk({
         ? old.map((x) => (x.id === r.id ? result.record : x))
         : [result.record, ...old],
     );
-    return result.record as RecordItem;
+    return result as { record: RecordItem; platformCommission?: { ok?: boolean } };
   };
   const remove = async (r: RecordItem) => {
     if (!confirm(`Delete “${r.data.title}”?`)) return;
@@ -1200,11 +1262,19 @@ export default function CommandDesk({
                 </button>
                 <button
                   className="forecast wallet"
-                  onClick={() => go("Cixy Studio")}
+                  onClick={() => go(firm?.office ? "Team" : "Cixy Studio")}
                 >
                   <small>✦ Apixis · Ixis</small>
-                  <strong>Cixy Essentials</strong>
-                  <span>Explore customization ↗</span>
+                  <strong>
+                    {firm?.office
+                      ? seesFirmBalance(firm.office.role)
+                        ? `${firm.office.balance ?? 0} Ixis`
+                        : "Billed to office"
+                      : "Cixy Essentials"}
+                  </strong>
+                  <span>
+                    {firm?.office ? "Office ledger ↗" : "Explore customization ↗"}
+                  </span>
                 </button>
               </section>
             </>
@@ -1280,6 +1350,31 @@ export default function CommandDesk({
             </Panel>
           )}
           {board === "Properties" && propertyCards}
+          {firm?.office &&
+            canRollup(firm.office.role) &&
+            board !== "Overview" &&
+            board !== "Team" && (
+              <div className="filter-row">
+                <button
+                  className={scope === "book" ? "selected" : ""}
+                  onClick={() => {
+                    setScope("book");
+                    void reload(officeId, "book");
+                  }}
+                >
+                  My book
+                </button>
+                <button
+                  className={scope === "team" ? "selected" : ""}
+                  onClick={() => {
+                    setScope("team");
+                    void reload(officeId, "team");
+                  }}
+                >
+                  Office rollup
+                </button>
+              </div>
+            )}
           {(board === "Leads" || board === "Transactions") && (
             <div className="filter-row">
               {[
@@ -1556,8 +1651,10 @@ export default function CommandDesk({
                 ))}
                 <p className="muted">
                   Expected commission comes from your entries, excludes
-                  cancelled transactions, and is not a cash balance. Marketing
-                  metrics appear only when a verified source is connected.
+                  cancelled transactions, and is not a cash balance. A closed
+                  deal also records a 5% platform cut as pending. Nothing is
+                  collected here. Marketing metrics appear only when a verified
+                  source is connected.
                 </p>
               </Panel>
             </>
@@ -1609,6 +1706,38 @@ export default function CommandDesk({
                 ))}
               </div>
             </>
+          )}
+          {board === "Team" && (
+            <TeamDesk
+              preview={preview}
+              firm={firm}
+              scope={scope}
+              busy={busy}
+              onNotice={setNotice}
+              onScope={(view) => {
+                setScope(view);
+                void reload(officeId, view);
+              }}
+              onOffice={(id) => {
+                void (async () => {
+                  const payload = await loadFirm(id);
+                  const next =
+                    payload?.office &&
+                    (payload.office.role === "owner" ||
+                      payload.office.role === "broker")
+                      ? scope
+                      : "book";
+                  setScope(next);
+                  await reload(id, next);
+                })();
+              }}
+              onChanged={() => {
+                void (async () => {
+                  await loadFirm(officeId);
+                  await reload(officeId, scope);
+                })();
+              }}
+            />
           )}
           {board === "Connections" && (
             <Panel title="Connections & preferences">
@@ -1726,9 +1855,13 @@ export default function CommandDesk({
               else data[field] = String(v);
             }
             try {
-              await write(formKind, data, editing || undefined);
+              const saved = await write(formKind, data, editing || undefined);
               editor.current?.close();
-              setNotice("Saved to your account.");
+              setNotice(
+                saved.platformCommission?.ok
+                  ? "Saved. A 5% platform commission is pending. Nothing was collected."
+                  : "Saved to your account.",
+              );
             } catch (e) {
               setFormError(e instanceof Error ? e.message : "Save failed.");
             } finally {

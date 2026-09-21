@@ -971,6 +971,7 @@ export default function CommandDesk({
           <span>Change lives.</span>
           <hr />
           <strong>PART OF APIXIS</strong>
+          <small className="company-line">A Apixis Company</small>
           <small>Real estate without limits.</small>
         </div>
         <div className="sidebar-account">{accountControl}</div>
@@ -1653,9 +1654,12 @@ export default function CommandDesk({
           )}
           <footer>
             <span>
-              RENOXIS <b>·</b> People. Properties. A brighter tomorrow.
+              RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A
+              brighter tomorrow.
             </span>
             <div>
+              <Link href="/privacy">Privacy</Link>
+              <Link href="/terms">Terms</Link>
               <button onClick={() => go("FAQs")}>FAQs</button>
               <button onClick={() => go("Connections")}>Connections</button>
               <button onClick={() => setInstallMessage(!installMessage)}>

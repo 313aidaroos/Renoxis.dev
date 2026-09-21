@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
@@ -57,6 +58,10 @@ export function LoginForm() {
           {message}
         </p>
       )}
+      <p className="login-legal">
+        <Link href="/privacy">Privacy</Link>
+        <Link href="/terms">Terms</Link>
+      </p>
     </form>
   );
 }

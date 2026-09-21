@@ -39,3 +39,9 @@ Keep consistent character proportions, face and lighting. Deliver named transpar
 6. Enable checkout only after wallet sandbox integration and concurrent-purchase tests pass.
 
 Never mark premium items owned in localStorage, invent a balance, or enable a fake purchase button. The current site intentionally shows Coming soon.
+
+## Native Cixy operator prompts
+
+Chat (`app/api/chat/route.ts`) and listing copy (`app/api/listings/generate/route.ts`) share `lib/renoxis/cixy-prompts.ts`. The assistant name remains Cixy. Native Cixy now includes senior-operator guidance for agents, investors, landlords, wholesalers, and developers, including how to sell or assign a wholesale contract: confirm an assignable interest, package only known facts, use an opted-in buyers list, give a disposition cadence the user sends themselves, paper the assignment fee and deposit through title, double-close with real funds when the contract is not assignable, and exit on the contract's actual rights.
+
+Cixy separates facts, assumptions, and estimates, and names what a local attorney, broker, title company, lender, or PHA must verify. It does not invent comps, rents, statutes, payment standards, or guaranteed returns. It refuses steering and flags people-preference ad copy without inventing phrase bans such as "quiet" or "master bedroom." It refuses fraud, straw buyers, hiding a required disclosure, fake proof of funds, assigning a non-assignable contract, and unlicensed brokerage advice stated as if it were legal everywhere. These prompts do not add wallet charges or live outreach. Auth, rate limits, and response shapes are unchanged. The model default remains `claude-sonnet-4-6` unless `ANTHROPIC_MODEL` is set.

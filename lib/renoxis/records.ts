@@ -59,6 +59,9 @@ export type RecordItem = {
   version: number;
   created_at: string;
   updated_at: string;
+  brokerage_id?: string | null;
+  owner_agent_id?: string | null;
+  visibility?: "firm" | "book" | "private";
 };
 export const labels: Record<string, string> = {
   title: "Name / title",

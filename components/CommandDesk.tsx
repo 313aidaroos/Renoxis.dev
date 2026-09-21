@@ -12,9 +12,9 @@ import CixySetup, { type Connections } from "./CixySetup";
 import CixyAvatar, { moods, type Mood } from "./CixyAvatar";
 import {
   catalog,
-  currency,
+  catalogPriceLabel,
   defaultLook,
-  validLook,
+  normalizeLook,
   type Look,
 } from "@/lib/renoxis/customization";
 import {
@@ -174,11 +174,11 @@ const faqs = [
   ],
   [
     "How do I customize Cixy?",
-    "Use the Customize button below Cixy or open Cixy Studio. Signature mode uses the reference-style animated artwork. Illustrated mode supports live skin, hair, eye, blazer and hairstyle changes. The basics are included. Preferences save on this device.",
+    "Use the Customize button below Cixy or open Cixy Studio. Skin, hair, eyes, blazer, and the office palette tint the signature artwork. Essentials are included. Preferences save on this device.",
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits are still unpriced. Buy Ixis opens Apixis Wallet. Renoxis does not capture cards or credit the office ledger from a purchase.",
+    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
   ],
   [
     "How do I install the app?",
@@ -350,7 +350,8 @@ export default function CommandDesk({
       const saved = JSON.parse(
         localStorage.getItem("renoxis-cixy-v2:" + account) || "null",
       );
-      if (validLook(saved)) setLook(saved);
+      const next = normalizeLook(saved);
+      if (next) setLook(next);
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -752,21 +753,9 @@ export default function CommandDesk({
         <h3>Make Cixy yours</h3>
         <p>Essentials included · saved on this device</p>
       </div>
-      <label className="field">
-        Avatar style
-        <select
-          value={look.style}
-          onChange={(e) =>
-            setLook({ ...look, style: e.target.value as Look["style"] })
-          }
-        >
-          <option value="signature">Signature artwork</option>
-          <option value="illustrated">Customizable illustration</option>
-        </select>
-      </label>
       <p className="muted">
-        Color and hairstyle controls use the customizable illustration.
-        Signature artwork keeps its original appearance.
+        Skin, hair, eyes, and blazer tint the signature artwork. The office
+        palette shifts the room. Hair style colors the painted hair.
       </p>
       <div className="color-controls">
         {(["skin", "hair", "eyes", "outfit"] as const).map((k) => (
@@ -776,9 +765,7 @@ export default function CommandDesk({
               aria-label={"Cixy " + k + " color"}
               type="color"
               value={look[k]}
-              onChange={(e) =>
-                setLook({ ...look, style: "illustrated", [k]: e.target.value })
-              }
+              onChange={(e) => setLook({ ...look, [k]: e.target.value })}
             />
           </label>
         ))}
@@ -791,7 +778,6 @@ export default function CommandDesk({
             onChange={(e) =>
               setLook({
                 ...look,
-                style: "illustrated",
                 hairstyle: e.target.value as Look["hairstyle"],
               })
             }
@@ -808,7 +794,6 @@ export default function CommandDesk({
             onChange={(e) =>
               setLook({
                 ...look,
-                style: "illustrated",
                 room: e.target.value as Look["room"],
               })
             }
@@ -1677,8 +1662,9 @@ export default function CommandDesk({
                 <span className="eyebrow">THE CIXY COLLECTION</span>
                 <h2>A workspace with your personality.</h2>
                 <p>
-                  Premium collections are being prepared. Prices are not set.
-                  Buy Ixis opens Apixis Wallet. This page does not charge a card.
+                  Premium collections stay Coming soon until an Ixis price is
+                  set. Buy Ixis opens Apixis Wallet and returns here. Essentials
+                  are already included. This page does not charge a card.
                 </p>
                 <WalletLinks href={walletHref} />
               </div>
@@ -1694,12 +1680,8 @@ export default function CommandDesk({
                     <span className="tag">{item.category}</span>
                     <h3>{item.name}</h3>
                     <p>{item.description}</p>
-                    <strong>
-                      {item.price === 0
-                        ? "Included · 0 " + currency
-                        : "Price to be set · " + currency}
-                    </strong>
-                    {item.status === "included" ? (
+                    <strong>{catalogPriceLabel(item.price)}</strong>
+                    {item.status === "included" || item.price === 0 ? (
                       <button
                         onClick={() => {
                           setCustom(true);
@@ -1709,7 +1691,12 @@ export default function CommandDesk({
                         Customize now
                       </button>
                     ) : (
-                      <span className="coming-soon">Coming soon</span>
+                      <>
+                        <span className="coming-soon">Coming soon</span>
+                        <a className="catalog-buy" href={walletHref}>
+                          Buy Ixis
+                        </a>
+                      </>
                     )}
                   </article>
                 ))}

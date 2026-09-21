@@ -84,14 +84,14 @@ Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
 
 Cash Ixis is bought only on Apixis Wallet (`https://apixis-wallet.vercel.app`). Renoxis does not run Stripe Checkout and does not credit the firm ledger from a card payment.
 
-`docs/WALLET_EMBED.md` is not published in ApixisWallet, and no buy deep link is documented. Until it is, **Buy Ixis** and **Wallet** open the wallet home with:
+**Buy Ixis** and **Wallet** open Apixis Wallet buy, per `docs/WALLET_EMBED.md`:
 
-- `origin=renoxis`
-- `return_url` allowlisted to `https://renoxis.vercel.app`, or the configured `APP_URL` origin when that origin is https (localhost `APP_URL` is allowed for local development)
+- `product=renoxis`
+- `return_url` = `https://renoxis.vercel.app/?board=Cixy Studio` (exact host only)
 
-Owners and brokers see the firm balance and those CTAs on the Team board. Agents still see “billed to office,” not a personal balance. The overview Ixis tile, Connections, and the footer Wallet link are the global entries. Manual grants and SKU debits stay on the office ledger.
+Owners and brokers see the firm balance and those CTAs on the Team board. Agents still see “billed to office,” not a personal balance. The overview Ixis tile, Connections, Cixy Studio catalog, and the footer Wallet link are the entries. Manual grants and SKU debits stay on the office ledger. Buying Ixis does not mark a premium outfit owned.
 
-Follow-up: point the link at the embed contract when `WALLET_EMBED` lands, then show `GET /api/v1/wallet` only if that doc defines CORS and a session exchange. Do not invent a balance before then.
+Do not call `GET /api/v1/wallet` from the browser until a session exchange and CORS contract exist. Do not invent a balance.
 
 ## Implementation order (when “start build”)
 

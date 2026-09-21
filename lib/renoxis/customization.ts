@@ -80,7 +80,8 @@ export type Look = {
 };
 
 /** Painted signature cut. Reset and first visit stay on the unmodified sprite. */
-export const defaultLook: Look = {
+/** Colors painted into public/cixy-sprites.png (green blazer). Used only to skip recolor. */
+export const paintedSignatureLook: Look = {
   skin: "#dca580",
   hair: "#503021",
   eyes: "#654224",
@@ -89,6 +90,113 @@ export const defaultLook: Look = {
   room: "mint",
   motion: true,
 };
+
+/** Product default: red coat. Recolor runs until the sheet itself is red. */
+export const defaultLook: Look = {
+  ...paintedSignatureLook,
+  outfit: "#b91c1c",
+};
+
+export type DeskTheme = "red" | "emerald" | "sunset" | "night";
+
+export type ThemeSpec = {
+  id: DeskTheme;
+  label: string;
+  coat: string;
+  accent: string;
+  accentDark: string;
+  soft: string;
+};
+
+export const themes: Record<DeskTheme, ThemeSpec> = {
+  red: {
+    id: "red",
+    label: "Red",
+    coat: "#b91c1c",
+    accent: "#b91c1c",
+    accentDark: "#7f1d1d",
+    soft: "#fef2f2",
+  },
+  emerald: {
+    id: "emerald",
+    label: "Emerald",
+    coat: "#075d4b",
+    accent: "#075e4b",
+    accentDark: "#04543e",
+    soft: "#e2f4e9",
+  },
+  sunset: {
+    id: "sunset",
+    label: "Sunset",
+    coat: "#c2410c",
+    accent: "#ea580c",
+    accentDark: "#9a3412",
+    soft: "#fff7ed",
+  },
+  night: {
+    id: "night",
+    label: "Night",
+    coat: "#1e3a5f",
+    accent: "#1d4ed8",
+    accentDark: "#1e3a8a",
+    soft: "#eff6ff",
+  },
+};
+
+export const DEFAULT_THEME: DeskTheme = "red";
+
+export function normalizeTheme(v: unknown): DeskTheme {
+  if (v === "red" || v === "emerald" || v === "sunset" || v === "night") return v;
+  return DEFAULT_THEME;
+}
+
+export function themeFromOutfit(outfit: string): DeskTheme {
+  const hex = outfit.toLowerCase();
+  for (const spec of Object.values(themes)) {
+    if (spec.coat === hex) return spec.id;
+  }
+  return DEFAULT_THEME;
+}
+
+export function applyThemeCoat(look: Look, theme: DeskTheme): Look {
+  return { ...look, outfit: themes[theme].coat };
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const n = Number.parseInt(hex.replace("#", "").slice(0, 6), 16);
+  if (Number.isNaN(n)) return [0, 0, 0];
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+/** Exact coat match, else nearest theme coat by RGB distance. */
+export function nearestTheme(hex: string): DeskTheme {
+  const exact = themeFromOutfit(hex);
+  if (themes[exact].coat === hex.toLowerCase()) return exact;
+  const [r, g, b] = hexToRgb(hex);
+  let best: DeskTheme = DEFAULT_THEME;
+  let bestDist = Number.POSITIVE_INFINITY;
+  for (const spec of Object.values(themes)) {
+    const [tr, tg, tb] = hexToRgb(spec.coat);
+    const d = (r - tr) ** 2 + (g - tg) ** 2 + (b - tb) ** 2;
+    if (d < bestDist) {
+      bestDist = d;
+      best = spec.id;
+    }
+  }
+  return best;
+}
+
+/** Theme + coat always match: snap outfit to the theme coat. */
+export function syncThemeAndCoat(
+  look: Look,
+  themeOrHex: DeskTheme | string,
+): { look: Look; theme: DeskTheme } {
+  const theme =
+    typeof themeOrHex === "string" && !(themeOrHex in themes)
+      ? nearestTheme(themeOrHex)
+      : normalizeTheme(themeOrHex);
+  return { theme, look: applyThemeCoat(look, theme) };
+}
 
 const HEX = /^#[0-9a-f]{6}$/i;
 
@@ -148,6 +256,7 @@ export type CixyPrefs = {
   look: Look;
   displayName: string;
   wardrobe: string[];
+  theme: DeskTheme;
 };
 
 export function defaultWardrobe(): string[] {
@@ -189,20 +298,21 @@ export function normalizePrefs(v: unknown): CixyPrefs {
       look: bare,
       displayName: DEFAULT_CIXY_NAME,
       wardrobe: defaultWardrobe(),
+      theme: themeFromOutfit(bare.outfit),
     };
   }
   if (!v || typeof v !== "object") {
-    return {
-      look: defaultLook,
-      displayName: DEFAULT_CIXY_NAME,
-      wardrobe: defaultWardrobe(),
-    };
+    return defaultPrefs();
   }
   const o = v as Record<string, unknown>;
+  const look = normalizeLook(o.look) ?? defaultLook;
+  const theme =
+    "theme" in o ? normalizeTheme(o.theme) : themeFromOutfit(look.outfit);
   return {
-    look: normalizeLook(o.look) ?? defaultLook,
+    look,
     displayName: normalizeDisplayName(o.displayName ?? o.cixyName),
     wardrobe: normalizeWardrobe(o.wardrobe),
+    theme,
   };
 }
 
@@ -211,5 +321,6 @@ export function defaultPrefs(): CixyPrefs {
     look: defaultLook,
     displayName: DEFAULT_CIXY_NAME,
     wardrobe: defaultWardrobe(),
+    theme: DEFAULT_THEME,
   };
 }

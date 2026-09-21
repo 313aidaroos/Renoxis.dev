@@ -11,13 +11,18 @@ import Link from "next/link";
 import CixySetup, { type Connections } from "./CixySetup";
 import CixyAvatar, { moods, type Mood } from "./CixyAvatar";
 import {
+  applyThemeCoat,
   catalog,
   catalogPriceLabel,
-  defaultLook,
   DEFAULT_CIXY_NAME,
+  DEFAULT_THEME,
+  defaultLook,
   ESSENTIALS_ID,
   normalizePrefs,
   ownsCatalogItem,
+  syncThemeAndCoat,
+  themes,
+  type DeskTheme,
   type Look,
 } from "@/lib/renoxis/customization";
 import {
@@ -226,6 +231,7 @@ export default function CommandDesk({
   const [look, setLook] = useState<Look>(defaultLook);
   const [cixyName, setCixyName] = useState(DEFAULT_CIXY_NAME);
   const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
+  const [theme, setTheme] = useState<DeskTheme>(DEFAULT_THEME);
   const [mood, setMood] = useState<Mood>("Smile");
   const [autoMood, setAutoMood] = useState(true);
   const [custom, setCustom] = useState(false);
@@ -356,9 +362,11 @@ export default function CommandDesk({
         localStorage.getItem("renoxis-cixy-v2:" + account) || "null",
       );
       const prefs = normalizePrefs(saved);
-      setLook(prefs.look);
+      const synced = syncThemeAndCoat(prefs.look, prefs.theme);
+      setLook(synced.look);
       setCixyName(prefs.displayName);
       setWardrobe(prefs.wardrobe);
+      setTheme(synced.theme);
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -569,6 +577,7 @@ export default function CommandDesk({
           look,
           displayName: name,
           wardrobe: owned,
+          theme,
         }),
       );
       setNotice(name + " appearance and wardrobe saved on this device.");
@@ -776,7 +785,7 @@ export default function CommandDesk({
       <p className="muted">
         Skin, hair, eyes, and blazer tint the signature painting. Hair style and
         office palette are variants of the same face — never a new character or
-        SVG.
+        SVG. Blazer follows desk theme (and the other way around).
       </p>
       <label className="field">
         Display name
@@ -796,11 +805,20 @@ export default function CommandDesk({
               aria-label={cixyName + " " + k + " color"}
               type="color"
               value={look[k]}
-              onChange={(e) => setLook({ ...look, [k]: e.target.value })}
+              onChange={(e) => {
+                if (k !== "outfit") {
+                  setLook({ ...look, [k]: e.target.value });
+                  return;
+                }
+                const synced = syncThemeAndCoat(look, e.target.value);
+                setTheme(synced.theme);
+                setLook(synced.look);
+              }}
             />
           </label>
         ))}
       </div>
+      <p className="muted">Blazer follows desk theme.</p>
       <div className="form-grid">
         <label className="field">
           Hair style
@@ -860,6 +878,7 @@ export default function CommandDesk({
             setLook(defaultLook);
             setCixyName(DEFAULT_CIXY_NAME);
             setWardrobe([ESSENTIALS_ID]);
+            setTheme(DEFAULT_THEME);
           }}
         >
           Reset look
@@ -1023,8 +1042,12 @@ export default function CommandDesk({
             r.data.status === stage),
       )
     : [];
+  const pickTheme = (next: DeskTheme) => {
+    setTheme(next);
+    setLook((prev) => applyThemeCoat(prev, next));
+  };
   return (
-    <div className="renoxis">
+    <div className="renoxis" data-theme={theme}>
       <a className="skip-link" href="#workspace">
         Skip to workspace
       </a>
@@ -1055,6 +1078,24 @@ export default function CommandDesk({
             </button>
           ))}
         </nav>
+        <div className="sidebar-theme" role="group" aria-label="Desk theme">
+          <span className="theme-label">Theme</span>
+          <div className="theme-swatches">
+            {(Object.keys(themes) as DeskTheme[]).map((id) => (
+              <button
+                key={id}
+                type="button"
+                className={"theme-swatch theme-" + id + (theme === id ? " current" : "")}
+                aria-pressed={theme === id}
+                title={themes[id].label}
+                onClick={() => pickTheme(id)}
+              >
+                <span className="swatch-dot" aria-hidden="true" />
+                {themes[id].label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="sidebar-quote">
           <span>Build.</span>
           <span>Connect.</span>

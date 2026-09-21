@@ -1,4 +1,4 @@
-import { defaultLook, type Look } from "./customization.ts";
+import { paintedSignatureLook, type Look } from "./customization.ts";
 
 /** Signature sheet layout: five activities × two animation frames. */
 export const SPRITE_COLS = 5;
@@ -71,11 +71,12 @@ export function hairCoverage(
 }
 
 export function isNaturalSignature(look: Look): boolean {
+  // True only when the look matches the painted green-blazer sheet pixels.
   return (
-    sameHex(look.skin, defaultLook.skin) &&
-    sameHex(look.hair, defaultLook.hair) &&
-    sameHex(look.eyes, defaultLook.eyes) &&
-    sameHex(look.outfit, defaultLook.outfit) &&
+    sameHex(look.skin, paintedSignatureLook.skin) &&
+    sameHex(look.hair, paintedSignatureLook.hair) &&
+    sameHex(look.eyes, paintedSignatureLook.eyes) &&
+    sameHex(look.outfit, paintedSignatureLook.outfit) &&
     look.hairstyle === "long" &&
     look.room === "mint"
   );
@@ -273,10 +274,10 @@ export function paintSpriteCosmetics(
   mask: Uint8Array,
   look: Look,
 ): void {
-  const skinOn = !sameHex(look.skin, defaultLook.skin);
-  const hairOn = !sameHex(look.hair, defaultLook.hair) || look.hairstyle !== "long";
-  const eyesOn = !sameHex(look.eyes, defaultLook.eyes);
-  const outfitOn = !sameHex(look.outfit, defaultLook.outfit);
+  const skinOn = !sameHex(look.skin, paintedSignatureLook.skin);
+  const hairOn = !sameHex(look.hair, paintedSignatureLook.hair) || look.hairstyle !== "long";
+  const eyesOn = !sameHex(look.eyes, paintedSignatureLook.eyes);
+  const outfitOn = !sameHex(look.outfit, paintedSignatureLook.outfit);
   const room =
     look.room === "sunset" || look.room === "night"
       ? hexRgb(ROOM_TINT[look.room])

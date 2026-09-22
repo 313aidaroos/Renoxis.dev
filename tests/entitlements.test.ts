@@ -25,40 +25,40 @@ function withEnv(values: Record<string, string | undefined>, fn: () => void) {
   }
 }
 
-test("unlisted signed user stays blocked", () => {
+test("unlisted signed user stays blocked", async () => {
   withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: undefined,
       RENOXIS_BETA_GRANT_USER_IDS: undefined,
     },
-    () => {
-      assert.equal(hasServerEntitlement(user), false);
-      assert.equal(serverEntitlement(user).source, "none");
-      assert.throws(() => requireServerEntitlement(user), /ENTITLEMENT/);
+    async () => {
+      assert.equal(await hasServerEntitlement(user), false);
+      assert.equal((await serverEntitlement(user)).source, "none");
+      await assert.rejects(async () => await requireServerEntitlement(user), /ENTITLEMENT/);
     },
   );
 });
 
-test("hub-admin beta email grant is server-only and case-insensitive", () => {
+test("hub-admin beta email grant is server-only and case-insensitive", async () => {
   withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: "other@example.com, AGENT@EXAMPLE.COM ",
       RENOXIS_BETA_GRANT_USER_IDS: undefined,
     },
-    () => {
-      assert.equal(hasServerEntitlement(user), true);
-      assert.equal(serverEntitlement(user).source, "admin_beta");
-      assert.doesNotThrow(() => requireServerEntitlement(user));
+    async () => {
+      assert.equal(await hasServerEntitlement(user), true);
+      assert.equal((await serverEntitlement(user)).source, "admin_beta");
+      await assert.doesNotReject(async () => await requireServerEntitlement(user));
     },
   );
 });
 
-test("hub-admin beta user id grant is server-only", () => {
+test("hub-admin beta user id grant is server-only", async () => {
   withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: undefined,
       RENOXIS_BETA_GRANT_USER_IDS: "user-123",
     },
-    () => assert.equal(hasServerEntitlement(user), true),
+    async () => assert.equal(await hasServerEntitlement(user), true),
   );
 });

@@ -13,10 +13,35 @@ function csv(name: string) {
 
 /**
  * Server-only entitlement lookup.
- * Wallet capture persistence must be added here once its server contract lands.
- * Until then only an explicit hub-admin beta allowlist can grant access.
+ * Reads from renoxis_records kind='entitlement' for wallet_capture,
+ * falls back to hub-admin beta allowlist.
  */
-export function serverEntitlement(user: UserIdentity): Entitlement {
+export async function serverEntitlement(
+  user: UserIdentity,
+  supabase?: any,
+): Promise<Entitlement> {
+  // First try database entitlement
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("renoxis_records")
+        .select("data")
+        .eq("user_id", user.id)
+        .eq("kind", "entitlement")
+        .single();
+
+      if (!error && data?.data) {
+        const ent = data.data as Entitlement;
+        if (ent.source === "wallet_capture" && ent.activatedAt) {
+          return ent;
+        }
+      }
+    } catch {
+      // Fall through to beta grant check
+    }
+  }
+
+  // Fall back to beta grants
   const emails = csv("RENOXIS_BETA_GRANT_EMAILS");
   const ids = csv("RENOXIS_BETA_GRANT_USER_IDS");
   const email = user.email?.trim().toLowerCase() || "";
@@ -27,6 +52,7 @@ export function serverEntitlement(user: UserIdentity): Entitlement {
       source: "admin_beta",
     };
   }
+
   return {
     activatedAt: null,
     seatPeriodEnd: null,
@@ -34,10 +60,18 @@ export function serverEntitlement(user: UserIdentity): Entitlement {
   };
 }
 
-export function hasServerEntitlement(user: UserIdentity) {
-  return serverEntitlement(user).source !== "none";
+export async function hasServerEntitlement(
+  user: UserIdentity,
+  supabase?: any,
+) {
+  const ent = await serverEntitlement(user, supabase);
+  return ent.source !== "none";
 }
 
-export function requireServerEntitlement(user: UserIdentity) {
-  if (!hasServerEntitlement(user)) throw new Error("ENTITLEMENT");
+export async function requireServerEntitlement(
+  user: UserIdentity,
+  supabase?: any,
+) {
+  if (!(await hasServerEntitlement(user, supabase)))
+    throw new Error("ENTITLEMENT");
 }

@@ -634,6 +634,32 @@ export default function CommandDesk({
       setNotice("Your browser could not save preferences.");
     }
   };
+  const handleActivate = async () => {
+    if (busy) return;
+    setBusy(true);
+    setNotice("");
+    try {
+      const res = await fetch("/api/redeem/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        if (res.status === 402 && data.insufficient) {
+          setNotice(data.error || "Not enough Ixis. Buy more on Apixis Wallet.");
+          window.open(activateHref, "_blank", "noopener,noreferrer");
+          return;
+        }
+        throw new Error(data.error || "Activation failed");
+      }
+      setNotice("Activated! Reloading your workspace...");
+      window.location.reload();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Activation failed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
   const byKind = (kind: Kind) => records.filter((r) => r.kind === kind);
   const stats = totals(records);
   const settings = byKind("settings")[0];
@@ -1250,9 +1276,13 @@ export default function CommandDesk({
               </p>
               <div className="actions">
                 {seat === "signed_inactive" ? (
-                  <a className="primary" href={activateHref}>
+                  <button
+                    className="primary"
+                    onClick={handleActivate}
+                    disabled={busy}
+                  >
                     {activateCopy()}
-                  </a>
+                  </button>
                 ) : (
                   <a className="primary" href={renewHref}>
                     {renewCopy()}
@@ -1948,9 +1978,13 @@ export default function CommandDesk({
                   seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
                 </p>
                 <div className="actions">
-                  <a className="primary" href={activateHref}>
+                  <button
+                    className="primary"
+                    onClick={handleActivate}
+                    disabled={busy || preview}
+                  >
                     {activateCopy()}
-                  </a>
+                  </button>
                   <a className="soft-button" href={renewHref}>
                     {renewCopy()}
                   </a>

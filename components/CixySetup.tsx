@@ -151,14 +151,16 @@ export default function CixySetup({
         </article>
       </div>
       <div className="actions">
-        <button
-          disabled={busy || preview}
-          onClick={status?.google.connected ? disconnect : connect}
-        >
-          {status?.google.connected
-            ? "Disconnect Google"
-            : "Connect Gmail & Calendar"}
-        </button>
+        {status?.google.configured && (
+          <button
+            disabled={busy || preview}
+            onClick={status?.google.connected ? disconnect : connect}
+          >
+            {status?.google.connected
+              ? "Disconnect Google"
+              : "Connect Gmail & Calendar"}
+          </button>
+        )}
         <button
           disabled={busy || preview}
           onClick={() =>

@@ -48,7 +48,6 @@ import {
   emptyEntitlement,
   redeemAwaitingCaptureCopy,
   renewCopy,
-  renewWalletHref,
   seatStatus,
   type Entitlement,
 } from "@/lib/renoxis/billing";
@@ -248,7 +247,6 @@ export default function CommandDesk({
   const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
   const [theme, setTheme] = useState<DeskTheme>(DEFAULT_THEME);
   const activateHref = activateWalletHref();
-  const renewHref = renewWalletHref();
   const seat = seatStatus(preview, entitlement);
   const workspaceOpen = canUseWorkspace(seat);
   const cixyOpen = canUseCixyChat(seat);
@@ -634,33 +632,32 @@ export default function CommandDesk({
       setNotice("Your browser could not save preferences.");
     }
   };
-  const handleActivate = async () => {
+  const handleRedeem = async (intent: "activate" | "monthly") => {
     if (busy) return;
     setBusy(true);
     setNotice("");
     try {
-      const res = await fetch("/api/redeem/activate", {
+      const res = await fetch(`/api/redeem/${intent}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json();
-        if (res.status === 402 && data.insufficient) {
-          setNotice(data.error || "Not enough Ixis. Buy more on Apixis Wallet.");
-          // No window.open: pop-up blockers swallow it and the customer sees nothing happen.
-          // The message points at the Buy Ixis button sitting right next to Activate.
-          return;
-        }
-        throw new Error(data.error || "Activation failed");
+        // 402 = honest "not enough Ixis". No window.open (pop-up blockers) — the
+        // Buy Ixis button is right next to this one.
+        setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Redeem failed. Nothing was charged."));
+        return;
       }
-      setNotice("Activated! Reloading your workspace...");
+      setNotice(intent === "activate" ? "Activated! Reloading your workspace..." : "Seat renewed for 30 days. Reloading...");
       window.location.reload();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Activation failed. Please try again.");
+      setNotice(error instanceof Error ? error.message : "Redeem failed. Nothing was charged.");
     } finally {
       setBusy(false);
     }
   };
+  const handleActivate = () => handleRedeem("activate");
+  const handleRenew = () => handleRedeem("monthly");
   const byKind = (kind: Kind) => records.filter((r) => r.kind === kind);
   const stats = totals(records);
   const settings = byKind("settings")[0];
@@ -1285,24 +1282,17 @@ export default function CommandDesk({
                     {activateCopy()}
                   </button>
                 ) : (
-                  <a className="primary" href={renewHref}>
+                  <button className="primary" onClick={handleRenew} disabled={busy}>
                     {renewCopy()}
-                  </a>
+                  </button>
                 )}
                 <a className="soft-button" href={walletHref}>
                   Buy Ixis
                 </a>
               </div>
               <p className="muted">
-                Wallet catalog is live. Seat unlocks after redeem capture —
-                until then entitlements stay empty (no invented balances).
-                The Wallet catalog is live, but this seat remains blocked
-                until capture is persisted or a hub-admin beta grant is set.
-                Renoxis never takes a card.
-              </p>
-              <p className="muted">
-                No browser action can unlock this seat. Access comes only from
-                captured Wallet entitlement or a server-side admin beta grant.
+                Ixis are redeemed on Apixis Wallet (100 Ixis = $1). Your seat unlocks the
+                moment the redeem is captured. Renoxis never takes a card.
               </p>
             </section>
           )}
@@ -1986,9 +1976,9 @@ export default function CommandDesk({
                   >
                     {activateCopy()}
                   </button>
-                  <a className="soft-button" href={renewHref}>
+                  <button className="soft-button" onClick={handleRenew} disabled={busy || preview}>
                     {renewCopy()}
-                  </a>
+                  </button>
                   <a className="soft-button" href={walletHref}>
                     Buy Ixis
                   </a>
@@ -2273,15 +2263,16 @@ export default function CommandDesk({
             <p>
               {seat === "signed_inactive"
                 ? "Activate your seat to chat with Cixy. Buy Ixis on Apixis Wallet — Renoxis does not take a card."
-                : "Renew Keep running to chat with Cixy. Monthly seat is 5,000 Ixis ($50)."}
+                : "Renew your monthly seat to chat with Cixy — 5,000 Ixis ($50) for 30 days."}
             </p>
             <div className="actions">
-              <a
+              <button
                 className="primary"
-                href={seat === "signed_inactive" ? activateHref : renewHref}
+                onClick={seat === "signed_inactive" ? handleActivate : handleRenew}
+                disabled={busy}
               >
                 {seat === "signed_inactive" ? activateCopy() : renewCopy()}
-              </a>
+              </button>
             </div>
           </>
         ) : activeChat ? (

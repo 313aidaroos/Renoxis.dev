@@ -7,8 +7,12 @@ import {
 } from "../lib/renoxis/entitlements.ts";
 
 const user = { id: "user-123", email: "agent@example.com" };
+delete process.env.WALLET_API_KEY;
+delete process.env.APIXIS_WALLET_API_KEY;
 
-function withEnv(values: Record<string, string | undefined>, fn: () => void) {
+// serverEntitlement is async (it consults the Wallet), so the env must stay set until the
+// awaited body finishes — a sync try/finally restored it before the assertions ran.
+async function withEnv(values: Record<string, string | undefined>, fn: () => Promise<void>) {
   const previous: Record<string, string | undefined> = {};
   for (const [key, value] of Object.entries(values)) {
     previous[key] = process.env[key];
@@ -16,7 +20,7 @@ function withEnv(values: Record<string, string | undefined>, fn: () => void) {
     else process.env[key] = value;
   }
   try {
-    fn();
+    await fn();
   } finally {
     for (const [key, value] of Object.entries(previous)) {
       if (value === undefined) delete process.env[key];
@@ -26,7 +30,7 @@ function withEnv(values: Record<string, string | undefined>, fn: () => void) {
 }
 
 test("unlisted signed user stays blocked", async () => {
-  withEnv(
+  await withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: undefined,
       RENOXIS_BETA_GRANT_USER_IDS: undefined,
@@ -40,7 +44,7 @@ test("unlisted signed user stays blocked", async () => {
 });
 
 test("hub-admin beta email grant is server-only and case-insensitive", async () => {
-  withEnv(
+  await withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: "other@example.com, AGENT@EXAMPLE.COM ",
       RENOXIS_BETA_GRANT_USER_IDS: undefined,
@@ -54,7 +58,7 @@ test("hub-admin beta email grant is server-only and case-insensitive", async () 
 });
 
 test("hub-admin beta user id grant is server-only", async () => {
-  withEnv(
+  await withEnv(
     {
       RENOXIS_BETA_GRANT_EMAILS: undefined,
       RENOXIS_BETA_GRANT_USER_IDS: "user-123",

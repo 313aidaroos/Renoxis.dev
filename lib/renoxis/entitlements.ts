@@ -1,5 +1,5 @@
 import type { Entitlement } from "./billing";
-import { hasEntitlement as walletHasEntitlement } from "../apixis-wallet.ts";
+import { hasEntitlement as walletHasEntitlement, isWalletConfigured } from "../apixis-wallet.ts";
 
 type UserIdentity = { id: string; email?: string | null };
 
@@ -25,19 +25,18 @@ export async function serverEntitlement(
   user: UserIdentity,
   supabase?: any,
 ): Promise<Entitlement> {
-  // Check Wallet entitlements (source of truth)
-  try {
-    const hasActivate = user.email ? await walletHasEntitlement(user.email, APP_SLUG, PRODUCT_KEY_ACTIVATE) : false;
-    if (hasActivate) {
-      return {
-        activatedAt: new Date().toISOString(),
-        seatPeriodEnd: null,
-        source: "wallet_capture",
-      };
+  // Wallet entitlements are the source of truth. The Wallet records WHAT was bought
+  // (activate, monthly); the seat period is ours, kept in the renoxis_records cache
+  // that the redeem route writes at capture time. So: Wallet proves ownership, cache
+  // supplies the dates. If the Wallet says "activated" but the cache is missing
+  // (e.g. bought on another device before the cache existed), rebuild a minimal row.
+  let walletActivated = false;
+  if (user.email && isWalletConfigured()) {
+    try {
+      walletActivated = await walletHasEntitlement(user.email, APP_SLUG, PRODUCT_KEY_ACTIVATE);
+    } catch (walletErr) {
+      console.warn("Wallet entitlement check failed:", walletErr);
     }
-  } catch (walletErr) {
-    // Wallet unreachable, fall through to cache + beta grants
-    console.warn("Wallet entitlement check failed:", walletErr);
   }
 
   // Fall back to local cache (renoxis_records) if Wallet unreachable
@@ -53,12 +52,16 @@ export async function serverEntitlement(
       if (!error && data?.data) {
         const ent = data.data as Entitlement;
         if (ent.source === "wallet_capture" && ent.activatedAt) {
-          return ent;
+          return ent; // has activatedAt + seatPeriodEnd from the redeem route
         }
       }
     } catch {
-      // Fall through to beta grant check
+      // Fall through
     }
+  }
+  if (walletActivated) {
+    // Wallet proves activation; no local dates yet → activated but not current.
+    return { activatedAt: "wallet", seatPeriodEnd: null, source: "wallet_capture" };
   }
 
   // Fall back to beta grants (for testing before first redeem)

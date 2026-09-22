@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (!hasServerEntitlement(user)) {
+    if (!(await hasServerEntitlement(user))) { // was missing await: a Promise is truthy, so the paywall never fired
       return NextResponse.json(
         {
           error:

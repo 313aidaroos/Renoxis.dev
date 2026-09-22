@@ -93,7 +93,9 @@ test("client has no self-confirm or local billing unlock path", async () => {
   assert.doesNotMatch(source, /Confirm Keep running/);
   assert.doesNotMatch(source, /renoxis-billing-v1/);
   assert.doesNotMatch(source, /persistEntitlement/);
-  assert.match(source, /No browser action can unlock this seat/);
+  // Every seat unlock goes through a server route (reserve→capture); the client only calls it.
+  assert.match(source, /fetch\(`\/api\/redeem\/\$\{intent\}`/);
+  assert.doesNotMatch(source, /localStorage[^\n]*(seat|entitlement)/i);
 });
 
 
@@ -106,7 +108,8 @@ test("paid server routes enforce server entitlement", async () => {
       "utf8",
     ),
   ]);
-  assert.match(records, /requireServerEntitlement\(user\)/);
-  assert.match(chat, /hasServerEntitlement\(user\)/);
-  assert.match(listings, /hasServerEntitlement\(user\)/);
+  assert.match(records, /await requireServerEntitlement\(user/);
+  assert.match(chat, /await hasServerEntitlement\(user/);
+  // Regression: this route once called hasServerEntitlement without await (always-truthy Promise → paywall open).
+  assert.match(listings, /await hasServerEntitlement\(user/);
 });

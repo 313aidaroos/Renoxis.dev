@@ -3,6 +3,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import CommandDesk from "@/components/CommandDesk";
 import { walletEntryUrl } from "@/lib/renoxis/wallet";
+import { serverEntitlement } from "@/lib/renoxis/entitlements";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -16,6 +17,7 @@ export default async function Home() {
       accountControl={user ? <LogoutButton /> : undefined}
       loginForm={<LoginForm />}
       walletHref={walletEntryUrl(process.env.APP_URL)}
+      entitlement={user ? serverEntitlement(user) : undefined}
     />
   );
 }

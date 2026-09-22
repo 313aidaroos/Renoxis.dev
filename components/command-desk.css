@@ -2337,3 +2337,12 @@
   color: white;
   box-shadow: inset 3px 0 #77e4b9;
 }
+
+.billing-gate {
+  border: 1px solid var(--line, #e5e0d8);
+  background: var(--mint, #e2f4e9);
+}
+.billing-gate .muted {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}

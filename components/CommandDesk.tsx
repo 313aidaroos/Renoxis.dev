@@ -39,6 +39,18 @@ import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
+import {
+  activateCopy,
+  activateWalletHref,
+  canUseCixyChat,
+  canUseWorkspace,
+  emptyEntitlement,
+  redeemAwaitingCaptureCopy,
+  renewCopy,
+  renewWalletHref,
+  seatStatus,
+  type Entitlement,
+} from "@/lib/renoxis/billing";
 import "./command-desk.css";
 const Chat = dynamic(() => import("./CixyChat").then((m) => m.CixyChat), {
   loading: () => <p>Opening Cixy…</p>,
@@ -211,12 +223,14 @@ export default function CommandDesk({
   accountControl,
   loginForm,
   walletHref = FALLBACK_WALLET_HREF,
+  entitlement = emptyEntitlement(),
 }: {
   preview?: boolean;
   account?: string;
   accountControl?: ReactNode;
   loginForm?: ReactNode;
   walletHref?: string;
+  entitlement?: Entitlement;
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -232,6 +246,11 @@ export default function CommandDesk({
   const [cixyName, setCixyName] = useState(DEFAULT_CIXY_NAME);
   const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
   const [theme, setTheme] = useState<DeskTheme>(DEFAULT_THEME);
+  const activateHref = activateWalletHref();
+  const renewHref = renewWalletHref();
+  const seat = seatStatus(preview, entitlement);
+  const workspaceOpen = canUseWorkspace(seat);
+  const cixyOpen = canUseCixyChat(seat);
   const [mood, setMood] = useState<Mood>("Smile");
   const [autoMood, setAutoMood] = useState(true);
   const [custom, setCustom] = useState(false);
@@ -367,6 +386,17 @@ export default function CommandDesk({
       setCixyName(prefs.displayName);
       setWardrobe(prefs.wardrobe);
       setTheme(synced.theme);
+      const billingIntent = params.get("billing");
+      if (billingIntent === "activate" || billingIntent === "renew") {
+        setBoard("Connections");
+        setNotice(
+          "Returned from Apixis Wallet. " +
+            redeemAwaitingCaptureCopy(
+              billingIntent === "activate" ? "activate" : "renew",
+            ) +
+            " Access remains blocked until server capture or an admin beta grant.",
+        );
+      }
     } catch {}
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -398,11 +428,28 @@ export default function CommandDesk({
     setActiveChat(true);
     chatDialog.current?.showModal();
   };
+  const requireSeat = (forChat = false) => {
+    if (preview) {
+      ask();
+      return false;
+    }
+    if (forChat ? !cixyOpen : !workspaceOpen) {
+      setBoard("Connections");
+      setNotice(
+        seat === "signed_inactive"
+          ? "Activate your Renoxis seat ($50 / 5,000 Ixis) in Apixis Wallet to use the workspace."
+          : "Renew Keep running ($50 / 5,000 Ixis per month) in Apixis Wallet to continue.",
+      );
+      return false;
+    }
+    return true;
+  };
   const add = (kind: Kind, r?: RecordItem) => {
     if (preview) {
       ask();
       return;
     }
+    if (!requireSeat()) return;
     setFormKind(kind);
     setEditing(r || null);
     setFormError("");
@@ -410,6 +457,12 @@ export default function CommandDesk({
   };
   const write = async (kind: Kind, data: Values, r?: RecordItem) => {
     if (preview) throw new Error("Sign in to save your work.");
+    if (!workspaceOpen)
+      throw new Error(
+        seat === "signed_inactive"
+          ? "Activate your seat to save workspace data."
+          : "Renew your monthly seat to save workspace data.",
+      );
     const clean = validateRecord(kind, data);
     const result = await request("/api/records", {
       method: r ? "PATCH" : "POST",
@@ -427,6 +480,7 @@ export default function CommandDesk({
     return result as { record: RecordItem; platformCommission?: { ok?: boolean } };
   };
   const remove = async (r: RecordItem) => {
+    if (!requireSeat()) return;
     if (!confirm(`Delete “${r.data.title}”?`)) return;
     setBusy(true);
     try {
@@ -443,10 +497,7 @@ export default function CommandDesk({
     }
   };
   const task = async (title: string) => {
-    if (preview) {
-      ask();
-      return;
-    }
+    if (!requireSeat()) return;
     setBusy(true);
     try {
       await write("task", { title, done: false });
@@ -468,10 +519,7 @@ export default function CommandDesk({
     }
   };
   const sync = async (kind: "inbox" | "calendar") => {
-    if (preview) {
-      ask();
-      return;
-    }
+    if (!requireSeat()) return;
     setBusy(true);
     try {
       const d = await request("/api/connections/google/sync?kind=" + kind);
@@ -1182,6 +1230,49 @@ export default function CommandDesk({
           <span>Dream homes. Real progress.</span>
         </nav>
         <main id="workspace">
+
+          {!preview && seat !== "active" && (
+            <section className="desk-panel billing-gate" id="billing-gate">
+              <header>
+                <h2>
+                  {seat === "signed_inactive"
+                    ? "Activate Renoxis"
+                    : "Keep Renoxis running"}
+                </h2>
+              </header>
+              <p>
+                {seat === "signed_inactive"
+                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; heavy Cixy actions still meter the office ledger."
+                  : "Monthly seat is 5,000 Ixis ($50/mo) on Apixis Wallet. Your activate is on file; renew to unlock writes and Cixy chat."}
+              </p>
+              <div className="actions">
+                {seat === "signed_inactive" ? (
+                  <a className="primary" href={activateHref}>
+                    {activateCopy()}
+                  </a>
+                ) : (
+                  <a className="primary" href={renewHref}>
+                    {renewCopy()}
+                  </a>
+                )}
+                <a className="soft-button" href={walletHref}>
+                  Buy Ixis
+                </a>
+              </div>
+              <p className="muted">
+                Wallet catalog is live. Seat unlocks after redeem capture —
+                until then entitlements stay empty (no invented balances).
+                The Wallet catalog is live, but this seat remains blocked
+                until capture is persisted or a hub-admin beta grant is set.
+                Renoxis never takes a card.
+              </p>
+              <p className="muted">
+                No browser action can unlock this seat. Access comes only from
+                captured Wallet entitlement or a server-side admin beta grant.
+              </p>
+            </section>
+          )}
+
           <div className="workspace-status">
             <span>
               <i className={preview ? "dot muted-dot" : "dot"} />
@@ -1832,19 +1923,59 @@ export default function CommandDesk({
             />
           )}
           {board === "Connections" && (
-            <Panel title="Connections & preferences">
-              <CixySetup
-                account={account}
-                settings={settings}
-                status={connections}
-                preview={preview}
-                refresh={refreshConnections}
-                walletHref={walletHref}
-                save={async (v) => {
-                  await write("settings", v, settings);
-                }}
-              />
-            </Panel>
+            <>
+              <section className="desk-panel billing-gate">
+                <header>
+                  <h2>Seat &amp; Ixis</h2>
+                </header>
+                <p>
+                  Status:{" "}
+                  <strong>
+                    {seat === "active"
+                      ? "Active"
+                      : seat === "activated_lapsed"
+                        ? "Activated · month ended"
+                        : preview
+                          ? "Sign in to activate"
+                          : "Not activated"}
+                  </strong>
+                  . Activate $50 (5,000 Ixis) once; Keep running $50/mo
+                  (5,000 Ixis). Heavy Cixy stays metered on the office ledger
+                  (lookup 25 · email 50 · offer 100). Chat basics are in the
+                  seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
+                </p>
+                <div className="actions">
+                  <a className="primary" href={activateHref}>
+                    {activateCopy()}
+                  </a>
+                  <a className="soft-button" href={renewHref}>
+                    {renewCopy()}
+                  </a>
+                  <a className="soft-button" href={walletHref}>
+                    Buy Ixis
+                  </a>
+                </div>
+                {!preview && seat !== "active" && (
+                  <p className="muted">
+                    Access remains blocked until Wallet capture is persisted or
+                    a hub-admin beta grant is set on the server.
+                  </p>
+                )}
+              </section>
+              <Panel title="Connections & preferences">
+                <CixySetup
+                  account={account}
+                  settings={settings}
+                  status={connections}
+                  preview={preview}
+                  refresh={refreshConnections}
+                  walletHref={walletHref}
+                  save={async (v) => {
+                    await write("settings", v, settings);
+                  }}
+                />
+              </Panel>
+            </>
           )}
           {board === "FAQs" && (
             <div className="faq-layout">
@@ -2088,6 +2219,22 @@ export default function CommandDesk({
           <>
             <p>Sign in to save your workspace and chat with Cixy.</p>
             {loginForm}
+          </>
+        ) : !cixyOpen ? (
+          <>
+            <p>
+              {seat === "signed_inactive"
+                ? "Activate your seat to chat with Cixy. Buy Ixis on Apixis Wallet — Renoxis does not take a card."
+                : "Renew Keep running to chat with Cixy. Monthly seat is 5,000 Ixis ($50)."}
+            </p>
+            <div className="actions">
+              <a
+                className="primary"
+                href={seat === "signed_inactive" ? activateHref : renewHref}
+              >
+                {seat === "signed_inactive" ? activateCopy() : renewCopy()}
+              </a>
+            </div>
           </>
         ) : activeChat ? (
           <Chat key={cixyName} assistantName={cixyName} />

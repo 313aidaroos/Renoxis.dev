@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { chatTurnsForApi } from "@/lib/renoxis/chat-turns";
 
 type Message = {
   role: "user" | "assistant";
@@ -37,34 +38,57 @@ export function CixyChat({
 
     const userMessage = input.trim();
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    const nextMessages: Message[] = [
+      ...messages,
+      { role: "user", content: userMessage },
+    ];
+    setMessages(nextMessages);
     setLoading(true);
 
     try {
+      const turns = chatTurnsForApi(nextMessages);
+      if (!turns.length || turns[0].role !== "user") {
+        throw new Error(
+          name + " needs a real message before she can reply. Please try again.",
+        );
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, { role: "user", content: userMessage }],
-        }),
+        body: JSON.stringify({ messages: turns }),
       });
 
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const problem = await response.json();
-        throw new Error(problem.error || name + " is temporarily unavailable.");
+        throw new Error(
+          (typeof data?.error === "string" && data.error) ||
+            name + " is temporarily unavailable.",
+        );
       }
 
-      const data = await response.json();
+      const reply =
+        typeof data?.message === "string" ? data.message.trim() : "";
+      if (!reply) {
+        throw new Error(
+          name +
+            " returned an empty reply. Please try again in a moment.",
+        );
+      }
+
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.message },
+        { role: "assistant", content: reply },
       ]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: error instanceof Error ? error.message : name + " is temporarily unavailable. Please try again.",
+          content:
+            error instanceof Error
+              ? error.message
+              : name + " is temporarily unavailable. Please try again.",
         },
       ]);
     } finally {
@@ -77,7 +101,7 @@ export function CixyChat({
       <div className="bg-zinc-100 dark:bg-zinc-900 p-4 border-b border-zinc-300 dark:border-zinc-700">
         <h3 className="font-bold">Chat with {name}</h3>
         <p className="text-xs text-zinc-600 dark:text-zinc-400">
-          Your halal-conscious real estate expert
+          Your real-estate operator desk
         </p>
       </div>
 
@@ -110,7 +134,10 @@ export function CixyChat({
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-zinc-300 dark:border-zinc-700">
+      <form
+        onSubmit={handleSubmit}
+        className="p-4 border-t border-zinc-300 dark:border-zinc-700"
+      >
         <div className="flex gap-2">
           <input
             type="text"
@@ -123,7 +150,7 @@ export function CixyChat({
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-bold px-6 py-2 rounded-lg transition-colors text-sm"
+            className="px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
           >
             Send
           </button>

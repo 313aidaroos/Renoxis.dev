@@ -16,7 +16,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const idempotencyKey = `renoxis-${user.id}-activate`;
+    // Fresh key per attempt: reserve is idempotent on this key, so a hold that was released
+    // (provision failed, wallet hiccup) must not block the customer from ever retrying.
+    const idempotencyKey = `renoxis-${user.id}-activate-${Date.now()}`;
     const now = new Date().toISOString();
 
     const outcome = await redeem({

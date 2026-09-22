@@ -647,11 +647,8 @@ export default function CommandDesk({
         const data = await res.json();
         if (res.status === 402 && data.insufficient) {
           setNotice(data.error || "Not enough Ixis. Buy more on Apixis Wallet.");
-          if (data.buyUrl) {
-            window.open(data.buyUrl, "_blank", "noopener,noreferrer");
-          } else {
-            window.open(activateHref, "_blank", "noopener,noreferrer");
-          }
+          // No window.open: pop-up blockers swallow it and the customer sees nothing happen.
+          // The message points at the Buy Ixis button sitting right next to Activate.
           return;
         }
         throw new Error(data.error || "Activation failed");

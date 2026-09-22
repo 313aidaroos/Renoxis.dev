@@ -647,7 +647,11 @@ export default function CommandDesk({
         const data = await res.json();
         if (res.status === 402 && data.insufficient) {
           setNotice(data.error || "Not enough Ixis. Buy more on Apixis Wallet.");
-          window.open(activateHref, "_blank", "noopener,noreferrer");
+          if (data.buyUrl) {
+            window.open(data.buyUrl, "_blank", "noopener,noreferrer");
+          } else {
+            window.open(activateHref, "_blank", "noopener,noreferrer");
+          }
           return;
         }
         throw new Error(data.error || "Activation failed");

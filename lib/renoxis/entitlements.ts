@@ -1,4 +1,5 @@
 import type { Entitlement } from "./billing";
+import { hasEntitlement as walletHasEntitlement } from "@/lib/apixis-wallet";
 
 type UserIdentity = { id: string; email?: string | null };
 
@@ -11,16 +12,35 @@ function csv(name: string) {
   );
 }
 
+const APP_SLUG = "renoxis";
+const PRODUCT_KEY_ACTIVATE = "renoxis.activate";
+
 /**
  * Server-only entitlement lookup.
- * Reads from renoxis_records kind='entitlement' for wallet_capture,
- * falls back to hub-admin beta allowlist.
+ * Wallet entitlements (written on capture) are the single source of truth.
+ * Local renoxis_records kind='entitlement' is a CACHE only, not authoritative.
+ * Falls back to hub-admin beta allowlist for testing.
  */
 export async function serverEntitlement(
   user: UserIdentity,
   supabase?: any,
 ): Promise<Entitlement> {
-  // First try database entitlement
+  // Check Wallet entitlements (source of truth)
+  try {
+    const hasActivate = await walletHasEntitlement(user.id, APP_SLUG, PRODUCT_KEY_ACTIVATE);
+    if (hasActivate) {
+      return {
+        activatedAt: new Date().toISOString(),
+        seatPeriodEnd: null,
+        source: "wallet_capture",
+      };
+    }
+  } catch (walletErr) {
+    // Wallet unreachable, fall through to cache + beta grants
+    console.warn("Wallet entitlement check failed:", walletErr);
+  }
+
+  // Fall back to local cache (renoxis_records) if Wallet unreachable
   if (supabase) {
     try {
       const { data, error } = await supabase
@@ -41,7 +61,7 @@ export async function serverEntitlement(
     }
   }
 
-  // Fall back to beta grants
+  // Fall back to beta grants (for testing before first redeem)
   const emails = csv("RENOXIS_BETA_GRANT_EMAILS");
   const ids = csv("RENOXIS_BETA_GRANT_USER_IDS");
   const email = user.email?.trim().toLowerCase() || "";

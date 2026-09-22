@@ -4,6 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { hasServerEntitlement } from "@/lib/renoxis/entitlements";
+import { chatTurnsForApi } from "@/lib/renoxis/chat-turns";
 
 export async function POST(request: Request) {
   try {
@@ -24,22 +25,30 @@ export async function POST(request: Request) {
         },
         { status: 402 },
       );
-    const { messages } = await request.json();
+    const body = await request.json();
+    const rawMessages = body?.messages;
     if (
-      !Array.isArray(messages) ||
-      messages.length === 0 ||
-      messages.length > 40 ||
-      JSON.stringify(messages).length > 60000 ||
-      messages.some(
-        (msg) =>
+      !Array.isArray(rawMessages) ||
+      rawMessages.length === 0 ||
+      rawMessages.length > 40 ||
+      JSON.stringify(rawMessages).length > 60000 ||
+      rawMessages.some(
+        (msg: { role?: string; content?: string }) =>
           !msg ||
-          !["user", "assistant"].includes(msg.role) ||
+          !["user", "assistant"].includes(msg.role || "") ||
           typeof msg.content !== "string" ||
           msg.content.length > 12000,
       )
     ) {
       return NextResponse.json(
         { error: "Invalid chat messages" },
+        { status: 400 },
+      );
+    }
+    const messages = chatTurnsForApi(rawMessages);
+    if (!messages.length || messages[0].role !== "user") {
+      return NextResponse.json(
+        { error: "Send a user message before chatting with Cixy." },
         { status: 400 },
       );
     }
@@ -100,8 +109,15 @@ export async function POST(request: Request) {
     if (!assistantMessage || assistantMessage.type !== "text") {
       throw new Error("Unexpected response type");
     }
+    const text = assistantMessage.text.trim();
+    if (!text) {
+      return NextResponse.json(
+        { error: "Cixy returned an empty reply. Please try again." },
+        { status: 502 },
+      );
+    }
 
-    return NextResponse.json({ message: assistantMessage.text });
+    return NextResponse.json({ message: text });
   } catch (error) {
     return aiError(error);
   }

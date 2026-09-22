@@ -83,12 +83,25 @@ export const labels: Record<string, string> = {
   start: "Starts (your local time)",
   end: "Ends (your local time)",
   budget: "Budget ($)",
-  displayName: "Your name",
+  displayName: "Display name",
   brokerage: "Brokerage",
   specialty: "Specialty",
   tools: "Existing tools",
   timezone: "Timezone (e.g. America/Detroit)",
 };
+/** Greeting/account label: saved display name, else email local-part, else "there". */
+export function workspaceDisplayName(
+  displayName: unknown,
+  accountEmail?: string | null,
+  preview = false,
+) {
+  const saved = typeof displayName === "string" ? displayName.trim() : "";
+  if (saved) return saved.slice(0, 80);
+  if (preview || !accountEmail) return "there";
+  const local = accountEmail.split("@")[0]?.trim() || "";
+  return local || "there";
+}
+
 export function isKind(value: unknown): value is Kind {
   return typeof value === "string" && Object.hasOwn(definitions, value);
 }

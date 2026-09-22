@@ -32,6 +32,7 @@ export default function CixySetup({
 }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const currentName = String(settings?.data.displayName || "").trim();
   async function connect() {
     setBusy(true);
     try {
@@ -62,13 +63,69 @@ export default function CixySetup({
       setBusy(false);
     }
   }
+  async function savePreferences(form: HTMLFormElement) {
+    const data = new FormData(form);
+    const values: Values = { title: "Workspace preferences" };
+    for (const [k, v] of data) values[k] = String(v);
+    setBusy(true);
+    try {
+      await save(values);
+      const next = String(values.displayName || "").trim();
+      setMessage(
+        next
+          ? `Display name saved. Desk greeting is now “Hello, ${next}.”`
+          : "Preferences saved. Greeting will use your email until you set a display name.",
+      );
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Save failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <div className="setup-flow">
       <div className="section-title">
         <span className="eyebrow">YOUR WORKSPACE, CONNECTED</span>
         <h2>Make yourself at home.</h2>
-        <p>Connect your tools and tell Cixy how you work.</p>
+        <p>Set how we greet you, then connect your tools.</p>
       </div>
+      <form
+        className="display-name-card desk-panel"
+        key={"name-" + (settings?.id || "new") + "-" + currentName}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          await savePreferences(e.currentTarget);
+        }}
+      >
+        <header>
+          <h3>Display name</h3>
+        </header>
+        <p className="muted">
+          This is the name on “Hello, …” across the desk and account button.
+          Until you set one, we use the part before @ in your email
+          ({account}).
+        </p>
+        <label className="field">
+          Display name
+          <input
+            name="displayName"
+            maxLength={80}
+            autoComplete="nickname"
+            placeholder="e.g. Awad"
+            defaultValue={currentName}
+            aria-label="Display name"
+          />
+        </label>
+        <input type="hidden" name="brokerage" defaultValue={String(settings?.data.brokerage || "")} />
+        <input type="hidden" name="specialty" defaultValue={String(settings?.data.specialty || "Agent operations")} />
+        <input type="hidden" name="timezone" defaultValue={String(settings?.data.timezone || "America/Chicago")} />
+        <input type="hidden" name="tools" defaultValue={String(settings?.data.tools || "")} />
+        <div className="actions">
+          <button className="primary" disabled={preview || busy} type="submit">
+            {busy ? "Saving…" : currentName ? "Update display name" : "Save display name"}
+          </button>
+        </div>
+      </form>
       <div className="connection-grid">
         {[
           ["Workspace", status?.storage ? "Connected" : "Sign in to check"],
@@ -123,33 +180,27 @@ export default function CixySetup({
         key={settings?.id || "new"}
         onSubmit={async (e) => {
           e.preventDefault();
-          const form = new FormData(e.currentTarget);
-          const values: Values = { title: "Workspace preferences" };
-          for (const [k, v] of form) values[k] = String(v);
-          setBusy(true);
-          try {
-            await save(values);
-            setMessage("Preferences saved to your account.");
-          } catch (e) {
-            setMessage(e instanceof Error ? e.message : "Save failed.");
-          } finally {
-            setBusy(false);
-          }
+          await savePreferences(e.currentTarget);
         }}
       >
+        <div className="section-title">
+          <span className="eyebrow">WORKSPACE PREFERENCES</span>
+          <h3>Brokerage details</h3>
+        </div>
         <div className="form-grid">
           {[
-            ["displayName", "Your name", ""],
+            ["displayName", "Display name", currentName || ""],
             ["brokerage", "Brokerage", ""],
             ["specialty", "Specialty", "Agent operations"],
-            ["timezone", "Timezone", "America/Detroit"],
+            ["timezone", "Timezone", "America/Chicago"],
             ["tools", "Existing tools / subscriptions", ""],
           ].map(([key, label, fallback]) => (
             <label className="field" key={key}>
               {label}
               <input
                 name={key}
-                maxLength={1000}
+                maxLength={key === "displayName" ? 80 : 1000}
+                placeholder={key === "displayName" ? "e.g. Awad" : undefined}
                 defaultValue={String(settings?.data[key] || fallback)}
               />
             </label>

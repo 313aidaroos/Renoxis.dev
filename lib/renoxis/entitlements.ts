@@ -27,7 +27,7 @@ export async function serverEntitlement(
 ): Promise<Entitlement> {
   // Check Wallet entitlements (source of truth)
   try {
-    const hasActivate = await walletHasEntitlement(user.id, APP_SLUG, PRODUCT_KEY_ACTIVATE);
+    const hasActivate = user.email ? await walletHasEntitlement(user.email, APP_SLUG, PRODUCT_KEY_ACTIVATE) : false;
     if (hasActivate) {
       return {
         activatedAt: new Date().toISOString(),

@@ -21,8 +21,9 @@ export async function POST(request: Request) {
     const idempotencyKey = `renoxis-${user.id}-activate-${Date.now()}`;
     const now = new Date().toISOString();
 
+    if (!user.email) return NextResponse.json({ error: "Your account has no email — sign in with email to redeem." }, { status: 400 });
     const outcome = await redeem({
-      ownerId: user.id,
+      ownerEmail: user.email, // family identity is the verified email, not this project's uid
       productKey: PRODUCT_KEY,
       idempotencyKey,
       provision: async () => {

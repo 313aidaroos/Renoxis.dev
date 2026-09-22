@@ -34,6 +34,7 @@ import {
   type Kind,
   type Values,
   type RecordItem,
+  workspaceDisplayName,
 } from "@/lib/renoxis/records";
 import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
@@ -636,9 +637,11 @@ export default function CommandDesk({
   const byKind = (kind: Kind) => records.filter((r) => r.kind === kind);
   const stats = totals(records);
   const settings = byKind("settings")[0];
-  const name =
-    text(settings?.data.displayName) ||
-    (preview ? "there" : account.split("@")[0]);
+  const name = workspaceDisplayName(
+    settings?.data.displayName,
+    account,
+    preview,
+  );
   const tasks = byKind("task");
   const leads = byKind("lead");
   const properties = byKind("property");
@@ -836,9 +839,9 @@ export default function CommandDesk({
         SVG. Blazer follows desk theme (and the other way around).
       </p>
       <label className="field">
-        Display name
+        Assistant name
         <input
-          aria-label="Cixy display name"
+          aria-label="Assistant name"
           maxLength={40}
           value={cixyName}
           onChange={(e) => setCixyName(e.target.value)}
@@ -1972,6 +1975,16 @@ export default function CommandDesk({
                   walletHref={walletHref}
                   save={async (v) => {
                     await write("settings", v, settings);
+                    const next = workspaceDisplayName(
+                      v.displayName,
+                      account,
+                      false,
+                    );
+                    setNotice(
+                      next && next !== "there"
+                        ? `Display name saved. Greeting is now “Hello, ${next}.”`
+                        : "Preferences saved.",
+                    );
                   }}
                 />
               </Panel>

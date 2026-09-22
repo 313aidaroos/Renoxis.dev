@@ -2250,7 +2250,7 @@ export default function CommandDesk({
             </div>
           </>
         ) : activeChat ? (
-          <Chat key={cixyName} assistantName={cixyName} />
+          <Chat key={cixyName} assistantName={cixyName} officeId={officeId} />
         ) : null}
       </dialog>
     </div>

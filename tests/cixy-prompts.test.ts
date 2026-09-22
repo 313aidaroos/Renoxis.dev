@@ -32,6 +32,9 @@ test("chat prompt covers wholesale contract sales and hard limits", () => {
   assert.match(prompt, /master bedroom/i);
   assert.match(prompt, /cannot email, text, or call/i);
   assert.match(prompt, /charge Ixis/i);
+  assert.match(prompt, /cannot create, upload, download, or email files/i);
+  assert.match(prompt, /neutral professional greeting/i);
+  assert.doesNotMatch(prompt, /Greet with "As-salamu alaykum"/);
   assert.doesNotMatch(prompt, /BANNED PHRASES/);
   assert.doesNotMatch(prompt, /quiet neighborhood/i);
 });

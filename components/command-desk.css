@@ -2361,3 +2361,156 @@
 .display-name-card .field {
   margin: 0.75rem 0;
 }
+
+/* Cixy chat panel — readable contrast in light and dark desk themes */
+.cixy-chat {
+  display: flex;
+  flex-direction: column;
+  height: min(600px, 70vh);
+  background: #fafafa;
+  color: #18181b;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cixy-chat-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e4e4e7;
+  background: #f4f4f5;
+}
+.cixy-chat-header h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #18181b;
+}
+.cixy-chat-header p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #52525b;
+}
+.cixy-chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fafafa;
+}
+.cixy-chat-row {
+  display: flex;
+}
+.cixy-chat-row-user {
+  justify-content: flex-end;
+}
+.cixy-chat-row-assistant {
+  justify-content: flex-start;
+}
+.cixy-chat-bubble {
+  max-width: 80%;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.cixy-chat-bubble-user {
+  background: #047857;
+  color: #ffffff;
+}
+.cixy-chat-bubble-assistant {
+  background: #ffffff;
+  color: #18181b;
+  border: 1px solid #d4d4d8;
+}
+.cixy-chat-typing {
+  color: #52525b;
+}
+.cixy-md {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.cixy-md-p {
+  margin: 0;
+  color: inherit;
+}
+.cixy-md-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: inherit;
+}
+.cixy-md-list li {
+  margin: 0.2rem 0;
+}
+.cixy-md strong {
+  font-weight: 700;
+  color: inherit;
+}
+.cixy-chat-composer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid #e4e4e7;
+  background: #ffffff;
+}
+.cixy-chat-composer input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #18181b;
+  font-size: 13px;
+}
+.cixy-chat-composer input::placeholder {
+  color: #71717a;
+}
+.cixy-chat-composer button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 0;
+  background: #047857;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.cixy-chat-composer button:disabled {
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cixy-chat,
+  .cixy-chat-thread {
+    background: #18181b;
+    color: #fafafa;
+  }
+  .cixy-chat-header {
+    background: #27272a;
+    border-bottom-color: #3f3f46;
+  }
+  .cixy-chat-header h3 {
+    color: #fafafa;
+  }
+  .cixy-chat-header p {
+    color: #a1a1aa;
+  }
+  .cixy-chat-bubble-assistant {
+    background: #27272a;
+    color: #fafafa;
+    border-color: #52525b;
+  }
+  .cixy-chat-typing {
+    color: #a1a1aa;
+  }
+  .cixy-chat-composer {
+    background: #18181b;
+    border-top-color: #3f3f46;
+  }
+  .cixy-chat-composer input {
+    background: #27272a;
+    color: #fafafa;
+    border-color: #52525b;
+  }
+  .cixy-chat-composer input::placeholder {
+    color: #a1a1aa;
+  }
+}

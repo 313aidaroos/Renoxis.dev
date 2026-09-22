@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { chatTurnsForApi } from "@/lib/renoxis/chat-turns";
+import { renderChatMarkdown } from "./CixyMarkdown";
 
 type Message = {
   role: "user" | "assistant";
@@ -17,7 +18,7 @@ export function CixyChat({
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: `As-salamu alaykum. I'm ${name}, your real estate assistant. How can I help you today?`,
+      content: `Hi — I’m ${name}, your real-estate operator desk. How can I help you today?`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -71,8 +72,7 @@ export function CixyChat({
         typeof data?.message === "string" ? data.message.trim() : "";
       if (!reply) {
         throw new Error(
-          name +
-            " returned an empty reply. Please try again in a moment.",
+          name + " returned an empty reply. Please try again in a moment.",
         );
       }
 
@@ -97,64 +97,59 @@ export function CixyChat({
   };
 
   return (
-    <div className="flex flex-col h-[600px]">
-      <div className="bg-zinc-100 dark:bg-zinc-900 p-4 border-b border-zinc-300 dark:border-zinc-700">
-        <h3 className="font-bold">Chat with {name}</h3>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400">
-          Your real-estate operator desk
-        </p>
+    <div className="cixy-chat">
+      <div className="cixy-chat-header">
+        <h3>Chat with {name}</h3>
+        <p>Real-estate operator desk · drafts only — no file or email send from chat</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="cixy-chat-thread">
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={
+              "cixy-chat-row " +
+              (msg.role === "user" ? "cixy-chat-row-user" : "cixy-chat-row-assistant")
+            }
           >
             <div
-              className={`max-w-[80%] rounded-lg p-3 ${
-                msg.role === "user"
-                  ? "bg-emerald-700 text-white"
-                  : "bg-zinc-200 dark:bg-zinc-800 text-foreground"
-              }`}
+              className={
+                "cixy-chat-bubble " +
+                (msg.role === "user"
+                  ? "cixy-chat-bubble-user"
+                  : "cixy-chat-bubble-assistant")
+              }
             >
-              <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+              {msg.role === "assistant"
+                ? renderChatMarkdown(msg.content)
+                : (
+                    <p className="cixy-md-p">{msg.content}</p>
+                  )}
             </div>
           </div>
         ))}
         {loading && (
-          <div className="flex justify-start">
-            <div className="bg-zinc-200 dark:bg-zinc-800 rounded-lg p-3">
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                {name} is typing...
-              </p>
+          <div className="cixy-chat-row cixy-chat-row-assistant">
+            <div className="cixy-chat-bubble cixy-chat-bubble-assistant cixy-chat-typing">
+              <p className="cixy-md-p">{name} is typing…</p>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="p-4 border-t border-zinc-300 dark:border-zinc-700"
-      >
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about listings, offers, fair housing..."
-            className="flex-1 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-foreground text-sm"
-            disabled={loading}
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
-          >
-            Send
-          </button>
-        </div>
+      <form onSubmit={handleSubmit} className="cixy-chat-composer">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about listings, offers, fair housing…"
+          disabled={loading}
+          aria-label={"Message " + name}
+        />
+        <button type="submit" disabled={loading || !input.trim()}>
+          Send
+        </button>
       </form>
     </div>
   );

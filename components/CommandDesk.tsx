@@ -42,13 +42,9 @@ import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import {
   activateCopy,
   activateWalletHref,
-  billingStorageKey,
   canUseCixyChat,
   canUseWorkspace,
   emptyEntitlement,
-  markActivated,
-  markSeatMonth,
-  parseEntitlement,
   redeemAwaitingCaptureCopy,
   renewCopy,
   renewWalletHref,
@@ -227,12 +223,14 @@ export default function CommandDesk({
   accountControl,
   loginForm,
   walletHref = FALLBACK_WALLET_HREF,
+  entitlement = emptyEntitlement(),
 }: {
   preview?: boolean;
   account?: string;
   accountControl?: ReactNode;
   loginForm?: ReactNode;
   walletHref?: string;
+  entitlement?: Entitlement;
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -248,20 +246,11 @@ export default function CommandDesk({
   const [cixyName, setCixyName] = useState(DEFAULT_CIXY_NAME);
   const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
   const [theme, setTheme] = useState<DeskTheme>(DEFAULT_THEME);
-  const [entitlement, setEntitlement] = useState<Entitlement>(emptyEntitlement);
   const activateHref = activateWalletHref();
   const renewHref = renewWalletHref();
   const seat = seatStatus(preview, entitlement);
   const workspaceOpen = canUseWorkspace(seat);
   const cixyOpen = canUseCixyChat(seat);
-  const persistEntitlement = (next: Entitlement) => {
-    setEntitlement(next);
-    try {
-      localStorage.setItem(billingStorageKey(account), JSON.stringify(next));
-    } catch {
-      /* ignore quota */
-    }
-  };
   const [mood, setMood] = useState<Mood>("Smile");
   const [autoMood, setAutoMood] = useState(true);
   const [custom, setCustom] = useState(false);
@@ -397,10 +386,6 @@ export default function CommandDesk({
       setCixyName(prefs.displayName);
       setWardrobe(prefs.wardrobe);
       setTheme(synced.theme);
-      const billed = parseEntitlement(
-        JSON.parse(localStorage.getItem(billingStorageKey(account)) || "null"),
-      );
-      setEntitlement(billed);
       const billingIntent = params.get("billing");
       if (billingIntent === "activate" || billingIntent === "renew") {
         setBoard("Connections");
@@ -409,7 +394,7 @@ export default function CommandDesk({
             redeemAwaitingCaptureCopy(
               billingIntent === "activate" ? "activate" : "renew",
             ) +
-            " Soft Confirm below is device-only until capture.",
+            " Access remains blocked until server capture or an admin beta grant.",
         );
       }
     } catch {}
@@ -1277,40 +1262,14 @@ export default function CommandDesk({
               <p className="muted">
                 Wallet catalog is live. Seat unlocks after redeem capture —
                 until then entitlements stay empty (no invented balances).
-                Soft Confirm is device-only until capture lands. Renoxis never
-                takes a card.
+                The Wallet catalog is live, but this seat remains blocked
+                until capture is persisted or a hub-admin beta grant is set.
+                Renoxis never takes a card.
               </p>
-              <div className="actions">
-                {seat === "signed_inactive" ? (
-                  <button
-                    type="button"
-                    className="soft-button"
-                    onClick={() => {
-                      const next = markSeatMonth(markActivated(entitlement));
-                      persistEntitlement(next);
-                      setNotice(
-                        "Soft-launch activate + first month marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
-                      );
-                    }}
-                  >
-                    Confirm activate (soft launch)
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="soft-button"
-                    onClick={() => {
-                      const next = markSeatMonth(entitlement);
-                      persistEntitlement(next);
-                      setNotice(
-                        "Soft-launch monthly seat marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
-                      );
-                    }}
-                  >
-                    Confirm Keep running (soft launch)
-                  </button>
-                )}
-              </div>
+              <p className="muted">
+                No browser action can unlock this seat. Access comes only from
+                captured Wallet entitlement or a server-side admin beta grant.
+              </p>
             </section>
           )}
 
@@ -1997,26 +1956,10 @@ export default function CommandDesk({
                   </a>
                 </div>
                 {!preview && seat !== "active" && (
-                  <div className="actions">
-                    <button
-                      type="button"
-                      className="soft-button"
-                      onClick={() => {
-                        const next =
-                          seat === "signed_inactive"
-                            ? markSeatMonth(markActivated(entitlement))
-                            : markSeatMonth(entitlement);
-                        persistEntitlement(next);
-                        setNotice(
-                          "Soft-launch seat marked on this device only. Real seat lands after Wallet redeem capture — no invented balance.",
-                        );
-                      }}
-                    >
-                      {seat === "signed_inactive"
-                        ? "Confirm activate (soft launch)"
-                        : "Confirm Keep running (soft launch)"}
-                    </button>
-                  </div>
+                  <p className="muted">
+                    Access remains blocked until Wallet capture is persisted or
+                    a hub-admin beta grant is set on the server.
+                  </p>
                 )}
               </section>
               <Panel title="Connections & preferences">

@@ -3,6 +3,7 @@ import { CIXY_SYSTEM_PROMPT } from "@/lib/renoxis/cixy-prompts";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { hasServerEntitlement } from "@/lib/renoxis/entitlements";
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Sign in to chat with Cixy" },
         { status: 401 },
+      );
+    if (!hasServerEntitlement(user))
+      return NextResponse.json(
+        {
+          error:
+            "Activate or renew your Renoxis seat. Access unlocks after Wallet capture or an admin beta grant.",
+        },
+        { status: 402 },
       );
     const { messages } = await request.json();
     if (

@@ -37,5 +37,13 @@ export function failure(e: unknown) {
     return json({ error: "Sign in to use your workspace." }, 401);
   if (message === "ORIGIN")
     return json({ error: "Request origin is not allowed." }, 403);
+  if (message === "ENTITLEMENT")
+    return json(
+      {
+        error:
+          "Activate or renew your Renoxis seat. Access unlocks after Wallet capture or an admin beta grant.",
+      },
+      402,
+    );
   return json({ error: message }, 400);
 }

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import {
   ACTIVATE_IXIS,
@@ -9,13 +10,11 @@ import {
   canUseCixyChat,
   canUseWorkspace,
   emptyEntitlement,
-  markActivated,
-  markSeatMonth,
-  parseEntitlement,
   redeemIdempotencyKey,
   redeemAwaitingCaptureCopy,
   renewWalletHref,
   seatStatus,
+  type Entitlement,
 } from "../lib/renoxis/billing.ts";
 
 test("pricing lock is 5000 Ixis activate and monthly", () => {
@@ -30,12 +29,20 @@ test("Wallet SKUs are activate + agent.monthly (not seat.monthly)", () => {
   assert.equal(WALLET_SKU_ALIAS.monthly, "renoxis-monthly");
 });
 
-test("seatStatus gates preview / inactive / lapsed / active", () => {
+test("seatStatus trusts only server entitlement sources", () => {
   assert.equal(seatStatus(true, emptyEntitlement()), "preview");
   assert.equal(seatStatus(false, emptyEntitlement()), "signed_inactive");
-  const activated = markActivated(emptyEntitlement());
-  assert.equal(seatStatus(false, activated), "activated_lapsed");
-  const current = markSeatMonth(activated, new Date("2026-09-01T00:00:00Z"), 30);
+  const beta: Entitlement = {
+    activatedAt: "admin-beta-grant",
+    seatPeriodEnd: null,
+    source: "admin_beta",
+  };
+  assert.equal(seatStatus(false, beta), "active");
+  const current: Entitlement = {
+    activatedAt: "2026-09-01T00:00:00Z",
+    seatPeriodEnd: "2026-10-01T00:00:00Z",
+    source: "wallet_capture",
+  };
   assert.equal(
     seatStatus(false, current, Date.parse("2026-09-15T00:00:00Z")),
     "active",
@@ -70,22 +77,36 @@ test("idempotency keys follow hub lock", () => {
   );
 });
 
-test("redeem awaiting-capture copy names live SKUs", () => {
+test("redeem copy keeps entitlement empty until capture", () => {
   assert.match(redeemAwaitingCaptureCopy("activate"), /renoxis\.activate/);
   assert.match(redeemAwaitingCaptureCopy("renew"), /renoxis\.agent\.monthly/);
   assert.match(redeemAwaitingCaptureCopy("activate"), /catalog is live/);
   assert.match(redeemAwaitingCaptureCopy("activate"), /empty until then/);
-  assert.doesNotMatch(redeemAwaitingCaptureCopy("activate"), /SKU pending/);
 });
 
-test("parseEntitlement ignores invented balances", () => {
-  assert.deepEqual(parseEntitlement({ balance: 9999 }), emptyEntitlement());
-  assert.equal(
-    parseEntitlement({
-      activatedAt: "2026-09-21T00:00:00.000Z",
-      seatPeriodEnd: "2026-10-21T00:00:00.000Z",
-      source: "wallet",
-    }).source,
-    "wallet",
+test("client has no self-confirm or local billing unlock path", async () => {
+  const source = await readFile(
+    new URL("../components/CommandDesk.tsx", import.meta.url),
+    "utf8",
   );
+  assert.doesNotMatch(source, /Confirm activate/);
+  assert.doesNotMatch(source, /Confirm Keep running/);
+  assert.doesNotMatch(source, /renoxis-billing-v1/);
+  assert.doesNotMatch(source, /persistEntitlement/);
+  assert.match(source, /No browser action can unlock this seat/);
+});
+
+
+test("paid server routes enforce server entitlement", async () => {
+  const [records, chat, listings] = await Promise.all([
+    readFile(new URL("../app/api/records/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/chat/route.ts", import.meta.url), "utf8"),
+    readFile(
+      new URL("../app/api/listings/generate/route.ts", import.meta.url),
+      "utf8",
+    ),
+  ]);
+  assert.match(records, /requireServerEntitlement\(user\)/);
+  assert.match(chat, /hasServerEntitlement\(user\)/);
+  assert.match(listings, /hasServerEntitlement\(user\)/);
 });

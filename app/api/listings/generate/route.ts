@@ -6,6 +6,7 @@ import {
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { hasServerEntitlement } from "@/lib/renoxis/entitlements";
 
 interface ListingRequest {
   address: string;
@@ -29,6 +30,15 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!hasServerEntitlement(user)) {
+      return NextResponse.json(
+        {
+          error:
+            "Activate or renew your Renoxis seat. Access unlocks after Wallet capture or an admin beta grant.",
+        },
+        { status: 402 },
+      );
     }
 
     const data: ListingRequest = await request.json();

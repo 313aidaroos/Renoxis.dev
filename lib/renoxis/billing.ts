@@ -38,39 +38,23 @@ export type SeatStatus =
 export type Entitlement = {
   activatedAt: string | null;
   seatPeriodEnd: string | null;
-  /** Soft-launch only — not a Wallet balance. */
-  source: "local" | "wallet";
+  /** Server-provisioned only. Client/local values never grant access. */
+  source: "none" | "admin_beta" | "wallet_capture";
 };
 
 export const emptyEntitlement = (): Entitlement => ({
   activatedAt: null,
   seatPeriodEnd: null,
-  source: "local",
+  source: "none",
 });
 
-export function billingStorageKey(account: string) {
-  return "renoxis-billing-v1:" + account;
-}
-
-export function parseEntitlement(v: unknown): Entitlement {
-  if (!v || typeof v !== "object") return emptyEntitlement();
-  const o = v as Record<string, unknown>;
-  const activatedAt =
-    typeof o.activatedAt === "string" && o.activatedAt ? o.activatedAt : null;
-  const seatPeriodEnd =
-    typeof o.seatPeriodEnd === "string" && o.seatPeriodEnd
-      ? o.seatPeriodEnd
-      : null;
-  const source = o.source === "wallet" ? "wallet" : "local";
-  return { activatedAt, seatPeriodEnd, source };
-}
-
 export function isActivated(e: Entitlement) {
-  return !!e.activatedAt;
+  return e.source !== "none" && !!e.activatedAt;
 }
 
 export function isSeatCurrent(e: Entitlement, now = Date.now()) {
-  if (!e.seatPeriodEnd) return false;
+  if (e.source === "admin_beta") return true;
+  if (e.source !== "wallet_capture" || !e.seatPeriodEnd) return false;
   const end = Date.parse(e.seatPeriodEnd);
   return Number.isFinite(end) && end > now;
 }
@@ -93,28 +77,6 @@ export function canUseWorkspace(status: SeatStatus) {
 /** Chat basics included in subscription; heavy SKUs still meter. */
 export function canUseCixyChat(status: SeatStatus) {
   return status === "active";
-}
-
-export function markActivated(e: Entitlement, at = new Date()): Entitlement {
-  return {
-    ...e,
-    activatedAt: at.toISOString(),
-    source: "local",
-  };
-}
-
-export function markSeatMonth(
-  e: Entitlement,
-  from = new Date(),
-  days = 30,
-): Entitlement {
-  const end = new Date(from.getTime() + days * 24 * 60 * 60 * 1000);
-  return {
-    ...e,
-    activatedAt: e.activatedAt || from.toISOString(),
-    seatPeriodEnd: end.toISOString(),
-    source: "local",
-  };
 }
 
 function billingReturn(intent: "activate" | "renew") {

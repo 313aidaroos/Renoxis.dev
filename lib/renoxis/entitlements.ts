@@ -1,5 +1,5 @@
 import type { Entitlement } from "./billing";
-import { hasEntitlement as walletHasEntitlement } from "@/lib/apixis-wallet";
+import { hasEntitlement as walletHasEntitlement } from "../apixis-wallet.ts";
 
 type UserIdentity = { id: string; email?: string | null };
 

@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         { error: "Sign in to chat with Cixy" },
         { status: 401 },
       );
-    if (!hasServerEntitlement(user))
+    if (!(await hasServerEntitlement(user, supabase)))
       return NextResponse.json(
         {
           error:

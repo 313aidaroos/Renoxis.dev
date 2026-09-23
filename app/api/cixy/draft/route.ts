@@ -14,7 +14,7 @@ import { randomUUID } from "node:crypto";
 export async function POST(request: Request) {
   try {
     const { db, user } = await session(request);
-    await requireServerEntitlement(user, db);
+    await requireServerEntitlement(user);
     const input = await body(request);
     if (!isDraftKind(input.kind))
       throw new Error("Choose a draft kind: generic, email_draft, or offer_letter.");

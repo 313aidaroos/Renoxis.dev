@@ -1,5 +1,24 @@
 import { session, json, failure } from "@/lib/renoxis/http";
 import { googleReady, connection, admin, decrypt } from "@/lib/renoxis/google";
+let aiHealth: { ok: boolean; at: number } | null = null;
+/** Cheap authenticated call to Anthropic; cached 5 min per server instance. */
+async function anthropicHealthy(): Promise<boolean> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return false;
+  if (aiHealth && Date.now() - aiHealth.at < 5 * 60_000) return aiHealth.ok;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/models?limit=1", {
+      headers: { "x-api-key": key, "anthropic-version": "2023-06-01" },
+      signal: AbortSignal.timeout(5000),
+      cache: "no-store",
+    });
+    aiHealth = { ok: res.ok, at: Date.now() };
+  } catch {
+    aiHealth = { ok: false, at: Date.now() };
+  }
+  return aiHealth.ok;
+}
+
 export async function GET() {
   try {
     const { db, user } = await session();
@@ -7,7 +26,8 @@ export async function GET() {
     const c = await connection(user.id);
     return json({
       storage: !error,
-      ai: !!process.env.ANTHROPIC_API_KEY,
+      // "Ready" means a real round-trip succeeded, not that a key string exists.
+      ai: await anthropicHealthy(),
       google: {
         configured: googleReady(),
         connected: !!c,

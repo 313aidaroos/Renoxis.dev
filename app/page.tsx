@@ -17,7 +17,7 @@ export default async function Home() {
       accountControl={user ? <LogoutButton /> : undefined}
       loginForm={<LoginForm />}
       walletHref={walletEntryUrl(process.env.APP_URL)}
-      entitlement={user ? await serverEntitlement(user, supabase) : undefined}
+      entitlement={user ? await serverEntitlement(user) : undefined}
     />
   );
 }

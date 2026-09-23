@@ -198,7 +198,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Property lookup, email drafts, and offer drafts debit the office balance. Tracking a contact is free. Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
+    "Ixis is the Apixis points unit. Email drafts and offer drafts debit the office balance. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
   ],
   [
     "How do I install the app?",
@@ -632,16 +632,25 @@ export default function CommandDesk({
       setNotice("Your browser could not save preferences.");
     }
   };
+  // One attemptId per click, kept until that attempt settles. A network retry of the same click
+  // reuses it (Wallet dedupes — never charged twice); a fresh click gets a fresh one.
+  const attemptRef = useRef<{ intent: string; id: string } | null>(null);
   const handleRedeem = async (intent: "activate" | "monthly") => {
     if (busy) return;
     setBusy(true);
     setNotice("");
+    if (!attemptRef.current || attemptRef.current.intent !== intent) {
+      attemptRef.current = { intent, id: (crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/-/g, "").slice(0, 32) };
+    }
     try {
       const res = await fetch(`/api/redeem/${intent}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ attemptId: attemptRef.current.id }),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status !== 0) attemptRef.current = null; // settled (success, 402, 409, 5xx) → next click is a new attempt
+
       if (!res.ok) {
         // 402 = honest "not enough Ixis". No window.open (pop-up blockers) — the
         // Buy Ixis button is right next to this one.

@@ -1,6 +1,6 @@
 /** Firm Ixis prices. The same integers are enforced in supabase/brokerage.sql. */
 export const IXIS_SKU = {
-  property_lookup: 25,
+  property_lookup: 0, // saves what you type; no property-data source yet, so it is free
   track_contact: 0,
   email_draft: 50,
   offer_letter: 100,

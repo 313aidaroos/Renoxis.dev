@@ -16,7 +16,7 @@ export default async function Dashboard() {
       account={user.email ?? "Your account"}
       accountControl={<LogoutButton />}
       walletHref={walletEntryUrl(process.env.APP_URL)}
-      entitlement={await serverEntitlement(user, supabase)}
+      entitlement={await serverEntitlement(user)}
     />
   );
 }

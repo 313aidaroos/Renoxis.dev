@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         { error: "Sign in to chat with Cixy" },
         { status: 401 },
       );
-    if (!(await hasServerEntitlement(user, supabase)))
+    if (!(await hasServerEntitlement(user)))
       return NextResponse.json(
         {
           error:
@@ -73,8 +73,15 @@ export async function POST(request: Request) {
     const personal = await supabase.from("renoxis_records").select("kind,data").eq("user_id", user.id).in("kind", ["task", "lead", "property", "transaction", "event", "settings"]).order("updated_at", { ascending: false }).limit(50);
     let snapshot = pack(personal.data);
     let officeNote = "";
+    // Use the office the user has selected in the UI (must be one of their memberships);
+    // fall back to the first membership only when nothing was selected.
     const snap = await supabase.rpc("renoxis_office_snapshot");
-    const office = Array.isArray(snap.data) ? snap.data[0] : null;
+    const offices: Array<{ id?: string; role?: string }> = Array.isArray(snap.data) ? snap.data : [];
+    const requested = typeof body?.brokerageId === "string" ? body.brokerageId : null;
+    if (requested && !offices.some((o) => o?.id === requested)) {
+      return NextResponse.json({ error: "Choose an office you belong to." }, { status: 403 });
+    }
+    const office = requested ? offices.find((o) => o?.id === requested) ?? null : offices[0] ?? null;
     if (office?.id && (office.role === "owner" || office.role === "broker" || office.role === "agent" || office.role === "assistant")) {
       let team = supabase.from("renoxis_records").select("kind,data").eq("brokerage_id", office.id).neq("visibility", "private").in("kind", ["task", "lead", "property", "transaction", "event", "settings"]).order("updated_at", { ascending: false }).limit(50);
       if (office.role === "agent" || office.role === "assistant")

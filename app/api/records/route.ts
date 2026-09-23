@@ -98,7 +98,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const { db, user } = await session(request);
-    await requireServerEntitlement(user, db);
+    await requireServerEntitlement(user);
     const input = await body(request);
     const record = validateRecord(input.kind, input.data);
     let row: Record<string, unknown> = { ...record, user_id: user.id };
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { db, user } = await session(request);
-    await requireServerEntitlement(user, db);
+    await requireServerEntitlement(user);
     const input = await body(request);
     const record = validateRecord(input.kind, input.data);
     if (
@@ -190,7 +190,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { db, user } = await session(request);
-    await requireServerEntitlement(user, db);
+    await requireServerEntitlement(user);
     const input = await body(request);
     if (typeof input.id !== "string" || !Number.isInteger(input.version))
       throw new Error("Invalid record.");

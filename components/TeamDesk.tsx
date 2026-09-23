@@ -374,13 +374,13 @@ export function TeamDesk({
       </Panel>
       <Panel title="Office actions">
         <p className="muted">
-          Property lookup {IXIS_SKU.property_lookup} · Track contact{" "}
-          {IXIS_SKU.track_contact} · Email draft {IXIS_SKU.email_draft} · Offer
-          letter {IXIS_SKU.offer_letter}. Debited from the office, not a personal
-          wallet. Nothing here sends mail or invents comps.
+          Email draft {IXIS_SKU.email_draft} · Offer letter {IXIS_SKU.offer_letter}
+          Ixis, debited from the office, not a personal wallet. Saving a property
+          and tracking a contact are free — Renoxis has no property-data source yet,
+          so a “lookup” only saves what you type. Nothing here sends mail or invents comps.
         </p>
         <ActionForm
-          title="Save a property lookup"
+          title="Save a property (what you know — no data lookup yet)"
           cost={IXIS_SKU.property_lookup}
           locked={locked}
           fields={["title", "city"]}

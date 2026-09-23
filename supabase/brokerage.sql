@@ -259,7 +259,7 @@ begin
     return jsonb_build_object('ok', false, 'error', 'You are not an active member of this office.');
   end if;
   cost := case sku
-    when 'property_lookup' then 25
+    when 'property_lookup' then 0  -- saves typed facts only; no data source yet → free until real
     when 'track_contact' then 0
     when 'email_draft' then 50
     when 'offer_letter' then 100

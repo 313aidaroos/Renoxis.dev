@@ -41,6 +41,7 @@ export function CixyChat({
   const [busyDraft, setBusyDraft] = useState<string | null>(null);
   const [draftNotice, setDraftNotice] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const draftRefs = useRef<Map<string, string>>(new Map());
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,6 +53,13 @@ export function CixyChat({
     save: boolean,
   ) => {
     const key = kind + ":" + (save ? "save" : "dl") + ":" + content.slice(0, 24);
+    // One ref per (draft content, kind) for the life of this chat: a retried click after a network
+    // blip reuses it and cannot debit the office twice.
+    let draftRef = draftRefs.current.get(key);
+    if (!draftRef) {
+      draftRef = (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/-/g, "").slice(0, 32);
+      draftRefs.current.set(key, draftRef);
+    }
     setBusyDraft(key);
     setDraftNotice("");
     try {
@@ -69,6 +77,9 @@ export function CixyChat({
           title,
           body: content,
           save,
+          // Stable per draft request: a retry of THIS request reuses it, so the office is
+          // debited once. The server dedupes on (brokerage_id, ref).
+          ref: draftRef,
           ...(officeId ? { brokerageId: officeId } : {}),
         }),
       });
@@ -122,7 +133,7 @@ export function CixyChat({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: turns }),
+        body: JSON.stringify({ messages: turns, ...(officeId ? { brokerageId: officeId } : {}) }),
       });
 
       const data = await response.json().catch(() => ({}));

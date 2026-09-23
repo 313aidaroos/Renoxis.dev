@@ -12,7 +12,7 @@ import './welcome.css';
 type Screen = 'welcome' | 'questions' | 'tour' | 'finish';
 const roles = ['Agent', 'Investor', 'Wholesaler', 'Landlord', 'Just exploring'];
 const focuses = [{label:'People & follow-ups', value:'Leads'}, {label:'Properties & deals', value:'Properties'}, {label:'My day & appointments', value:'Calendar'}];
-export default function WelcomeExperience({ startInTour = false, destination = '/dashboard' }: { startInTour?: boolean; destination?: string }) {
+export default function WelcomeExperience({ startInTour = false, destination = '/dashboard', signedIn = false }: { startInTour?: boolean; destination?: string; signedIn?: boolean }) {
   const [screen, setScreen] = useState<Screen>(startInTour ? 'questions' : 'welcome');
   const [role, setRole] = useState('');
   const [focus, setFocus] = useState('Leads');
@@ -59,7 +59,7 @@ export default function WelcomeExperience({ startInTour = false, destination = '
       <nav aria-label="Welcome navigation">
         <Link href="/tour">Explore with Cixy</Link>
         <button className="text-button" onClick={() => setMotion(!motion)} aria-pressed={!motion}>{motion ? 'Pause Cixy motion' : 'Enable Cixy motion'}</button>
-        <button className="primary" onClick={signIn}>Sign in <span aria-hidden="true">↗</span></button>
+        {signedIn ? <Link className="primary welcome-dashboard-link" href={destination}>Open dashboard ↗</Link> : <button className="primary" onClick={signIn}>Sign in <span aria-hidden="true">↗</span></button>}
       </nav>
     </header>
     <main id="welcome-main" className="welcome-main">

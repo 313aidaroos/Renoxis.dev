@@ -1266,6 +1266,11 @@ export default function CommandDesk({
           <span>Dream homes. Real progress.</span>
         </nav>
         <main id="workspace">
+          <section className="desk-tour-entry" aria-labelledby="desk-tour-heading">
+            <div className="desk-tour-avatar"><CixyAvatar look={look} mood="Wave" /></div>
+            <div><span className="eyebrow">CIXY’S GUIDED TOUR</span><h2 id="desk-tour-heading">Let me show you around.</h2><p>I’ll explain every box, ask about your work, and help you try things out.</p></div>
+            <Link className="primary" href="/tour">Take a tour with Cixy →</Link>
+          </section>
 
           {!preview && seat !== "active" && (
             <section className="desk-panel billing-gate" id="billing-gate">

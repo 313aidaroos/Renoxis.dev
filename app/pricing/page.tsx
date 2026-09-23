@@ -27,7 +27,7 @@ export default async function PricingPage() {
         <section className="welcome-hero">
           <span className="welcome-kicker">PRICING · PAID IN IXIS</span>
           <h1>One activation.<br />One monthly seat.<br /><em>Nothing hidden.</em></h1>
-          <p>Renoxis is the real-estate agent&rsquo;s workspace with Cixy beside you: contacts, properties, deals, calendar and drafts in one desk. You pay with Ixis — the Apixis family credit — through Apixis Wallet. 100 Ixis = $1. Paid Ixis never expires.</p>
+          <p>Renoxis is the workspace for real estate agents, real estate developers and brokerages, with Cixy beside you: contacts, properties, deals, calendar and drafts in one desk. You pay with Ixis — the Apixis family credit — through Apixis Wallet. 100 Ixis = $1. Paid Ixis never expires.</p>
         </section>
 
         <section className="tour-price" aria-labelledby="price-title">

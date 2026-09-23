@@ -10,7 +10,7 @@ import './command-desk.css';
 import './welcome.css';
 
 type Screen = 'welcome' | 'questions' | 'tour' | 'finish';
-const roles = ['Agent', 'Investor', 'Wholesaler', 'Landlord', 'Just exploring'];
+const roles = ['Real estate agent','Real estate developer','Brokerage','Just exploring'];
 const focuses = [{label:'People & follow-ups', value:'Leads'}, {label:'Properties & deals', value:'Properties'}, {label:'My day & appointments', value:'Calendar'}];
 export default function WelcomeExperience({ startInTour = false, destination = '/dashboard', signedIn = false }: { startInTour?: boolean; destination?: string; signedIn?: boolean }) {
   const [screen, setScreen] = useState<Screen>(startInTour ? 'questions' : 'welcome');
@@ -68,7 +68,7 @@ export default function WelcomeExperience({ startInTour = false, destination = '
           <div className="welcome-intro">
             <span className="welcome-kicker"><i /> YOUR NEXT CHAPTER IN REAL ESTATE</span>
             <h1 ref={heading} tabIndex={-1}>A place for your people.<br /><em>A plan for what’s next.</em></h1>
-            <p>Meet Renoxis. Your contacts, properties, deals and day, brought together in one thoughtful workspace—with Cixy beside you.</p>
+            <p>Meet Renoxis. Built for real estate agents, real estate developers and brokerages: your contacts, properties, deals and day in one workspace—with Cixy beside you.</p>
             <div className="welcome-actions"><button className="primary" onClick={begin}>Take a tour with Cixy <span aria-hidden="true">→</span></button><a href="#how-it-works">How it works ↓</a></div>
             <p className="welcome-small">Interactive. At your pace. No account needed to explore.</p>
             <div className="welcome-proof"><span>People & relationships</span><span>Properties & progress</span><span>Your personal desk</span></div>

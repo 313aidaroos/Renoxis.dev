@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-export function LoginForm() {
+export function LoginForm({ next = "/dashboard" }: { next?: string }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -16,7 +16,7 @@ export function LoginForm() {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOtp({ email, options: {emailRedirectTo: `${window.location.origin}/auth/callback`} });
+      const { error } = await supabase.auth.signInWithOtp({ email, options: {emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next.startsWith("/dashboard") && !next.includes("\\") ? next : "/dashboard")}`} });
       setMessage(error ? error.message : "Check your email for the login link!");
     } catch {
       setMessage("Unable to connect. Please check your connection and try again.");

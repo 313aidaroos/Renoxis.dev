@@ -1,6 +1,6 @@
 # Welcome page and guided tour
 
-Anonymous visitors land on the public welcome page at `/`. Signed-in visitors go to `/dashboard`; board, billing, invite and Google-return query parameters are retained. The public `/tour` route is replayable from the dashboard FAQs.
+The homepage at `/` shows the welcome page for both signed-in and anonymous visitors. Signed-in users have an Open dashboard link. Explicit board, billing, invite and Google-return links still redirect signed-in users to the matching dashboard location. The dashboard has a prominent Cixy tour banner. The public `/tour` route is replayable from the dashboard FAQs.
 
 Cixy uses the existing `CixyAvatar` and original `cixy-sprites.png`. No replacement character or SVG avatar is introduced. The welcome uses the existing emerald palette and desk styling.
 

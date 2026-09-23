@@ -2571,3 +2571,11 @@
     color: #e0e7ff;
   }
 }
+
+.desk-tour-entry { display:flex;align-items:center;gap:18px;padding:18px 22px;margin-bottom:20px;border:1px solid var(--line);border-radius:12px;background:var(--mint); }
+.desk-tour-avatar { width:76px;flex-shrink:0;border-radius:12px;overflow:hidden; }
+.desk-tour-entry>div:nth-child(2) { flex:1; }
+.desk-tour-entry h2 { margin:5px 0; }
+.desk-tour-entry p { font-size:13px;color:var(--muted); }
+.desk-tour-entry>a { flex-shrink:0; }
+@media(max-width:650px) { .desk-tour-entry { flex-wrap:wrap;padding:16px;gap:12px; } .desk-tour-avatar { width:60px; } .desk-tour-entry>a { width:100%;text-align:center; } }

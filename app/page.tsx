@@ -4,11 +4,15 @@ import WelcomeExperience from '@/components/WelcomeExperience';
 import { dashboardDestination } from '@/lib/renoxis/tour';
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const destination = dashboardDestination(await searchParams);
+  const params = await searchParams;
+  const destination = dashboardDestination(params);
+  let signedIn = false;
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) redirect(destination);
+    signedIn = !!user;
+    // Only explicit workspace/provider links bypass the public welcome.
+    if (user && destination !== "/dashboard") redirect(destination);
   }
-  return <WelcomeExperience destination={destination} />;
+  return <WelcomeExperience destination={destination} signedIn={signedIn} />;
 }

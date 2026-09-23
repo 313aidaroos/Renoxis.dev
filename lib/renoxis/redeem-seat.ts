@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redeem, WalletError, buyIxisUrl } from "@/lib/apixis-wallet";
+import { walletOwner } from "@/lib/renoxis/wallet-charge";
 import type { Entitlement } from "@/lib/renoxis/billing";
 
 const APP_SLUG = "renoxis";
@@ -59,7 +60,7 @@ export async function redeemSeat(intent: "activate" | "monthly", body: unknown) 
 
   try {
     const outcome = await redeem<Entitlement>({
-      ownerEmail: user.email,
+      owner: walletOwner(user) ?? user.email,
       productKey,
       idempotencyKey,
       provision: async (reservation) => {

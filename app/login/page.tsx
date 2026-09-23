@@ -69,6 +69,14 @@ function LoginContent() {
           </p>
         </div>
 
+        <a
+          href={`/auth/apixis/start?next=${encodeURIComponent(next)}`}
+          className="block w-full text-center bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        >
+          Sign in with Apixis
+        </a>
+        <p className="text-center text-xs text-zinc-500">One Apixis account for every family site. Or use email below.</p>
+
         <div className="flex border-b border-zinc-300 dark:border-zinc-700">
           <button
             type="button"

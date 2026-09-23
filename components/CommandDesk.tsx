@@ -36,10 +36,11 @@ import {
   type RecordItem,
   workspaceDisplayName,
 } from "@/lib/renoxis/records";
-import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
+import { canRollup } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
+import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 import {
   activateCopy,
   activateWalletHref,
@@ -234,6 +235,7 @@ export default function CommandDesk({
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
+  const walletIxis = useWalletBalance();
   const [loading, setLoading] = useState(!preview);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -1461,11 +1463,7 @@ export default function CommandDesk({
                 <div className="forecast wallet">
                   <small>✦ Apixis · Ixis</small>
                   <strong>
-                    {firm?.office
-                      ? seesFirmBalance(firm.office.role)
-                        ? `${firm.office.balance ?? 0} Ixis`
-                        : "Billed to office"
-                      : "Cixy Essentials"}
+                    {walletIxis === null ? "Apixis Wallet" : `${walletIxis.toLocaleString()} Ixis`}
                   </strong>
                   <button
                     type="button"

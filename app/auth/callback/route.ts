@@ -9,8 +9,20 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (!error && data.user) {
+      // Check if user has ever set a password (user_metadata.has_password or last_sign_in_at with password)
+      // New users from magic link won't have a password set
+      const hasPassword = data.user.user_metadata?.has_password;
+      
+      if (!hasPassword) {
+        // First magic-link sign-in, offer password setup
+        const setPasswordUrl = new URL(`${origin}/set-password`);
+        setPasswordUrl.searchParams.set("next", next);
+        return NextResponse.redirect(setPasswordUrl.toString());
+      }
+      
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

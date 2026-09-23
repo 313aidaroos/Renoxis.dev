@@ -2271,7 +2271,14 @@ export default function CommandDesk({
         {preview ? (
           <>
             <p>Sign in to save your workspace and chat with Cixy.</p>
-            {loginForm}
+            <div className="actions">
+              <a
+                className="primary"
+                href="/login?next=%2F"
+              >
+                Sign in
+              </a>
+            </div>
           </>
         ) : !cixyOpen ? (
           <>

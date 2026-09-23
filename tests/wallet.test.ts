@@ -24,21 +24,21 @@ test("buy link is /buy with product=renoxis and a studio return", () => {
   assert.equal(url.searchParams.get("product"), "renoxis");
   assert.equal(url.searchParams.get("origin"), null);
   assert.equal(back.origin, RENOXIS_APP_ORIGIN);
-  assert.equal(back.hostname, "renoxis.vercel.app");
+  assert.equal(back.hostname, "renoxis.dev");
   assert.equal(back.protocol, "https:");
   assert.equal(back.searchParams.get("board"), "Cixy Studio");
   assert.equal(FALLBACK_WALLET_HREF, href);
   assert.equal(studioReturnUrl(), back.toString());
 });
 
-test("only https://renoxis.vercel.app is an allowlisted return", () => {
-  const studio = allowlistedReturnUrl("https://renoxis.vercel.app/dashboard");
+test("only https://renoxis.dev is an allowlisted return", () => {
+  const studio = allowlistedReturnUrl("https://renoxis.dev/dashboard");
   const parsed = new URL(studio);
-  assert.equal(parsed.hostname, "renoxis.vercel.app");
+  assert.equal(parsed.hostname, "renoxis.dev");
   assert.equal(parsed.pathname, "/dashboard");
   assert.equal(parsed.protocol, "https:");
 
-  const withBoard = walletEntryUrl("https://renoxis.vercel.app/dashboard");
+  const withBoard = walletEntryUrl("https://renoxis.dev/dashboard");
   const { back } = returnTarget(withBoard);
   assert.equal(back.pathname, "/dashboard");
   assert.equal(back.searchParams.get("board"), "Cixy Studio");
@@ -53,15 +53,15 @@ test("preview, localhost, and other hosts fall back to Cixy Studio", () => {
     "https://evil.example",
     "http://evil.example",
     "javascript:alert(1)",
-    "https://user:pass@renoxis.vercel.app",
-    "https://renoxis.vercel.app:444/buy",
+    "https://user:pass@renoxis.dev",
+    "https://renoxis.dev:444/buy",
     "not a url",
     "",
   ]) {
     const { url, back } = returnTarget(walletEntryUrl(bad));
     assert.equal(url.pathname, "/buy");
     assert.equal(url.searchParams.get("product"), "renoxis");
-    assert.equal(back.hostname, "renoxis.vercel.app");
+    assert.equal(back.hostname, "renoxis.dev");
     assert.equal(back.protocol, "https:");
     assert.equal(back.port, "");
     assert.equal(back.searchParams.get("board"), "Cixy Studio");

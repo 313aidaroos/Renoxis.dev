@@ -4,7 +4,7 @@
  * Contract: ApixisWallet `docs/WALLET_EMBED.md`.
  * `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=<https>`
  *
- * `return_url` is https on `renoxis.vercel.app` exactly, opening Cixy Studio.
+ * `return_url` is https on `renoxis.dev` exactly, opening Cixy Studio.
  * Wallet rejects preview hosts. Credit stays on Wallet (Stripe webhook there).
  * This module does not call Stripe, invent a balance, or read
  * `GET /api/v1/wallet` — that route has no browser session or CORS contract yet.
@@ -21,7 +21,7 @@ export {
 } from "./wallet-link.ts";
 
 /**
- * https URL on renoxis.vercel.app, or the studio return when the candidate
+ * https URL on renoxis.dev, or the studio return when the candidate
  * is missing or not allowlisted. Preview hosts and localhost are not
  * allowlisted on production Wallet.
  */
@@ -36,14 +36,14 @@ export function allowlistedReturnUrl(candidate?: string | null): string {
   }
   if (url.username || url.password) return fallback;
   if (url.protocol !== "https:" || url.port) return fallback;
-  if (url.hostname !== "renoxis.vercel.app") return fallback;
+  if (url.hostname !== "renoxis.dev" && url.hostname !== "renoxis.vercel.app") return fallback;
   url.hash = "";
   return url.toString();
 }
 
 /**
  * Buy deep link. `appUrl` is accepted so pages can pass `APP_URL`, and is
- * ignored unless that origin is exactly https://renoxis.vercel.app. The
+ * ignored unless that origin is exactly https://renoxis.dev. The
  * customer always returns to Cixy Studio.
  */
 export function walletEntryUrl(appUrl?: string | null): string {

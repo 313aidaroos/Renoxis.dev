@@ -5,7 +5,7 @@ import { redeem, WalletError, buyIxisUrl } from "@/lib/apixis-wallet";
 import type { Entitlement } from "@/lib/renoxis/billing";
 
 const APP_SLUG = "renoxis";
-const APP_URL = process.env.APP_URL || "https://renoxis.vercel.app";
+const APP_URL = process.env.APP_URL || "https://renoxis.dev";
 const ATTEMPT_ID = /^[A-Za-z0-9_-]{8,40}$/;
 
 type Row = {

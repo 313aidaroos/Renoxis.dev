@@ -60,7 +60,7 @@ export default async function PricingPage() {
         <section className="welcome-actions">
           <Link className="primary" href={start}>Start · {fmt(ACTIVATE_IXIS)} Ixis →</Link>
           <Link href="/tour">Take the tour first</Link>
-          <a href="https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.vercel.app%2Fpricing">Buy Ixis</a>
+          <a href="https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2Fpricing">Buy Ixis</a>
         </section>
         <p className="tour-note">Ixis is a closed-loop platform credit for Apixis-family products. It is not a currency or investment and cannot be withdrawn.</p>
       </main>

@@ -1,7 +1,7 @@
 /** Public wallet entry constants. No server env — safe for client components. */
 
 export const APIXIS_WALLET_HOME = "https://apixis-wallet.vercel.app";
-export const RENOXIS_APP_ORIGIN = "https://renoxis.vercel.app";
+export const RENOXIS_APP_ORIGIN = "https://renoxis.dev";
 
 /** Cixy Studio on the production host Wallet allowlists exactly. */
 export function studioReturnUrl(): string {

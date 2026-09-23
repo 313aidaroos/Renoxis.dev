@@ -36,14 +36,15 @@ const owner: Viewer = {
 test("firm ledger debits published SKUs and rejects a short balance", () => {
   assert.deepEqual(
     { ...IXIS_SKU },
-    { property_lookup: 25, track_contact: 0, email_draft: 50, offer_letter: 100 },
+    { property_lookup: 0, track_contact: 0, email_draft: 50, offer_letter: 100 },
   );
+  // Property "lookup" saves typed facts and queries no data source → free until it does.
   assert.deepEqual(quoteDebit(100, "property_lookup"), {
     ok: true,
     sku: "property_lookup",
-    cost: 25,
+    cost: 0,
     balance: 100,
-    next: 75,
+    next: 100,
   });
   assert.deepEqual(quoteDebit(0, "track_contact"), {
     ok: true,
@@ -121,7 +122,7 @@ test("sql sketches the same isolation, prices, and approve gate", () => {
   assert.match(sql, /enable row level security/);
   assert.match(sql, /renoxis_private\.can_read_record/);
   assert.match(sql, /renoxis_private\.can_read_note/);
-  assert.match(sql, /when 'property_lookup' then 25/);
+  assert.match(sql, /when 'property_lookup' then 0/);
   assert.match(sql, /when 'track_contact' then 0/);
   assert.match(sql, /when 'email_draft' then 50/);
   assert.match(sql, /when 'offer_letter' then 100/);

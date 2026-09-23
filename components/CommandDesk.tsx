@@ -2034,6 +2034,7 @@ export default function CommandDesk({
                   Clear answers.
                 </h2>
                 <p>Everything you need to settle into your new workspace.</p>
+                <Link className="soft-button" href="/tour">Take the guided tour with Cixy →</Link>
                 <button className="primary" onClick={ask}>
                   Ask Cixy ✦
                 </button>

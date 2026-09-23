@@ -4,7 +4,7 @@ Pricing lock (Awad 2026-09-21):
 
 - **Activate** — $50 = 5,000 Ixis one-time (Apixis Wallet)
 - **Keep running** — $50/mo = 5,000 Ixis/mo (Apixis Wallet)
-- **Heavy Cixy** — office ledger: lookup 25 · email 50 · offer 100 Ixis; chat basics included in the seat
+- **Heavy Cixy** — office ledger: lookup **0** (typed facts only) · email 50 · offer 100 Ixis; chat basics included in the seat
 - **No Renoxis Stripe** — cash buy only on Wallet
 
 ## Locked Wallet SKUs (LIVE — ApixisWallet #5 → main)
@@ -33,10 +33,10 @@ Redeem flow: quote → reserve → capture. Idempotency:
 
 ## Wallet return URLs
 
-- Activate: `https://renoxis.vercel.app/?board=Connections&billing=activate`
-- Renew: `https://renoxis.vercel.app/?board=Connections&billing=renew`
+- Activate: `https://renoxis.dev/?board=Connections&billing=activate`
+- Renew: `https://renoxis.dev/?board=Connections&billing=renew`
 
-Both must stay on Wallet allowlist (same host as studio return). `APP_URL=https://renoxis.vercel.app` on Renoxis Vercel (hub).
+Canonical origin is `renoxis.dev` (Wallet allowlist). `*.vercel.app` may still work during transition. `APP_URL` on Renoxis Vercel should match production host (hub).
 
 ## Hub / Wallet Lead still needed
 

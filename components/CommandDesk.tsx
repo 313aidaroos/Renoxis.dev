@@ -1979,7 +1979,7 @@ export default function CommandDesk({
                   </strong>
                   . Activate $50 (5,000 Ixis) once; Keep running $50/mo
                   (5,000 Ixis). Heavy Cixy stays metered on the office ledger
-                  (lookup 25 · email 50 · offer 100). Chat basics are in the
+                  (lookup 0 · email 50 · offer 100). Chat basics are in the
                   seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
                 </p>
                 <div className="actions">

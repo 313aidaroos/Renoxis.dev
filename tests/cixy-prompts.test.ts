@@ -34,6 +34,10 @@ test("chat prompt covers wholesale contract sales and hard limits", () => {
   assert.match(prompt, /charge Ixis/i);
   assert.match(prompt, /labeled DRAFT text/i);
   assert.match(prompt, /cannot send outbound email/i);
+  assert.match(prompt, /property lookup \*\*0 Ixis\*\*/i);
+  assert.match(prompt, /Activate = 5,000 Ixis/i);
+  assert.match(prompt, /renoxis\.dev/);
+  assert.match(prompt, /magic-link first/i);
   assert.match(prompt, /neutral professional greeting/i);
   assert.doesNotMatch(prompt, /Greet with "As-salamu alaykum"/);
   assert.doesNotMatch(prompt, /BANNED PHRASES/);

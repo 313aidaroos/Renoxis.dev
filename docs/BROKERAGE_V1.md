@@ -15,7 +15,7 @@
 | Rollups | Broker/owner see firm rollups; agents see their book |
 | Cixy | Signed-in context; firm-level Qs for owners/brokers |
 | Ixis billing | **Firm / office wallet pays** — agents use tools; brokerage balance is debited |
-| Action prices | Property lookup **25** · Track contact **0** · Email **50** · Offer letter **100** |
+| Action prices | Property lookup **0** (typed facts only) · Track contact **0** · Email **50** · Offer letter **100** |
 | Close | **5% (500 bps)** Apixis platform cut on closed deal fees (`platform_commission` pending) |
 | Real outbound | **Awad Approve** only — drafts OK; no silent send |
 | Wallet capture | Hub-deferred (Developer Bot) until server contracts |
@@ -69,7 +69,7 @@ Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
 
 | SKU | Ixis | Notes |
 |-----|------|--------|
-| `property_lookup` | 25 | Firm wallet |
+| `property_lookup` | 0 | Firm wallet (free until a real data source) |
 | `track_contact` | 0 | Free |
 | `email_draft` | 50 | Firm wallet; send Approve-gated |
 | `offer_letter` | 100 | Firm wallet; send Approve-gated |

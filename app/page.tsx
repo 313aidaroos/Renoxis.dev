@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import WelcomeExperience from '@/components/WelcomeExperience';
+import AuthHashHandler from '@/components/AuthHashHandler';
 import { dashboardDestination } from '@/lib/renoxis/tour';
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -14,5 +15,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     // Only explicit workspace/provider links bypass the public welcome.
     if (user && destination !== "/dashboard") redirect(destination);
   }
-  return <WelcomeExperience destination={destination} signedIn={signedIn} />;
+  return (
+    <>
+      <AuthHashHandler destination={destination} />
+      <WelcomeExperience destination={destination} signedIn={signedIn} />
+    </>
+  );
 }

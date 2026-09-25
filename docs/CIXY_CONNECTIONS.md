@@ -29,7 +29,7 @@ Enable Gmail and Calendar APIs in a Renoxis-owned Google Cloud project. Register
 
 ## Apixis Wallet (buy link only)
 
-Buy Ixis and Wallet open `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=…`. The return address is `https://renoxis.vercel.app/?board=Cixy%20Studio` (exact host from ApixisWallet `docs/WALLET_EMBED.md`). Preview hosts are not sent. Cash credit happens only on Apixis Wallet, via its Stripe webhook. Renoxis does not add Stripe keys, a checkout page, or a second coin ledger. Firm Ixis spend stays on the office ledger (manual grant and SKU debits).
+Buy Ixis and Wallet open `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=…`. The return address is `https://renoxis.dev/?board=Cixy%20Studio` (exact host from ApixisWallet `docs/WALLET_EMBED.md`). Preview hosts are not sent. Cash credit happens only on Apixis Wallet, via its Stripe webhook. Renoxis does not add Stripe keys, a checkout page, or a second coin ledger. Paid drafts spend from the person’s shared Apixis Wallet. The office-grant endpoint is retired.
 
 `GET /api/v1/wallet` is not called from the browser. Show a Wallet balance only after a session exchange and CORS contract exist. Do not invent a balance before then.
 - Cross-company shared Cixy memory: requires the existing command-center API contract, signed service identity and per-company/customer permissions. Do not share customer records globally.

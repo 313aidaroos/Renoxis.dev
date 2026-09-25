@@ -1,114 +1,32 @@
-# Renoxis brokerage v1 — team workspace
+# Renoxis team workspace
 
-**Status:** Spec locked 2026-09-21. Docs greenlit. **Do not implement** until Awad or Dashboard Lead says “start build.”
+Implemented in the existing emerald CommandDesk. Roles: owner, broker, agent, assistant.
 
-**Product:** https://renoxis.vercel.app · Repo: `313aidaroos/Renoxis.dev`
+## Records and permissions
 
-## Decision summary
+- Team records belong to a brokerage, optionally to an agent, with book/firm/private visibility.
+- Owners and brokers see permitted office rollups; agents see their book and shared firm records.
+- Private notes use role- and author-scoped access. Other brokerages must never be visible.
+- Cixy receives a limited snapshot for the selected office and role, excluding private notes.
+- Invites and saved drafts do not imply an email was sent.
 
-| Decision | Lock |
-|----------|------|
-| Model | **Team workspace** (brokerage entity + member invites) |
-| Roles | `owner` / `broker` / `agent` / `assistant` |
-| Record scope | `brokerage_id` + optional `owner_agent_id` |
-| Visibility | RLS: peers do not see private notes unless shared |
-| Rollups | Broker/owner see firm rollups; agents see their book |
-| Cixy | Signed-in context; firm-level Qs for owners/brokers |
-| Ixis billing | **Firm / office wallet pays** — agents use tools; brokerage balance is debited |
-| Action prices | Property lookup **0** (typed facts only) · Track contact **0** · Email **50** · Offer letter **100** |
-| Close | **5% (500 bps)** Apixis platform cut on closed deal fees (`platform_commission` pending) |
-| Real outbound | **Awad Approve** only — drafts OK; no silent send |
-| Wallet capture | Hub-deferred (Developer Bot) until server contracts |
+## Billing after shared Wallet rollout
 
-## UI theme (hard rule)
+There is one Ixis balance, in the person’s Apixis Wallet. The person clicking a paid action pays; the office is not billed.
 
-Brokerage v1 UI must match the live Renoxis website theme **to a tee**.
+| Action | Cost |
+|---|---|
+| Save typed property facts | Free; no external lookup |
+| Track contact | Free |
+| Email draft | 50 Ixis from personal Apixis Wallet |
+| Offer-letter draft | 100 Ixis from personal Apixis Wallet |
 
-- Reuse emerald CommandDesk, `components/command-desk.css`, and the existing Cixy office/avatar surfaces.
-- No new visual system, no alternate design language, no restyle of Apixis marketing sites.
-- Team invites, rollups, firm Ixis balance, and private notes are new *flows* inside the same desk chrome — not a separate app shell.
+Paid drafts use Wallet SKUs `renoxis.email_draft` and `renoxis.offer_letter`, with reserve/capture and stable attempt references. Manual office grants are retired (`/api/brokerage/grant` returns 410). Legacy SQL ledger objects remain historical and are not the billing authority.
 
-## Out of v1
+Closed-deal platform commission is recorded as a pending 5% (500 bps) fee. It is not automatically collected. Outbound email remains off; approval records review but does not send.
 
-- Multi-office hierarchies
-- MLS seats
-- Full transaction-coordinator OS
-- Auto commission-split ledgers between agents
+Buy Ixis opens Apixis Wallet with `product=renoxis` and an allowlisted `https://renoxis.dev` return. Buying Ixis does not unlock a premium outfit or grant a Renoxis seat by itself.
 
-## Domain model (plan)
+## Outside this release
 
-### Entities
-
-1. **`brokerages`** — id, name, slug, created_by, status, settings JSON
-2. **`brokerage_members`** — brokerage_id, user_id, role (`owner`|`broker`|`agent`|`assistant`), status (`invited`|`active`|`removed`), invited_by, invited_at, joined_at
-3. **`brokerage_invites`** — token, email, role, expires_at, accepted_at (or fold into members)
-4. **CRM records** (existing `renoxis_records` shape) — add `brokerage_id` (required for team mode), `owner_agent_id` (nullable = firm-owned), `visibility` / private-notes channel
-5. **Private notes** — either note rows with `shared=false` visible only to author (+ owner/broker override TBD) or a `renoxis_notes` table with RLS
-6. **Ixis ledger (firm)** — `brokerage_id`, sku, amount_ixis, actor_user_id, ref (record/deal/draft id), created_at — **balance lives on brokerage**, not per agent in v1
-7. **`platform_commission`** — pending rows on closed deals: bps=500, fee base, status (`pending`|`invoiced`|`paid`), no wallet auto-capture in v1
-
-### RLS sketch
-
-- Member of brokerage ⇒ can read non-private firm records in that brokerage
-- `owner_agent_id = auth.uid()` ⇒ agent’s book
-- Private notes: author only unless `shared_with` / broker role grant
-- Service role for ledger writes from authenticated API after debit checks
-- Never expose other brokerages
-
-### API / product surfaces (v1)
-
-- Create / rename brokerage (owner)
-- Invite by email + role; accept invite
-- Switch context: personal vs brokerage (if personal remains) — **default path: signed-in user acts inside active brokerage**
-- CRM list/filter: my book vs team (role-gated)
-- Cixy: workspace snapshot scoped to brokerage + role; firm questions for owner/broker
-- Debit firm Ixis on lookup / email draft / offer draft; reject with clear UX if balance insufficient
-- Send email / offer: create draft + **Approve** gate; no provider send without Approve + hub mail scopes
-
-### SKUs (align with Cixy capability PR)
-
-| SKU | Ixis | Notes |
-|-----|------|--------|
-| `property_lookup` | 0 | Firm wallet (free until a real data source) |
-| `track_contact` | 0 | Free |
-| `email_draft` | 50 | Firm wallet; send Approve-gated |
-| `offer_letter` | 100 | Firm wallet; send Approve-gated |
-
-## UX notes (pricing / team)
-
-- Show firm Ixis balance to owner/broker; agents see “billed to office” not a personal balance
-- Before costly Cixy actions, confirm SKU cost against firm balance
-- Commission forecast / close flow: surface 5% platform cut as pending, not collected until hub wallet exists
-
-## Apixis Wallet entry (buy)
-
-Cash Ixis is bought only on Apixis Wallet (`https://apixis-wallet.vercel.app`). Renoxis does not run Stripe Checkout and does not credit the firm ledger from a card payment.
-
-**Buy Ixis** and **Wallet** open Apixis Wallet buy, per `docs/WALLET_EMBED.md`:
-
-- `product=renoxis`
-- `return_url` = `https://renoxis.vercel.app/?board=Cixy Studio` (exact host only)
-
-Owners and brokers see the firm balance and those CTAs on the Team board. Agents still see “billed to office,” not a personal balance. The overview Ixis tile, Connections, Cixy Studio catalog, and the footer Wallet link are the entries. Manual grants and SKU debits stay on the office ledger. Buying Ixis does not mark a premium outfit owned.
-
-Do not call `GET /api/v1/wallet` from the browser until a session exchange and CORS contract exist. Do not invent a balance.
-
-## Implementation order (when “start build”)
-
-1. Schema migration + RLS policies on Supabase `renoxis` (`loyjbfqpanskcecvpolt`)
-2. Invite + membership APIs
-3. Scope existing CRM APIs to `brokerage_id`
-4. Firm Ixis ledger + SKU debit helpers (no Stripe/wallet capture)
-5. Cixy/tool routes: debit + Approve hooks for send
-6. Desk UX: team switcher, invites, private notes, balance
-7. Secrets / Google send scopes only via Developer Bot hub after Approve
-
-## Non-goals reminder
-
-Do not restyle Apixis marketing sites. Do not add Stripe keys, a Renoxis checkout page, MLS, or live send-mail. Buy Ixis is an outbound link to Apixis Wallet. Honest empty states — no fake DEMO deals.
-
-## Owners
-
-- Product / UX: Renoxis Lead
-- Schema + env secrets: Developer Bot hub
-- Coordinating CloudAgents: Dashboard Lead / Renoxis Lead after **start build**
+MLS imports, multi-office hierarchies, automatic commission splits, live outbound mail, automatic monthly renewal, and premium wardrobe purchases are not enabled.

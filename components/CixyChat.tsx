@@ -54,7 +54,7 @@ export function CixyChat({
   ) => {
     const key = kind + ":" + (save ? "save" : "dl") + ":" + content.slice(0, 24);
     // One ref per (draft content, kind) for the life of this chat: a retried click after a network
-    // blip reuses it and cannot debit the office twice.
+    // blip reuses it and cannot charge your Wallet twice.
     let draftRef = draftRefs.current.get(key);
     if (!draftRef) {
       draftRef = (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/-/g, "").slice(0, 32);
@@ -77,7 +77,7 @@ export function CixyChat({
           title,
           body: content,
           save,
-          // Stable per draft request: a retry of THIS request reuses it, so the office is
+          // Stable per draft request: a retry of THIS request reuses it, so your Wallet is
           // debited once. The server dedupes on (brokerage_id, ref).
           ref: draftRef,
           ...(officeId ? { brokerageId: officeId } : {}),

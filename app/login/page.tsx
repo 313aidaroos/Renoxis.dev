@@ -1,5 +1,6 @@
 "use client";
 
+import { safeLocalRedirect } from "@/lib/apixis-redirect";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -13,7 +14,7 @@ function LoginContent() {
   const [message, setMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/";
+  const next = safeLocalRedirect(searchParams.get("next"));
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();

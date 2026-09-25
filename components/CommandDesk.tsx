@@ -637,12 +637,19 @@ export default function CommandDesk({
   // One attemptId per click, kept until that attempt settles. A network retry of the same click
   // reuses it (Wallet dedupes — never charged twice); a fresh click gets a fresh one.
   const attemptRef = useRef<{ intent: string; id: string } | null>(null);
+  const redeemInFlight = useRef(false);
   const handleRedeem = async (intent: "activate" | "monthly") => {
-    if (busy) return;
+    if (busy || redeemInFlight.current) return;
+    redeemInFlight.current = true;
     setBusy(true);
     setNotice("");
+    const storageKey = `renoxis-seat-attempt:${account}:${intent}`;
     if (!attemptRef.current || attemptRef.current.intent !== intent) {
-      attemptRef.current = { intent, id: (crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/-/g, "").slice(0, 32) };
+      let saved: string | null = null;
+      try { saved = sessionStorage.getItem(storageKey); } catch { /* In-memory retries still work. */ }
+      const id = saved && /^[A-Za-z0-9_-]{8,40}$/.test(saved) ? saved : crypto.randomUUID().replace(/-/g, "");
+      attemptRef.current = { intent, id };
+      try { sessionStorage.setItem(storageKey, id); } catch { /* Storage may be disabled. */ }
     }
     try {
       const res = await fetch(`/api/redeem/${intent}`, {
@@ -651,19 +658,23 @@ export default function CommandDesk({
         body: JSON.stringify({ attemptId: attemptRef.current.id }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.status !== 0) attemptRef.current = null; // settled (success, 402, 409, 5xx) → next click is a new attempt
+      if (data.retrySameAttempt === false || (res.status < 500 && data.retrySameAttempt !== true)) {
+        attemptRef.current = null;
+        try { sessionStorage.removeItem(storageKey); } catch { /* Storage may be disabled. */ }
+      }
 
       if (!res.ok) {
         // 402 = honest "not enough Ixis". No window.open (pop-up blockers) — the
         // Buy Ixis button is right next to this one.
-        setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Redeem failed. Nothing was charged."));
+        setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Payment status is uncertain. Retry the same attempt to confirm it."));
         return;
       }
       setNotice(intent === "activate" ? "Activated! Reloading your workspace..." : "Seat renewed for 30 days. Reloading...");
       window.location.reload();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Redeem failed. Nothing was charged.");
+      setNotice(error instanceof Error ? error.message : "Payment status is uncertain. Retry the same attempt to confirm it.");
     } finally {
+      redeemInFlight.current = false;
       setBusy(false);
     }
   };

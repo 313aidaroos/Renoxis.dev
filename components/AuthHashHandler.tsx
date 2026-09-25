@@ -1,4 +1,5 @@
 "use client";
+import { safeLocalRedirect } from "@/lib/apixis-redirect";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -30,7 +31,7 @@ export default function AuthHashHandler({ destination }: { destination: string }
       const { error: setErr } = await supabase.auth.setSession({ access_token, refresh_token });
       window.history.replaceState(null, "", window.location.pathname);
       if (setErr) { router.replace("/auth/error"); return; }
-      router.replace(destination.startsWith("/") ? destination : "/dashboard");
+      router.replace(safeLocalRedirect(destination, "/dashboard"));
       router.refresh();
     })();
   }, [destination, router]);

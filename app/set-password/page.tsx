@@ -1,5 +1,6 @@
 "use client";
 
+import { safeLocalRedirect } from "@/lib/apixis-redirect";
 import { Suspense, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,7 +11,7 @@ function SetPasswordContent() {
   const [message, setMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/";
+  const next = safeLocalRedirect(searchParams.get("next"));
 
   const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -8,7 +8,7 @@ import {
 import { requireServerEntitlement } from "@/lib/renoxis/entitlements";
 import { notReady, officesOf } from "@/lib/renoxis/firm-store";
 import { body, failure, json, session } from "@/lib/renoxis/http";
-import { insufficientMessage } from "@/lib/renoxis/ixis";
+import { chargeFromWallet } from "@/lib/renoxis/wallet-charge";
 import { randomUUID } from "node:crypto";
 
 export async function POST(request: Request) {
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const wrapped = wrapDraftFile(kind, title, draftBody);
     const filename = wrapped.filename + ".txt";
     let cost = 0;
-    let balance: number | null = null;
+    const balance: number | null = null;
     let outboxId: string | null = null;
     let path: string | null = null;
 
@@ -60,67 +60,39 @@ export async function POST(request: Request) {
         .eq("ref", ref)
         .maybeSingle();
       if (!existing) {
-        const debit = await db.rpc("renoxis_debit_ixis", {
-          bid: office.id,
-          sku: kind,
-          ref,
-        });
-        if (notReady(debit.error))
-          return json({ error: "The office ledger is not ready yet." }, 503);
-        if (debit.error)
-          return json({ error: "Could not debit the office." }, 503);
-        if (!debit.data?.ok) {
-          const debitCost = Number(debit.data?.cost || 0);
-          const debitBalance =
-            typeof debit.data?.balance === "number" ? debit.data.balance : null;
-          return json(
-            {
-              error:
-                debit.data?.error === "INSUFFICIENT"
-                  ? insufficientMessage(debitCost, debitBalance)
-                  : debit.data?.error || "Could not debit the office.",
-              cost: debitCost,
-              balance: debitBalance,
-              sent: false,
-              disclaimer: DRAFT_DISCLAIMER,
-            },
-            debit.data?.error === "INSUFFICIENT" ? 402 : 400,
-          );
-        }
-        cost = Number(debit.data.cost || (kind === "email_draft" ? 50 : 100));
-        balance =
-          office.role === "owner" || office.role === "broker"
-            ? typeof debit.data.balance === "number"
-              ? debit.data.balance
-              : null
-            : null;
+        // Paid from the person's one Apixis Wallet balance (no office ledger).
         const subject = wrapped.title.slice(0, 200);
-        const { data: outbox, error } = await db
-          .from("renoxis_outbox")
-          .insert({
-            brokerage_id: office.id,
-            author_id: user.id,
-            kind: kind === "email_draft" ? "email" : "offer",
-            to_email: null,
-            subject,
-            body: wrapped.text,
-            status: "draft",
-            approved: false,
-            provider: "not_configured",
-            ref,
-          })
-          .select("id")
-          .single();
-        if (error)
-          return json(
-            {
-              error:
-                "The office was debited but the draft did not save. Retry with the same reference.",
-              ref,
-              sent: false,
-            },
-            503,
-          );
+        const charge = await chargeFromWallet(
+          user,
+          kind,
+          ref,
+          async () => {
+            const { data, error } = await db
+              .from("renoxis_outbox")
+              .insert({
+                brokerage_id: office.id,
+                author_id: user.id,
+                kind: kind === "email_draft" ? "email" : "offer",
+                to_email: null,
+                subject,
+                body: wrapped.text,
+                status: "draft",
+                approved: false,
+                provider: "not_configured",
+                ref,
+              })
+              .select("id")
+              .single();
+            if (error) throw new Error("The draft did not save. Nothing was charged. Try again.");
+            return data;
+          },
+          async (row) => {
+            await db.from("renoxis_outbox").delete().eq("id", row.id);
+          },
+        );
+        if (!charge.ok) return json({ ...charge.body, sent: false, disclaimer: DRAFT_DISCLAIMER }, charge.status);
+        cost = charge.cost;
+        const outbox = charge.result;
         outboxId = outbox.id;
       } else {
         outboxId = existing.id;

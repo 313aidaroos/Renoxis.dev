@@ -119,7 +119,7 @@ export function TeamDesk({
         <div className="empty">
           <span className="empty-symbol">✧</span>
           <strong>Sign in to open an office</strong>
-          <p>Invites, the firm ledger, and drafts live with your account.</p>
+          <p>Invites and team drafts live with your account. Paid actions use your personal Apixis Wallet.</p>
         </div>
       </Panel>
     );
@@ -342,7 +342,7 @@ export function TeamDesk({
       <Panel title="Office actions">
         <p className="muted">
           Email draft {IXIS_SKU.email_draft} · Offer letter {IXIS_SKU.offer_letter}
-          Ixis, debited from the office, not a personal wallet. Saving a property
+          Ixis, paid from your personal Apixis Wallet. Saving a property
           and tracking a contact are free — Renoxis has no property-data source yet,
           so a “lookup” only saves what you type. Nothing here sends mail or invents comps.
         </p>
@@ -596,8 +596,8 @@ function ActionForm({
         >;
         const warning =
           cost === 0
-            ? `${title}? This does not debit Ixis. Billed to office.`
-            : `${title}? This debits ${cost} Ixis from the office balance.`;
+            ? `${title}? This is free; no Ixis is spent.`
+            : `${title}? This debits ${cost} Ixis from your personal Apixis Wallet.`;
         if (!confirm(warning)) return;
         onSubmit(data);
         form.reset();
@@ -635,7 +635,7 @@ function DraftForm({
         event.preventDefault();
         const form = event.currentTarget;
         const data = new FormData(form);
-        if (!confirm(`${title}? This debits ${cost} Ixis and does not send.`)) return;
+        if (!confirm(`${title}? This debits ${cost} Ixis from your personal Apixis Wallet and does not send.`)) return;
         onSubmit({
           subject: String(data.get("subject") || ""),
           email: String(data.get("email") || ""),

@@ -2,7 +2,7 @@
  * Soft-launch billing for Renoxis.
  * Cash buy stays on Apixis Wallet. No Renoxis Stripe.
  * Activate + monthly seat: 5000 Ixis ($50) each per Awad lock 2026-09-21.
- * Heavy Cixy SKUs remain on the office ledger (see ixis.ts).
+ * Paid Cixy drafts use the person’s shared Apixis Wallet (see wallet-charge.ts).
  * Wallet SKUs locked by hub: renoxis.activate + renoxis.agent.monthly @ 5000
  * (do NOT invent Wallet balances; revise monthly off 30000 — no new seat.monthly key).
  * Wallet catalog SKUs are LIVE (activate + agent.monthly @ 5000).

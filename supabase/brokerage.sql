@@ -1,5 +1,5 @@
 -- Renoxis brokerage v1. Additive. Personal records stay user-scoped.
--- Prices must match lib/renoxis/ixis.ts: lookup 25, track 0, email 50, offer 100, commission 500 bps.
+-- Prices must match lib/renoxis/ixis.ts: lookup 0, track 0, email 50, offer 100, commission 500 bps.
 -- Privileged helpers live in renoxis_private (not an exposed Data API schema).
 
 create schema if not exists renoxis_private;

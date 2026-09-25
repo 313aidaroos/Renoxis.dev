@@ -36,10 +36,11 @@ import {
   type RecordItem,
   workspaceDisplayName,
 } from "@/lib/renoxis/records";
-import { canRollup, seesFirmBalance } from "@/lib/renoxis/access";
+import { canRollup } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
+import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 import {
   activateCopy,
   activateWalletHref,
@@ -190,7 +191,7 @@ const faqs = [
   ],
   [
     "Can Cixy send messages or act on her own?",
-    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Office drafts on the Team board debit the firm balance and wait for Approve. Approve does not send mail.",
+    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Paid drafts on the Team board charge your shared personal Wallet and wait for Approve. Approve does not send mail.",
   ],
   [
     "How do I customize Cixy?",
@@ -198,7 +199,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Email drafts and offer drafts debit the office balance. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
+    "Ixis is the Apixis points unit. Email drafts and offer drafts charge your shared personal Wallet. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
   ],
   [
     "How do I install the app?",
@@ -234,6 +235,7 @@ export default function CommandDesk({
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
+  const walletIxis = useWalletBalance();
   const [loading, setLoading] = useState(!preview);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -635,12 +637,19 @@ export default function CommandDesk({
   // One attemptId per click, kept until that attempt settles. A network retry of the same click
   // reuses it (Wallet dedupes — never charged twice); a fresh click gets a fresh one.
   const attemptRef = useRef<{ intent: string; id: string } | null>(null);
+  const redeemInFlight = useRef(false);
   const handleRedeem = async (intent: "activate" | "monthly") => {
-    if (busy) return;
+    if (busy || redeemInFlight.current) return;
+    redeemInFlight.current = true;
     setBusy(true);
     setNotice("");
+    const storageKey = `renoxis-seat-attempt:${account}:${intent}`;
     if (!attemptRef.current || attemptRef.current.intent !== intent) {
-      attemptRef.current = { intent, id: (crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36)).replace(/-/g, "").slice(0, 32) };
+      let saved: string | null = null;
+      try { saved = sessionStorage.getItem(storageKey); } catch { /* In-memory retries still work. */ }
+      const id = saved && /^[A-Za-z0-9_-]{8,40}$/.test(saved) ? saved : crypto.randomUUID().replace(/-/g, "");
+      attemptRef.current = { intent, id };
+      try { sessionStorage.setItem(storageKey, id); } catch { /* Storage may be disabled. */ }
     }
     try {
       const res = await fetch(`/api/redeem/${intent}`, {
@@ -649,19 +658,23 @@ export default function CommandDesk({
         body: JSON.stringify({ attemptId: attemptRef.current.id }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.status !== 0) attemptRef.current = null; // settled (success, 402, 409, 5xx) → next click is a new attempt
+      if (data.retrySameAttempt === false || (res.status < 500 && data.retrySameAttempt !== true)) {
+        attemptRef.current = null;
+        try { sessionStorage.removeItem(storageKey); } catch { /* Storage may be disabled. */ }
+      }
 
       if (!res.ok) {
         // 402 = honest "not enough Ixis". No window.open (pop-up blockers) — the
         // Buy Ixis button is right next to this one.
-        setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Redeem failed. Nothing was charged."));
+        setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Payment status is uncertain. Retry the same attempt to confirm it."));
         return;
       }
       setNotice(intent === "activate" ? "Activated! Reloading your workspace..." : "Seat renewed for 30 days. Reloading...");
       window.location.reload();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Redeem failed. Nothing was charged.");
+      setNotice(error instanceof Error ? error.message : "Payment status is uncertain. Retry the same attempt to confirm it.");
     } finally {
+      redeemInFlight.current = false;
       setBusy(false);
     }
   };
@@ -1283,7 +1296,7 @@ export default function CommandDesk({
               </header>
               <p>
                 {seat === "signed_inactive"
-                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; heavy Cixy actions still meter the office ledger."
+                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; paid Cixy drafts use your personal Apixis Wallet."
                   : "Monthly seat is 5,000 Ixis ($50/mo) on Apixis Wallet. Your activate is on file; renew to unlock writes and Cixy chat."}
               </p>
               <div className="actions">
@@ -1461,11 +1474,7 @@ export default function CommandDesk({
                 <div className="forecast wallet">
                   <small>✦ Apixis · Ixis</small>
                   <strong>
-                    {firm?.office
-                      ? seesFirmBalance(firm.office.role)
-                        ? `${firm.office.balance ?? 0} Ixis`
-                        : "Billed to office"
-                      : "Cixy Essentials"}
+                    {walletIxis === null ? "Apixis Wallet" : `${walletIxis.toLocaleString()} Ixis`}
                   </strong>
                   <button
                     type="button"
@@ -1978,8 +1987,8 @@ export default function CommandDesk({
                           : "Not activated"}
                   </strong>
                   . Activate $50 (5,000 Ixis) once; Keep running $50/mo
-                  (5,000 Ixis). Heavy Cixy stays metered on the office ledger
-                  (lookup 25 · email 50 · offer 100). Chat basics are in the
+                  (5,000 Ixis). Paid Cixy drafts use your personal Apixis Wallet
+                  (lookup 0 · email 50 · offer 100). Chat basics are in the
                   seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
                 </p>
                 <div className="actions">

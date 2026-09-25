@@ -2,7 +2,8 @@ import { recordVisibility } from "@/lib/renoxis/access";
 import { isUuid } from "@/lib/renoxis/brokerage";
 import { notReady, officesOf } from "@/lib/renoxis/firm-store";
 import { body, failure, json, session } from "@/lib/renoxis/http";
-import { insufficientMessage, isSku, type IxisSku } from "@/lib/renoxis/ixis";
+import { isSku, type IxisSku } from "@/lib/renoxis/ixis";
+import { chargeFromWallet } from "@/lib/renoxis/wallet-charge";
 import { validateRecord } from "@/lib/renoxis/records";
 import { randomUUID } from "node:crypto";
 
@@ -61,60 +62,39 @@ export async function POST(request: Request) {
         return json({
           outbox: existing,
           idempotent: true,
-          billedToOffice: true,
+          billedToOffice: false,
           sent: false,
         });
-      const debit = await db.rpc("renoxis_debit_ixis", {
-        bid: office.id,
+      // Paid from the person's one Apixis Wallet balance (no office ledger).
+      const charge = await chargeFromWallet(
+        user,
         sku,
         ref,
-      });
-      if (notReady(debit.error))
-        return json({ error: "The office ledger is not ready yet." }, 503);
-      if (debit.error) return json({ error: "Could not debit the office." }, 503);
-      if (!debit.data?.ok) {
-        const cost = Number(debit.data?.cost || 0);
-        const balance =
-          typeof debit.data?.balance === "number" ? debit.data.balance : null;
-        return json(
-          {
-            error:
-              debit.data?.error === "INSUFFICIENT"
-                ? insufficientMessage(cost, balance)
-                : debit.data?.error || "Could not debit the office.",
-            cost,
-            balance,
-            billedToOffice: true,
-          },
-          debit.data?.error === "INSUFFICIENT" ? 402 : 400,
-        );
-      }
-      const { data, error } = await db
-        .from("renoxis_outbox")
-        .insert({
-          brokerage_id: office.id,
-          author_id: user.id,
-          kind: sku === "email_draft" ? "email" : "offer",
-          to_email: draft.email || null,
-          subject: draft.subject,
-          body: draft.body,
-          status: "draft",
-          approved: false,
-          provider: "not_configured",
-          ref,
-        })
-        .select("id,kind,subject,status,approved,provider")
-        .single();
-      if (error)
-        return json(
-          {
-            error:
-              "The office was debited but the draft did not save. Retry with the same reference.",
-            ref,
-            billedToOffice: true,
-          },
-          503,
-        );
+        async () => {
+          const { data, error } = await db
+            .from("renoxis_outbox")
+            .insert({
+              brokerage_id: office.id,
+              author_id: user.id,
+              kind: sku === "email_draft" ? "email" : "offer",
+              to_email: draft.email || null,
+              subject: draft.subject,
+              body: draft.body,
+              status: "draft",
+              approved: false,
+              provider: "not_configured",
+              ref,
+            })
+            .select("id,kind,subject,status,approved,provider")
+            .single();
+          if (error) throw new Error("The draft did not save. Nothing was charged. Try again.");
+          return data;
+        },
+        async (outbox) => {
+          await db.from("renoxis_outbox").delete().eq("id", outbox.id);
+        },
+      );
+      if (!charge.ok) return json({ ...charge.body, billedToOffice: false }, charge.status);
       if (sku === "email_draft") {
         const record = validateRecord("draft", {
           title: draft.subject,
@@ -132,11 +112,13 @@ export async function POST(request: Request) {
       }
       return json(
         {
-          outbox: data,
-          billedToOffice: true,
+          outbox: charge.result,
+          billedToOffice: false,
+          paidFromWallet: true,
+          cost: charge.cost,
+          receiptId: charge.receiptId,
           sent: false,
-          balance: office.role === "owner" || office.role === "broker" ? debit.data.balance : null,
-          message: "Draft saved. Nothing was sent.",
+          message: "Draft saved. Paid from your Apixis Wallet. Nothing was sent.",
         },
         201,
       );
@@ -151,32 +133,8 @@ export async function POST(request: Request) {
       .eq("external_ref", ref)
       .maybeSingle();
     if (existing)
-      return json({ record: existing, idempotent: true, billedToOffice: true });
-    const debit = await db.rpc("renoxis_debit_ixis", {
-      bid: office.id,
-      sku,
-      ref,
-    });
-    if (notReady(debit.error))
-      return json({ error: "The office ledger is not ready yet." }, 503);
-    if (debit.error) return json({ error: "Could not debit the office." }, 503);
-    if (!debit.data?.ok) {
-      const cost = Number(debit.data?.cost || 0);
-      const balance =
-        typeof debit.data?.balance === "number" ? debit.data.balance : null;
-      return json(
-        {
-          error:
-            debit.data?.error === "INSUFFICIENT"
-              ? insufficientMessage(cost, balance)
-              : debit.data?.error || "Could not debit the office.",
-          cost,
-          balance,
-          billedToOffice: true,
-        },
-        debit.data?.error === "INSUFFICIENT" ? 402 : 400,
-      );
-    }
+      return json({ record: existing, idempotent: true, billedToOffice: false });
+    // Saving a property or tracking a contact is free: no Wallet charge.
     const { data, error } = await db
       .from("renoxis_records")
       .insert({
@@ -193,21 +151,20 @@ export async function POST(request: Request) {
       return json(
         {
           error:
-            "The office was debited but the record did not save. Retry with the same reference.",
+            "The record did not save. Nothing was charged. Retry with the same reference.",
           ref,
-          billedToOffice: true,
+          billedToOffice: false,
         },
         503,
       );
     return json(
       {
         record: data,
-        billedToOffice: true,
-        balance: office.role === "owner" || office.role === "broker" ? debit.data.balance : null,
+        billedToOffice: false,
         message:
           sku === "property_lookup"
             ? "Saved the property facts you entered. No listing feed or comps were queried."
-            : "Contact saved to your book. Billed to office. No charge.",
+            : "Contact saved to your book. No charge.",
       },
       201,
     );

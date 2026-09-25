@@ -1,45 +1,16 @@
-# Renoxis soft billing gate (launch)
+# Renoxis billing
 
-Pricing lock (Awad 2026-09-21):
+Renoxis uses one personal Apixis Wallet. It does not keep an office balance or run Stripe Checkout.
 
-- **Activate** — $50 = 5,000 Ixis one-time (Apixis Wallet)
-- **Keep running** — $50/mo = 5,000 Ixis/mo (Apixis Wallet)
-- **Heavy Cixy** — office ledger: lookup 25 · email 50 · offer 100 Ixis; chat basics included in the seat
-- **No Renoxis Stripe** — cash buy only on Wallet
+- Activation: 5,000 Ixis ($50), one time, SKU `renoxis.activate`.
+- Monthly access: 5,000 Ixis ($50), SKU `renoxis.agent.monthly`. Each purchase adds 30 days; it is not automatic renewal.
+- Activation and the first month are separate purchases: 10,000 Ixis ($100) to start.
+- Email draft: 50 Ixis, SKU `renoxis.email_draft`. Offer-letter draft: 100 Ixis, SKU `renoxis.offer_letter`.
+- Saving typed property facts and tracking contacts are free. There is no property-data lookup provider.
+- The person choosing a paid action pays from their shared Wallet. Office membership organizes records and drafts; it does not change who pays.
 
-## Locked Wallet SKUs (LIVE — ApixisWallet #5 → main)
+The Wallet catalog is the price authority. Renoxis uses the shared reserve → provision → capture SDK. Server-only entitlements gate paid workspace writes and AI. Browser state cannot grant access. Trusted beta grants remain server environment settings.
 
-| Key | Alias | Amount |
-| --- | --- | --- |
-| `renoxis.activate` | `renoxis-activate` | 5,000 Ixis one-time |
-| `renoxis.agent.monthly` | `renoxis-monthly` | 5,000 Ixis/mo (30k row gone) |
+Buy Ixis opens Wallet `/buy?product=renoxis&return_url=…`. Canonical return origin: `https://renoxis.dev`. Buying Ixis credits the Wallet; activation and monthly access require separate redemption. Returning from checkout alone never unlocks access.
 
-Buy link stays `/buy?product=renoxis&return_url=…`.
-
-Redeem flow: quote → reserve → capture. Idempotency:
-
-- Activate: `renoxis-{userId}-activate`
-- Monthly: `renoxis-{userId}-seat-{YYYY-MM}`
-
-## Soft launch behavior
-
-1. Unsigned users stay in preview (sign-in CTA).
-2. Signed users without activate see Activate + Buy Ixis CTAs; CRM writes and Cixy chat stay gated.
-3. Activated with expired month see Keep running CTA.
-4. The browser cannot grant itself an entitlement. There are no public Confirm/self-unlock buttons and no billing entitlement in `localStorage`.
-5. **Catalog is live** — do not show “SKU pending.” Entitlements stay **empty until capture** (do not invent balances).
-6. Until Wallet capture persistence lands, a trusted beta user may be granted server-side with `RENOXIS_BETA_GRANT_EMAILS` or `RENOXIS_BETA_GRANT_USER_IDS` (comma-separated; hub-managed). Unlisted signed users remain blocked.
-7. CRM POST/PATCH/DELETE, Cixy chat, and AI listing generation enforce entitlement on the server, not only in the UI.
-
-## Wallet return URLs
-
-- Activate: `https://renoxis.vercel.app/?board=Connections&billing=activate`
-- Renew: `https://renoxis.vercel.app/?board=Connections&billing=renew`
-
-Both must stay on Wallet allowlist (same host as studio return). `APP_URL=https://renoxis.vercel.app` on Renoxis Vercel (hub).
-
-## Hub / Wallet Lead still needed
-
-- Wire Renoxis server redeem (quote → reserve → capture) + entitlement persistence in `serverEntitlement`
-- Set trusted closed-beta grants in server env until capture persistence lands
-- `WALLET_API_KEY` on Renoxis Vercel (via Developer Bot hub only)
+`/api/brokerage/grant` returns 410. Legacy office-ledger tables remain for historical records only and are not used by paid actions. Live email sending is disabled, even for approved drafts.

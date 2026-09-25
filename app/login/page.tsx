@@ -1,5 +1,6 @@
 "use client";
 
+import { safeLocalRedirect } from "@/lib/apixis-redirect";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -13,7 +14,7 @@ function LoginContent() {
   const [message, setMessage] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/";
+  const next = safeLocalRedirect(searchParams.get("next"));
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +69,14 @@ function LoginContent() {
             Real Estate Personal Assistant
           </p>
         </div>
+
+        <a
+          href={`/auth/apixis/start?next=${encodeURIComponent(next)}`}
+          className="block w-full text-center bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        >
+          Sign in with Apixis
+        </a>
+        <p className="text-center text-xs text-zinc-500">One Apixis account for every family site. Or use email below.</p>
 
         <div className="flex border-b border-zinc-300 dark:border-zinc-700">
           <button

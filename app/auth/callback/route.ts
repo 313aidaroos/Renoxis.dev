@@ -1,3 +1,4 @@
+import { safeLocalRedirect } from "@/lib/apixis-redirect";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -5,7 +6,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const requested = searchParams.get("next") ?? "/";
-  const next = requested.startsWith("/") && !requested.startsWith("//") && !requested.includes("\\") ? requested : "/";
+  const next = safeLocalRedirect(requested);
 
   if (code) {
     const supabase = await createClient();

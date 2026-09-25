@@ -3,7 +3,9 @@ import { test } from "node:test";
 
 /**
  * Payment-safety contract of the shared Wallet client, exercised against a fake Wallet:
- *  - capture fails after provision → unprovision runs, then release; caller sees the error
+ *  - capture fails after provision → retried once; the hold is released and ONLY THEN (not charged)
+ *    unprovision runs; caller sees the error
+ *  - capture response lost but the Wallet did capture (release → 409 already_captured) → ok, access kept
  *  - provision fails → release only; unprovision never runs
  *  - same idempotency key twice → Wallet dedupes (one reservation), so a retried click cannot double-charge
  */
@@ -13,7 +15,7 @@ process.env.APIXIS_WALLET_API_URL = "https://wallet.test";
 const { redeem } = await import("../lib/apixis-wallet.ts");
 
 type Call = { path: string; body?: string };
-function fakeWallet(opts: { captureFails?: boolean } = {}) {
+function fakeWallet(opts: { captureFails?: boolean; alreadyCaptured?: boolean } = {}) {
   const calls: Call[] = [];
   const reservations = new Map<string, string>(); // idempotencyKey → reservationId
   globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
@@ -29,13 +31,16 @@ function fakeWallet(opts: { captureFails?: boolean } = {}) {
       return json(200, { reservationId: id, ixis: 5000, xp: 5000, status: "held" });
     }
     if (path.endsWith("/capture")) return opts.captureFails ? json(500, { error: "ledger unavailable" }) : json(200, { receiptId: "rcpt-1" });
-    if (path.endsWith("/release")) return json(200, { released: true });
+    if (path.endsWith("/release")) {
+      return opts.alreadyCaptured ? json(409, { error: "already captured", code: "already_captured" }) : json(200, { released: true });
+    }
+    if (/\/reservations\/[^/]+$/.test(path)) return json(200, { status: "captured", receiptId: "rcpt-late" });
     return json(404, { error: "nope" });
   }) as typeof fetch;
   return { calls, reservations };
 }
 
-test("capture failure after provision → unprovision then release, error surfaces", async () => {
+test("capture failure after provision → retry, release, then unprovision; error surfaces", async () => {
   const w = fakeWallet({ captureFails: true });
   const events: string[] = [];
   await assert.rejects(
@@ -47,7 +52,20 @@ test("capture failure after provision → unprovision then release, error surfac
   );
   assert.deepEqual(events, ["provision", "unprovision"]);
   const paths = w.calls.map((c) => c.path.split("/").pop());
-  assert.deepEqual(paths, ["reservations", "capture", "release"]);
+  assert.deepEqual(paths, ["reservations", "capture", "capture", "release"]);
+});
+
+test("lost capture response (Wallet already captured) → ok, access kept, no unprovision", async () => {
+  const w = fakeWallet({ captureFails: true, alreadyCaptured: true });
+  const events: string[] = [];
+  const out = await redeem({
+    owner: "a@example.com", productKey: "renoxis.activate", idempotencyKey: "rx-activate-abc-attempt9",
+    provision: async () => { events.push("provision"); return { seat: true }; },
+    unprovision: async () => { events.push("unprovision"); },
+  });
+  assert.equal(out.ok, true);
+  assert.deepEqual(events, ["provision"]);
+  assert.ok(w.calls.some((c) => c.path.endsWith("/release")));
 });
 
 test("provision failure → release only, unprovision never runs", async () => {

@@ -4,11 +4,11 @@ import {
   canApprove,
   canInvite,
   canRollup,
-  seesFirmBalance,
 } from "@/lib/renoxis/access";
 import type { Office } from "@/lib/renoxis/brokerage";
 import { IXIS_SKU } from "@/lib/renoxis/ixis";
 import { WalletLinks } from "./WalletLinks";
+import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 
 export type FirmDesk = {
   ready: boolean;
@@ -98,6 +98,7 @@ export function TeamDesk({
   onOffice: (id: string) => void;
   walletHref: string;
 }) {
+  const walletIxis = useWalletBalance();
   const [pending, setPending] = useState(false);
   const [inviteLink, setInviteLink] = useState("");
   const locked = busy || pending;
@@ -118,7 +119,7 @@ export function TeamDesk({
         <div className="empty">
           <span className="empty-symbol">✧</span>
           <strong>Sign in to open an office</strong>
-          <p>Invites, the firm ledger, and drafts live with your account.</p>
+          <p>Invites and team drafts live with your account. Paid actions use your personal Apixis Wallet.</p>
         </div>
       </Panel>
     );
@@ -176,7 +177,7 @@ export function TeamDesk({
     );
   }
   const office = firm.office;
-  const balance = seesFirmBalance(office.role);
+
   return (
     <div className="two-column">
       <Panel title={office.name}>
@@ -195,11 +196,9 @@ export function TeamDesk({
         )}
         <p className="muted">
           Your role is {office.role}.{" "}
-          {balance
-            ? `Office balance: ${office.balance ?? 0} Ixis. Buy Ixis opens Apixis Wallet. Cash credit stays on Wallet. This office still spends its firm ledger.`
-            : "Billed to office. Card checkout is not on this desk."}
+          {`Your Apixis Wallet: ${walletIxis === null ? "—" : walletIxis.toLocaleString()} Ixis. Drafts are paid from your own Wallet. Buy Ixis opens Apixis Wallet and brings you back here.`}
         </p>
-        {balance && <WalletLinks href={walletHref} />}
+        <WalletLinks href={walletHref} />
         {canRollup(office.role) && (
           <div className="filter-row">
             <button
@@ -215,38 +214,6 @@ export function TeamDesk({
               Office rollup
             </button>
           </div>
-        )}
-        {office.role === "owner" && (
-          <form
-            className="form-grid"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const form = event.currentTarget;
-              const amount = Number(new FormData(form).get("amount"));
-              if (
-                !confirm(
-                  `Record a manual grant of ${amount} Ixis? This is not a purchase.`,
-                )
-              )
-                return;
-              void run(async () => {
-                const data = await call("/api/brokerage/grant", {
-                  method: "POST",
-                  body: JSON.stringify({ brokerageId: office.id, amount }),
-                });
-                form.reset();
-                return data.message;
-              });
-            }}
-          >
-            <label className="field">
-              Manual office grant
-              <input name="amount" type="number" min={1} max={1000000} required />
-            </label>
-            <div className="actions">
-              <button disabled={locked}>Record grant</button>
-            </div>
-          </form>
         )}
         {office.role === "owner" && (
           <form
@@ -375,7 +342,7 @@ export function TeamDesk({
       <Panel title="Office actions">
         <p className="muted">
           Email draft {IXIS_SKU.email_draft} · Offer letter {IXIS_SKU.offer_letter}
-          Ixis, debited from the office, not a personal wallet. Saving a property
+          Ixis, paid from your personal Apixis Wallet. Saving a property
           and tracking a contact are free — Renoxis has no property-data source yet,
           so a “lookup” only saves what you type. Nothing here sends mail or invents comps.
         </p>
@@ -629,8 +596,8 @@ function ActionForm({
         >;
         const warning =
           cost === 0
-            ? `${title}? This does not debit Ixis. Billed to office.`
-            : `${title}? This debits ${cost} Ixis from the office balance.`;
+            ? `${title}? This is free; no Ixis is spent.`
+            : `${title}? This debits ${cost} Ixis from your personal Apixis Wallet.`;
         if (!confirm(warning)) return;
         onSubmit(data);
         form.reset();
@@ -668,7 +635,7 @@ function DraftForm({
         event.preventDefault();
         const form = event.currentTarget;
         const data = new FormData(form);
-        if (!confirm(`${title}? This debits ${cost} Ixis and does not send.`)) return;
+        if (!confirm(`${title}? This debits ${cost} Ixis from your personal Apixis Wallet and does not send.`)) return;
         onSubmit({
           subject: String(data.get("subject") || ""),
           email: String(data.get("email") || ""),

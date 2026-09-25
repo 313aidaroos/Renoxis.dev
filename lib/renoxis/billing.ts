@@ -54,7 +54,7 @@ export function isActivated(e: Entitlement) {
 
 export function isSeatCurrent(e: Entitlement, now = Date.now()) {
   if (e.source === "admin_beta") return true;
-  if (e.source !== "wallet_capture" || !e.seatPeriodEnd) return false;
+  if (e.source !== "wallet_capture" || !e.activatedAt || !e.seatPeriodEnd) return false;
   const end = Date.parse(e.seatPeriodEnd);
   return Number.isFinite(end) && end > now;
 }

@@ -45,9 +45,9 @@ export default async function PricingPage() {
             <li>Team offices with owner, broker, agent and assistant roles.</li>
             <li>Your own Google inbox and calendar, read-only, once you connect your account.</li>
           </ul>
-          <h2>What costs extra (office ledger)</h2>
+          <h2>What costs extra (your Apixis Wallet)</h2>
           <ul>
-            <li>Email draft · 50 Ixis. Offer letter draft · 100 Ixis. Debited from the office, not your wallet.</li>
+            <li>Email draft · 50 Ixis. Offer letter draft · 100 Ixis. Paid from your personal Apixis Wallet.</li>
             <li>Saving a property or tracking a contact is free.</li>
           </ul>
           <h2>What Renoxis does not do yet</h2>

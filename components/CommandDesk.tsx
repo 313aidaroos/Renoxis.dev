@@ -191,7 +191,7 @@ const faqs = [
   ],
   [
     "Can Cixy send messages or act on her own?",
-    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Office drafts on the Team board debit the firm balance and wait for Approve. Approve does not send mail.",
+    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Paid drafts on the Team board charge your shared personal Wallet and wait for Approve. Approve does not send mail.",
   ],
   [
     "How do I customize Cixy?",
@@ -199,7 +199,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Email drafts and offer drafts debit the office balance. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
+    "Ixis is the Apixis points unit. Email drafts and offer drafts charge your shared personal Wallet. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
   ],
   [
     "How do I install the app?",
@@ -1296,7 +1296,7 @@ export default function CommandDesk({
               </header>
               <p>
                 {seat === "signed_inactive"
-                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; heavy Cixy actions still meter the office ledger."
+                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; paid Cixy drafts use your personal Apixis Wallet."
                   : "Monthly seat is 5,000 Ixis ($50/mo) on Apixis Wallet. Your activate is on file; renew to unlock writes and Cixy chat."}
               </p>
               <div className="actions">
@@ -1987,8 +1987,8 @@ export default function CommandDesk({
                           : "Not activated"}
                   </strong>
                   . Activate $50 (5,000 Ixis) once; Keep running $50/mo
-                  (5,000 Ixis). Heavy Cixy stays metered on the office ledger
-                  (lookup 25 · email 50 · offer 100). Chat basics are in the
+                  (5,000 Ixis). Paid Cixy drafts use your personal Apixis Wallet
+                  (lookup 0 · email 50 · offer 100). Chat basics are in the
                   seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
                 </p>
                 <div className="actions">

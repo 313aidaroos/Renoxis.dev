@@ -27,7 +27,7 @@ export function ApixisWorldWelcome({ view, look, enterHref }: { view: WorldAgent
     <section className="desk-tour-entry apixis-agent-card" aria-labelledby="apixis-agent-heading" data-state={view.status}>
       <div className="desk-tour-avatar apixis-agent-guide">
         <CixyAvatar look={look} mood="Wave" />
-        <span className="apixis-agent-guide-tag">Cixy · your guide</span>
+        <span className="apixis-agent-guide-tag"><b>Cixy</b> your guide</span>
       </div>
       <div className="apixis-agent-copy">
         <span className="eyebrow">{ready ? "APIXIS WORLD · YOUR AGENT IS READY" : "APIXIS WORLD · YOUR OWN AGENT"}</span>

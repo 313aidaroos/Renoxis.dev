@@ -17,7 +17,8 @@ export async function GET(request: Request) {
       // New users from magic link won't have a password set
       const hasPassword = data.user.user_metadata?.has_password;
       
-      if (!hasPassword) {
+      // 2026-09-28 Grok: a password-reset link goes straight to /set-password?reset=1.
+      if (!hasPassword && !next.startsWith("/set-password")) {
         // First magic-link sign-in, offer password setup
         const setPasswordUrl = new URL(`${origin}/set-password`);
         setPasswordUrl.searchParams.set("next", next);

@@ -1,19 +1,19 @@
+// 2026-09-28 Grok Developer Bot: Renoxis header + Cixy help, and a way back when a link expired.
 import Link from "next/link";
-export default function AuthError() {
+import { AuthShell } from "@/components/AuthShell";
+
+export default async function AuthError({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const params = await searchParams;
+  const reason = typeof params.reason === "string" ? params.reason : "";
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Authentication Error</h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Something went wrong. Please try again.
-        </p>
-        <Link
-          href="/"
-          className="inline-block mt-8 text-blue-600 hover:text-blue-700"
-        >
-          Return to Home
-        </Link>
-      </div>
-    </div>
+    <AuthShell>
+      <span className="welcome-kicker"><i /> RENOXIS · SIGN-IN</span>
+      <h1>That link didn&apos;t work</h1>
+      <p className="auth-lede">
+        {reason || "Sign-in and reset links work once, on the device that asked for them, for about an hour."} Ask for a fresh one and try again.
+      </p>
+      <p><Link className="primary auth-apixis" href="/login">Back to log in</Link></p>
+      <p className="auth-note"><Link href="/login?mode=forgot">Email me a new password reset link</Link></p>
+    </AuthShell>
   );
 }

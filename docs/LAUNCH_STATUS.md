@@ -1,52 +1,68 @@
-# Renoxis launch brief — September 20, 2026
+# Renoxis launch status — refreshed 2026-09-27
 
-Production URL: https://renoxis.vercel.app
+Production: https://renoxis.dev (canonical; `www` 308s to apex). https://renoxis.vercel.app still serves the same build.
 Repository: https://github.com/313aidaroos/Renoxis.dev
+Production deployment: `ef3712e` (PR #23), which matches `main` HEAD.
+Supabase project: `renoxis` (`loyjbfqpanskcecvpolt`). All 9 repo migrations applied, including `seat_payment_attempts`.
 
-## Delivered
+This file replaces the Sep 20 brief. It records only what was checked on 2026-09-27 or is proven by merged PRs.
 
-- Existing site rebuilt around the approved emerald/white design and central female Cixy office; no duplicate frontend or repository.
-- Cixy smile, wave, sleep, snack and coffee sprite animations. Motion controls, activity cycling, reduced-motion support, and signature-sprite tints for skin, hair, eyes, blazer, and office palette.
-- Cixy Studio catalog: basic controls included at 0 Ixis; premium collections marked Coming soon with null prices for Awad to set. Buy Ixis opens Apixis Wallet. Renoxis does not charge a card or invent a balance.
-- Saved leads, clients, properties, transactions, tasks, appointments, renovation briefs, social drafts, document links and workspace preferences.
-- Zero-state dashboard: pipeline and commission forecast calculated from the signed-in account’s records; no fixed sample revenue or deals.
-- Private file upload, listing, deletion and short-lived download links. Supported PDF/PNG/JPG/text files up to 4 MB.
-- Search, record editing/deletion, follow-up tasks, export, FAQ tab, account actions, responsive mobile menu, PWA manifest/icons and install instructions.
-- Google OAuth/backend wiring, encrypted credential storage, read-only inbox, calendar fetch, reviewed idempotent appointment creation and disconnect. Requires provider configuration below.
-- Existing Cixy chat and listing-copy generation retained. Cixy receives a limited read-only workspace snapshot. AI request limits: 10/minute and 100/day/account, enforced atomically in the database.
-- Native Cixy prompts now include wholesale contract-sale expertise (assignable interest, deal package, buyers list, disposition cadence, assignment fee and title deposit, double close, clean exit) plus brokerage, labeled underwriting estimates, high-level development, and a Section 8/HCV landlord path that defers to the local PHA. Hard limits: no invented comps or legal bans, no steering, and refusals for fraud, straw buyers, hidden required disclosures, fake proof of funds, non-assignable assignments, and universal unlicensed-brokerage coaching. No wallet charge or live outreach was added. See `docs/CIXY_CUSTOMIZATION.md`.
-- App-version handoff: `docs/APP_VERSION.md`. Customization catalog and asset plan: `docs/CIXY_CUSTOMIZATION.md`; live catalog source: `lib/renoxis/customization.ts`.
+## Locks (owner, current)
 
-## Verified before deployment
+- **Payments only via Apixis Wallet.** No Renoxis Stripe, no Renoxis Ixis balance. 100 Ixis = $1, closed-loop credit.
+- **Seat:** `renoxis.activate` 5,000 Ixis one-time, `renoxis.agent.monthly` 5,000 Ixis per 30 days (manual renewal). Server-side entitlement only.
+- **Paid drafts** from the person's own Wallet via redeem: `renoxis.email_draft` 50, `renoxis.offer_letter` 100. Property record and contact tracking are free. The office Ixis ledger was retired in PR #18 (manual grants return 410).
+- **Platform cut:** closed-deal fees record a 5% (500 bps) cut as pending.
+- **Apixis Bank (2026-09-27):** Apixis takes 5% of every transaction in the Apixis universe, including in-world Ixis transfers, trades, purchases and agent-to-agent deals. That fee is applied by Apixis Wallet / Apixis.dev, not by Renoxis code.
+- **Apixis world agent (2026-09-27):** every signup gets their own Apixis world agent through Apixis ID (Wallet SSO). Entry: `https://www.apixis.dev/enter?from=renoxis`. Cixy stays the guide, not the user's avatar. Arrivals start with 200 in-world Ixis on Apixis.dev. Rollout order: Apixis.dev, then Renoxis, then other products.
+- "A Apixis Company" badge on every surface including mobile. Emerald CommandDesk theme is a hard rule.
 
-- Production build and TypeScript compilation passed.
-- ESLint passed; pure validation/totals tests passed (3 tests).
-- Real Supabase tests with two temporary QA accounts: API authentication, create/read/update/delete, second-account isolation, stale-version conflicts and numeric validation.
-- Direct database tests: row-level read isolation, ownership spoof rejection, token-table access denial and atomic AI rate limit.
-- Private file upload, signed download URL, cross-account denial and deletion passed.
-- Browser tests: every main navigation tab, FAQ expansion, sign-in dialog, Cixy color save/reload, manual activity choice, authenticated lead creation and reload, mobile navigation, no horizontal overflow at 390px and no browser page errors.
-- Desktop and mobile screenshots inspected.
-- Fixed a same-origin save rejection discovered during actual browser testing.
+## Done (live on production)
 
-## Requires owner/provider setup
+| Item | How it was verified |
+|---|---|
+| Prod build equals main (`ef3712e`) | Vercel production deployment list, 2026-09-27 |
+| `/`, `/login`, `/privacy`, `/terms`, `/pricing` return 200 on renoxis.dev | curl, 2026-09-27 |
+| Custom domain renoxis.dev live, www redirects | curl, 2026-09-27 |
+| Sign in with Apixis start route | `/auth/apixis/start` 302s to Wallet `/sso/authorize?client_id=renoxis` with callback `https://renoxis.dev/auth/apixis/callback` |
+| Magic-link login + password tab + `/set-password` | Merged (db9004d); magic-link signed-in smoke passed 2026-09-22 |
+| Server-side seat entitlement, recoverable seat payments without double renewal | PRs #11, #20; migration applied on prod Supabase |
+| Paid drafts via personal Wallet redeem, draft removed if charge fails | PR #18 (tests in repo) |
+| Cixy chat answers when entitled; drafts download / Save to Documents, never sends | Prod smoke 2026-09-22; PRs #13–#15 |
+| Shared Cixy brain pack applied (lookup 0, locks) | PR #19 |
+| Apixis world entry: one-time first-run card + persistent sidebar link to `https://www.apixis.dev/enter?from=renoxis` | PR #23, deployed |
+| Privacy + Terms pages | 200 on prod |
 
-1. Google OAuth credentials and consent/verification for Renoxis, canonical APP_URL, service-role key and 32-byte encryption key in Vercel. See `docs/CIXY_CONNECTIONS.md` and `.env.example`. Code is implemented; real Google authorization/refresh/revocation/calendar writes have not been end-to-end tested without those credentials.
-2. Add API credits or complete billing for the Anthropic account behind production `ANTHROPIC_API_KEY`. A live Cixy request reached the provider but was blocked by insufficient credits/billing. The app now returns a clear 503 explanation; saved workspace features remain available. AI is not yet operational.
-3. Verify Supabase email delivery and redirect allowlist includes `https://renoxis.vercel.app/auth/callback` and any intended custom domain. No test email was sent. Existing auth settings were not changed.
-4. Awad supplies premium Ixis prices and chooses outfit/office/background assets. Buy Ixis opens Apixis Wallet `/buy?product=renoxis` and returns to Cixy Studio. Outfit entitlements and Wallet balance display stay off until a session contract exists. Null prices stay Coming soon.
-5. Outlook, MLS feeds, external CRM sync, email sending, social publishing, renovation image generation and shared cross-company Cixy memory need their provider/API contracts. These are not represented as active features.
+Local checks on `main` (2026-09-27): 60/60 unit tests pass (Node 22), `tsc --noEmit` clean, ESLint 0 errors / 2 warnings, `next build` succeeds.
 
-## Known practical limits
+## Not done
 
-- Signature artwork is one painted sprite sheet. Color controls tint that painting. Hair style does not draw a new cut; layered wardrobe PNGs are still required for a true silhouette change.
-- Appearance preferences save on-device, not across devices. Chat history is session-local.
-- Calendar publishes confirmed events without attendees; conflict checking and automatic email extraction are not implemented.
-- Workspace list/export currently uses the newest 1,000 records and warns if truncated. File listing is capped at 100. Larger workspaces need pagination.
-- PWA is online-first, not an App Store binary. No private offline cache or push notifications.
-- Supabase advisor: server-only connections table intentionally has RLS with no customer policies and no customer grants. Existing leaked-password protection setting is disabled; the UI uses magic-link login.
+1. iPhone Safari pass and mobile badge check on a real device.
+2. Signed-in end-to-end smoke of Sign in with Apixis (Wallet SSO) on production after PR #18/#20.
+3. Real Wallet redeem rehearsal on production for Activate, monthly renewal, email draft and offer letter (the Stripe sandbox browser rehearsal is still pending on the Wallet side).
+4. Apixis world entry verified end to end: signup, then own agent created on Apixis.dev with 200 in-world Ixis.
+5. Invite restriction check for closed beta (who can reach a paid seat without Wallet capture).
+6. Phase B outbound send (Approve-gated outbox). Deferred.
+7. Google OAuth, Outlook, MLS feeds. Deferred.
+8. Seat-payment CI workflow (`docs/ci/seat-payments.yml`) is not active because the GitHub token lacks workflow scope.
 
-## Production verification
+## Bugs found 2026-09-27 (not fixed in this docs PR)
 
-Vercel reported a successful deployment for commit `23d368791a73050dc29c9f4ad09642a69f4ced9d`. The production URL returned the new manifest and passed unauthenticated API denial, authenticated records read and same-origin task create/delete checks. Live desktop/mobile browser navigation, FAQs, customization persistence and no-horizontal-overflow checks also passed with no browser page errors. Production reports database connected and AI configured; Google is not configured and wallet is disabled.
+| Severity | File | Symptom |
+|---|---|---|
+| Medium | `components/WelcomeExperience.tsx`, `app/login/page.tsx`, `app/pricing/page.tsx`, tour pages | "A Apixis Company" badge is absent on the public homepage, login, pricing and tour. It appears only inside the Command Desk and legal pages. Breaks the badge hard rule for signed-out visitors, including on phones. |
+| Low | `lib/renoxis/tour.ts` (wallet stop) | Welcome tour still says "Ixis & office ledger" and "Office actions use the office ledger". The office ledger was retired in PR #18; drafts now charge the person's Wallet. |
+| Low | `components/WelcomeExperience.tsx` | Price box says "Some office draft actions cost additional Ixis". Should say drafts are paid from your Apixis Wallet. |
+| Low | `lib/renoxis/ixis.ts` | `checkBalance` / `insufficientMessage` still describe an office balance; appear unused after PR #18. Dead code with stale copy. |
+| Low | `package.json` | `npm test` uses `--experimental-strip-types`, which fails on Node 20 ("bad option"). Needs Node 22+ or an `engines` field. |
+| Low | Domain setup | Starting Sign in with Apixis on `renoxis.vercel.app` returns the session to `renoxis.dev`. Redirecting the vercel.app host to renoxis.dev would avoid a signed-out surprise. |
+| Trivial | `components/CommandDesk.tsx` | ESLint warnings: unused `loginForm`, `activateHref`. |
 
-A final AI maintenance fix replaces the retired Sonnet 4 model default with Anthropic’s recommended `claude-sonnet-4-6` replacement, bounds chat/context size, and limits workspace context to relevant non-document fields. Source: https://platform.claude.com/docs/en/about-claude/model-deprecations . The follow-up deployment succeeded. A real production AI request confirmed the billing blocker above; no successful AI generation is claimed. Temporary QA accounts, sessions, records and uploaded files were removed after verification.
+## Open PRs
+
+- #1 "Add wholesale contract-sale / assignment dispo playbook" — draft since 2026-09-21, stale. Content is superseded by the shared Cixy brain pack (PR #19). Candidate to close.
+
+## Progress estimate
+
+- Closed-invite beta: about 85%. Remaining: mobile/iPhone pass, Apixis SSO signed-in smoke, invite restriction check, badge on public pages.
+- Public launch: about 60%. Also needs a real Wallet redeem rehearsal, the world-agent flow verified end to end, the stale ledger copy fixed, and a decision on Phase B send.

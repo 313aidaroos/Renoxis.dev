@@ -40,6 +40,7 @@ test("chat prompt covers wholesale contract sales and hard limits", () => {
   assert.match(prompt, /magic-link first/i);
   assert.match(prompt, /neutral professional greeting/i);
   assert.doesNotMatch(prompt, /Greet with "As-salamu alaykum"/);
+  assert.doesNotMatch(prompt, /Muslim AI/i);
   assert.doesNotMatch(prompt, /BANNED PHRASES/);
   assert.doesNotMatch(prompt, /quiet neighborhood/i);
 });

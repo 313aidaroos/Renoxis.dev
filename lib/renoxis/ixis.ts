@@ -28,19 +28,11 @@ export type DebitQuote =
 
 export function quoteDebit(balance: number, sku: IxisSku): DebitQuote {
   if (!Number.isInteger(balance) || balance < 0 || balance > 1_000_000_000)
-    throw new Error("Invalid office balance.");
+    throw new Error("Invalid Ixis balance.");
   const cost = IXIS_SKU[sku];
   if (balance < cost)
     return { ok: false, sku, cost, balance, shortfall: cost - balance };
   return { ok: true, sku, cost, balance, next: balance - cost };
-}
-
-export function insufficientMessage(cost: number, balance: number | null) {
-  const buy =
-    "Buy Ixis opens Apixis Wallet. Cash credit stays there; this office ledger changes only by grant or debit.";
-  if (balance === null)
-    return `The office does not have enough Ixis for this action (${cost}). Billed to office. ${buy}`;
-  return `The office has ${balance} Ixis. This action costs ${cost}. ${buy}`;
 }
 
 /** 500 bps of a closed-deal fee. Pending only: nothing is captured. */

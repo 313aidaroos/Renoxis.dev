@@ -1,6 +1,6 @@
 # Renoxis
 
-Real-estate workspace with Cixy. Live: https://renoxis.vercel.app
+Real-estate workspace with Cixy. Live: https://renoxis.dev
 
 Emerald command desk, account-scoped CRM, appointments, tasks, private documents, commission forecasts, FAQs and an animated/customizable assistant. One shared frontend serves `/` and `/dashboard`.
 

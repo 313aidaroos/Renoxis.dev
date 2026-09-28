@@ -46,6 +46,7 @@ import {
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
+import { WalletPill } from "@/components/WalletPill";
 import {
   activateCopy,
   canUseCixyChat,
@@ -1252,6 +1253,7 @@ export default function CommandDesk({
             />
           </label>
           <div className="top-actions">
+            {!preview && <WalletPill href={walletHref} />}
             <button
               className="primary"
               onClick={() => add(boardKind[board] || "task")}

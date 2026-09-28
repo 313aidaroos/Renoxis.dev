@@ -1,7 +1,7 @@
 /**
  * Send someone from an Ixis product into the Apixis world with their own agent.
- * Copied from Apixis.dev sdk/apixis-world.ts (PR #45). Only change: the origin is www.apixis.dev,
- * because the apex 308-redirects there and we skip that extra hop.
+ * Copied from Apixis.dev sdk/apixis-world.ts (synced 2026-09-28 with Apixis.dev PR #51: 13 clients,
+ * origin www.apixis.dev because the apex 308-redirects there).
  * Browser- and server-safe: no secrets, no network calls. Apixis.dev does the sign-in (Apixis ID)
  * and validates `from` and `next` again on its side, so this helper is a convenience, not a gate.
  *
@@ -26,6 +26,11 @@ export const APIXIS_ENTER_CLIENTS = [
   "lyrixis",
   "recovra",
   "qahwahworld",
+  "launchixis",
+  "deduxis",
+  "geoxis",
+  "contentbot",
+  "nurserytoons",
 ] as const;
 
 export type ApixisEnterClient = (typeof APIXIS_ENTER_CLIENTS)[number];

@@ -43,6 +43,8 @@ import {
   apixisPromptSeenKey,
   shouldShowApixisPrompt,
 } from "@/lib/renoxis/apixis-entry";
+import { ApixisWorldWelcome } from "./ApixisWorldWelcome";
+import type { WorldAgentView } from "@/lib/renoxis/world-agent";
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
@@ -229,12 +231,15 @@ export default function CommandDesk({
   accountControl,
   walletHref = FALLBACK_WALLET_HREF,
   entitlement = emptyEntitlement(),
+  worldAgent,
 }: {
   preview?: boolean;
   account?: string;
   accountControl?: ReactNode;
   walletHref?: string;
   entitlement?: Entitlement;
+  /** Apixis world agent state from the server (lib/renoxis/world-agent.ts). */
+  worldAgent?: WorldAgentView;
 }) {
   const [board, setBoard] = useState<Board>("Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -1305,13 +1310,11 @@ export default function CommandDesk({
             <div><span className="eyebrow">CIXY’S GUIDED TOUR</span><h2 id="desk-tour-heading">Let me show you around.</h2><p>I’ll explain every box, ask about your work, and help you try things out.</p></div>
             <Link className="primary" href="/tour">Take a tour with Cixy →</Link>
           </section>
-          {!preview && apixisPrompt && (
-            <section className="desk-tour-entry apixis-world-entry" aria-labelledby="apixis-world-heading">
-              <div className="apixis-world-mark" aria-hidden="true">✦</div>
-              <div><span className="eyebrow">APIXIS WORLD · YOUR AGENT</span><h2 id="apixis-world-heading">Your own agent is waiting.</h2><p>Your Renoxis account comes with your own agent in the Apixis world, with 200 in-world Ixis to start. Sign in with Apixis ID and make its hair, outfit and colors yours. Cixy stays your guide here.</p></div>
-              <a className="primary" href={RENOXIS_APIXIS_WORLD_URL}>Enter the Apixis world ↗</a>
-              <button className="text-button" onClick={() => setApixisPrompt(false)}>Not now</button>
-            </section>
+          {/* Apixis world: new accounts get their agent created server-side at signup and see the
+              "Your agent is ready" card until they enter or dismiss it; older accounts keep the one-time
+              per-browser invite. Grok Developer Bot, 2026-09-28. */}
+          {!preview && worldAgent && (worldAgent.showWelcome || (apixisPrompt && !worldAgent.dismissed)) && (
+            <ApixisWorldWelcome view={worldAgent} look={look} enterHref={RENOXIS_APIXIS_WORLD_URL} />
           )}
 
           {!preview && seat !== "active" && (

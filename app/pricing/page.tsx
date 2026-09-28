@@ -19,7 +19,7 @@ export default async function PricingPage() {
   return (
     <div className="welcome-shell">
       <header className="welcome-header">
-        <Link className="welcome-brand" href="/"><span className="welcome-monogram">R</span><span>RENOXIS<small>AN APIXIS COMPANY</small></span></Link>
+        <Link className="welcome-brand" href="/"><span className="welcome-monogram">R</span><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
         <nav><Link href="/tour">Tour with Cixy</Link><Link className="primary" href={start}>{signedIn ? "Open dashboard ↗" : "Sign in ↗"}</Link></nav>
       </header>
 
@@ -66,7 +66,7 @@ export default async function PricingPage() {
       </main>
 
       <footer className="welcome-footer">
-        <span>RENOXIS <b>·</b> People. Properties. A brighter tomorrow.</span>
+        <span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span>
         <div><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link></div>
       </footer>
     </div>

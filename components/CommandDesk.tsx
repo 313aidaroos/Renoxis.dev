@@ -48,7 +48,6 @@ import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 import {
   activateCopy,
-  activateWalletHref,
   canUseCixyChat,
   canUseWorkspace,
   emptyEntitlement,
@@ -227,14 +226,12 @@ export default function CommandDesk({
   preview = false,
   account = "Your account",
   accountControl,
-  loginForm,
   walletHref = FALLBACK_WALLET_HREF,
   entitlement = emptyEntitlement(),
 }: {
   preview?: boolean;
   account?: string;
   accountControl?: ReactNode;
-  loginForm?: ReactNode;
   walletHref?: string;
   entitlement?: Entitlement;
 }) {
@@ -253,7 +250,6 @@ export default function CommandDesk({
   const [cixyName, setCixyName] = useState(DEFAULT_CIXY_NAME);
   const [wardrobe, setWardrobe] = useState<string[]>([ESSENTIALS_ID]);
   const [theme, setTheme] = useState<DeskTheme>(DEFAULT_THEME);
-  const activateHref = activateWalletHref();
   const seat = seatStatus(preview, entitlement);
   const workspaceOpen = canUseWorkspace(seat);
   const cixyOpen = canUseCixyChat(seat);

@@ -15,3 +15,13 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Env (Vercel `renoxis`, production + preview): `APIXIS_WORLD_KEY` (server only; Apixis.dev holds only its SHA-256 in `APIXIS_WORLD_KEYS`).
 - Not touched: login/auth pages (login sweep), WalletPill, Stripe/checkout/payments, Supabase schema.
 - Undo: revert this PR's merge commit; optionally delete `APIXIS_WORLD_KEY` (without it the provision call is skipped and the card falls back to the invite, which still creates the agent on entry). Agents already created stay on Apixis.dev (no data is deleted).
+
+## 2026-09-28 (CT) — Grok Developer Bot: login sweep (PR #27, squash 969cd33)
+- Before: /login had no site header, a "Sign in with Apixis" button and no way to reset a forgotten password.
+- What: /login uses the home header/footer (`components/AuthShell.tsx`, `components/auth.css` on top of welcome.css tokens). Heading + primary button "Log in with Apixis ID" (→ /auth/apixis/start). Email link + Password tabs kept (Renoxis Supabase accounts). "Forgot password?" → `resetPasswordForEmail` → /auth/callback → /set-password?reset=1 ("Choose a new password", no Skip, expired link → new link). `/auth/callback` skips the first-password detour for reset links. `/auth/error` restyled with a way back. Copy: 200 Ixis (in-world, Apixis agent).
+- Cixy: `components/CixyHelp.tsx` card (official Combo A avatar `public/cixy/cixy-combo-a-avatar.webp`, answers for Apixis ID / forgot password / email link, "Ask Cixy ↗" → https://apixis.dev/login#ask-cixy). Renoxis's own CixyChat needs a signed-in session, so Renoxis still needs a public Cixy chat hooked up.
+- Home sign-in dialog (WelcomeExperience): "Log in with Apixis ID" button, password link, compact Cixy help.
+- WalletPill: "Link Apixis ID" instead of "Sign in with Apixis" for signed-in, unlinked accounts.
+- Verified live 2026-09-28 ~02:00 CT: reset email from renoxis@apixis.dev, redirect to renoxis.dev/auth/callback allowed in Supabase loyjbfqpanskcecvpolt, new password saved → /dashboard, password login works (desktop + mobile). Test user grok-apixis-1790575604@uberip.com (Renoxis auth user) created for this; not deleted (Awad to decide).
+- Deploy: dpl_4QuAsXHaQxkkk5rD8zJMEvDFUDUA READY. No payments/Stripe/env/DB changes.
+- Undo: `git revert 969cd3314db38d327a1c1dd0f049864cd02c2ec2`.

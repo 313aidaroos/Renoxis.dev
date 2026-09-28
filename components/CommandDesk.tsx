@@ -38,6 +38,11 @@ import {
 } from "@/lib/renoxis/records";
 import { canRollup } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
+import {
+  RENOXIS_APIXIS_WORLD_URL,
+  apixisPromptSeenKey,
+  shouldShowApixisPrompt,
+} from "@/lib/renoxis/apixis-entry";
 import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
@@ -277,6 +282,7 @@ export default function CommandDesk({
   const [editing, setEditing] = useState<RecordItem | null>(null);
   const [formError, setFormError] = useState("");
   const [activeChat, setActiveChat] = useState(false);
+  const [apixisPrompt, setApixisPrompt] = useState(false);
   const editor = useRef<HTMLDialogElement>(null);
   const chatDialog = useRef<HTMLDialogElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -399,6 +405,17 @@ export default function CommandDesk({
         );
       }
     } catch {}
+    // One-time "Enter the Apixis world" prompt per account. Marked seen the first time it shows;
+    // the sidebar link stays for later visits.
+    if (!preview) {
+      try {
+        const seenKey = apixisPromptSeenKey(account);
+        if (shouldShowApixisPrompt(localStorage.getItem(seenKey))) {
+          setApixisPrompt(true);
+          localStorage.setItem(seenKey, new Date().toISOString());
+        }
+      } catch {}
+    }
     if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
     // Firm and record loads are started once. Later office changes call reload directly.
@@ -1174,6 +1191,12 @@ export default function CommandDesk({
               {b === "Overview" ? "Command Desk" : b}
             </button>
           ))}
+          {!preview && (
+            <a className="nav-link" href={RENOXIS_APIXIS_WORLD_URL}>
+              <span aria-hidden="true">✦</span>
+              Apixis World ↗
+            </a>
+          )}
         </nav>
         <div className="sidebar-theme" role="group" aria-label="Desk theme">
           <span className="theme-label">Theme</span>
@@ -1284,6 +1307,14 @@ export default function CommandDesk({
             <div><span className="eyebrow">CIXY’S GUIDED TOUR</span><h2 id="desk-tour-heading">Let me show you around.</h2><p>I’ll explain every box, ask about your work, and help you try things out.</p></div>
             <Link className="primary" href="/tour">Take a tour with Cixy →</Link>
           </section>
+          {!preview && apixisPrompt && (
+            <section className="desk-tour-entry apixis-world-entry" aria-labelledby="apixis-world-heading">
+              <div className="apixis-world-mark" aria-hidden="true">✦</div>
+              <div><span className="eyebrow">APIXIS WORLD · YOUR AGENT</span><h2 id="apixis-world-heading">Your own agent is waiting.</h2><p>Your Renoxis account comes with your own agent in the Apixis world, with 200 in-world Ixis to start. Sign in with Apixis ID and make its hair, outfit and colors yours. Cixy stays your guide here.</p></div>
+              <a className="primary" href={RENOXIS_APIXIS_WORLD_URL}>Enter the Apixis world ↗</a>
+              <button className="text-button" onClick={() => setApixisPrompt(false)}>Not now</button>
+            </section>
+          )}
 
           {!preview && seat !== "active" && (
             <section className="desk-panel billing-gate" id="billing-gate">

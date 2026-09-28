@@ -166,7 +166,8 @@
   flex-direction: column;
   gap: 4px;
 }
-.sidebar nav button {
+.sidebar nav button,
+.sidebar nav a.nav-link {
   border: 0;
   background: transparent;
   color: #d9e7df;
@@ -178,14 +179,16 @@
   padding: 10px 13px;
   font-weight: 500;
 }
-.sidebar nav button span {
+.sidebar nav button span,
+.sidebar nav a.nav-link span {
   width: 19px;
   text-align: center;
   font-size: 20px;
   line-height: 20px;
   color: #cde5d7;
 }
-.sidebar nav button:hover {
+.sidebar nav button:hover,
+.sidebar nav a.nav-link:hover {
   background: #ffffff0d;
 }
 .sidebar nav button.current {
@@ -1587,7 +1590,8 @@
     width: 170px;
     padding: 15px 8px;
   }
-  .sidebar nav button {
+  .sidebar nav button,
+  .sidebar nav a.nav-link {
     padding: 9px 8px;
     font-size: 11px;
     gap: 10px;
@@ -2198,9 +2202,9 @@
 }
 .renoxis[data-theme="red"] .brand svg { color: #fca5a5; }
 .renoxis[data-theme="red"] .brand small { color: #fecaca; }
-.renoxis[data-theme="red"] .sidebar nav button { color: #fee2e2; }
-.renoxis[data-theme="red"] .sidebar nav button span { color: #fecaca; }
-.renoxis[data-theme="red"] .sidebar nav button:hover { background: #ffffff14; }
+.renoxis[data-theme="red"] .sidebar nav button, .renoxis[data-theme="red"] .sidebar nav a.nav-link { color: #fee2e2; }
+.renoxis[data-theme="red"] .sidebar nav button span, .renoxis[data-theme="red"] .sidebar nav a.nav-link span { color: #fecaca; }
+.renoxis[data-theme="red"] .sidebar nav button:hover, .renoxis[data-theme="red"] .sidebar nav a.nav-link:hover { background: #ffffff14; }
 .renoxis[data-theme="red"] .sidebar nav button.current {
   background: linear-gradient(90deg, #dc2626, #991b1b);
   color: #fff;
@@ -2250,9 +2254,9 @@
 }
 .renoxis[data-theme="sunset"] .brand svg { color: #fdba74; }
 .renoxis[data-theme="sunset"] .brand small { color: #fed7aa; }
-.renoxis[data-theme="sunset"] .sidebar nav button { color: #ffedd5; }
-.renoxis[data-theme="sunset"] .sidebar nav button span { color: #fed7aa; }
-.renoxis[data-theme="sunset"] .sidebar nav button:hover { background: #ffffff14; }
+.renoxis[data-theme="sunset"] .sidebar nav button, .renoxis[data-theme="sunset"] .sidebar nav a.nav-link { color: #ffedd5; }
+.renoxis[data-theme="sunset"] .sidebar nav button span, .renoxis[data-theme="sunset"] .sidebar nav a.nav-link span { color: #fed7aa; }
+.renoxis[data-theme="sunset"] .sidebar nav button:hover, .renoxis[data-theme="sunset"] .sidebar nav a.nav-link:hover { background: #ffffff14; }
 .renoxis[data-theme="sunset"] .sidebar nav button.current {
   background: linear-gradient(90deg, #f97316, #c2410c);
   color: #fff;
@@ -2302,9 +2306,9 @@
 }
 .renoxis[data-theme="night"] .brand svg { color: #93c5fd; }
 .renoxis[data-theme="night"] .brand small { color: #bfdbfe; }
-.renoxis[data-theme="night"] .sidebar nav button { color: #dbeafe; }
-.renoxis[data-theme="night"] .sidebar nav button span { color: #bfdbfe; }
-.renoxis[data-theme="night"] .sidebar nav button:hover { background: #ffffff14; }
+.renoxis[data-theme="night"] .sidebar nav button, .renoxis[data-theme="night"] .sidebar nav a.nav-link { color: #dbeafe; }
+.renoxis[data-theme="night"] .sidebar nav button span, .renoxis[data-theme="night"] .sidebar nav a.nav-link span { color: #bfdbfe; }
+.renoxis[data-theme="night"] .sidebar nav button:hover, .renoxis[data-theme="night"] .sidebar nav a.nav-link:hover { background: #ffffff14; }
 .renoxis[data-theme="night"] .sidebar nav button.current {
   background: linear-gradient(90deg, #2563eb, #1e40af);
   color: #fff;
@@ -2579,3 +2583,7 @@
 .desk-tour-entry p { font-size:13px;color:var(--muted); }
 .desk-tour-entry>a { flex-shrink:0; }
 @media(max-width:650px) { .desk-tour-entry { flex-wrap:wrap;padding:16px;gap:12px; } .desk-tour-avatar { width:60px; } .desk-tour-entry>a { width:100%;text-align:center; } }
+/* Apixis world entry: first-run prompt reuses .desk-tour-entry; mark stands in for the avatar slot. */
+.apixis-world-mark { width:56px;height:56px;flex-shrink:0;display:grid;place-items:center;border-radius:12px;background:var(--green);color:#fff;font-size:26px; }
+.apixis-world-entry>.text-button { flex-shrink:0; }
+@media(max-width:650px) { .apixis-world-mark { width:44px;height:44px;font-size:20px; } }

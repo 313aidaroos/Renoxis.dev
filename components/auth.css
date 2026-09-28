@@ -1,0 +1,52 @@
+/* 2026-09-28 Grok Developer Bot: Renoxis sign-in pages. Uses the home page tokens (welcome.css). */
+.auth-shell{display:flex;flex-direction:column}
+.auth-shell .welcome-header{width:100%}
+.auth-main{flex:1;width:100%;max-width:1040px;margin:0 auto;padding:56px 5% 64px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:start}
+.auth-main-single{grid-template-columns:minmax(0,520px);justify-content:center}
+.auth-card{background:#f8fbf6;border:1px solid #d0ded3;border-radius:16px;padding:34px;box-shadow:0 20px 60px #123f2b0d}
+.auth-card h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(30px,3.2vw,40px);font-weight:400;line-height:1.15;letter-spacing:-1px;margin:14px 0 10px}
+.auth-card h1:focus{outline:none}
+.renoxis .auth-lede{color:#627773;font-size:14px;line-height:1.7;margin-bottom:22px}
+.renoxis .auth-apixis{display:block;width:100%;text-align:center;padding:13px 18px;font-size:15px;border-radius:9px}
+.auth-divider{display:flex;align-items:center;gap:12px;color:#7b8d88;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin:24px 0 18px}
+.auth-divider:before,.auth-divider:after{content:"";flex:1;height:1px;background:#dce7e1}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#e5efe6;border:1px solid #d4e2d6;border-radius:10px;margin-bottom:18px}
+.renoxis .auth-tabs button{border:0;background:transparent;box-shadow:none;padding:9px 10px;border-radius:7px;color:#476f5b;font-weight:600}
+.renoxis .auth-tabs button[aria-selected=true]{background:#fff;color:#075e4b;box-shadow:0 1px 4px #0b43301a}
+.auth-form{display:grid;gap:8px}
+.auth-form label{font-size:13px;font-weight:700;margin-top:6px}
+.auth-form input{width:100%;padding:11px 13px;border:1px solid #cfdcd3;border-radius:9px;background:#fff;color:#142e2c;font-size:15px}
+.auth-form input:focus{border-color:#075e4b;outline:3px solid #e3b85680;outline-offset:1px}
+.renoxis .auth-form .primary{width:100%;padding:12px 16px;font-size:14px;margin-top:10px}
+.auth-row{display:flex;justify-content:flex-end;margin-top:2px}
+.renoxis .auth-row .text-button,.renoxis .auth-back{font-size:13px}
+.renoxis .auth-note{color:#627773;font-size:12px;line-height:1.6;text-align:center;margin-top:12px}
+.renoxis .auth-apixis+.auth-note{margin-top:10px}
+.renoxis .auth-form .auth-note{margin-top:6px}
+.auth-note strong{color:#075e4b}
+.renoxis .auth-status{border-radius:9px;padding:10px 12px;font-size:13px;line-height:1.5;margin-bottom:6px}
+.auth-status.error{background:#fbeceb;border:1px solid #efc9c5;color:#8a2a22}
+.auth-status.ok{background:#e2f4e9;border:1px solid #bfe0cb;color:#075e4b}
+.renoxis .auth-sent h2{font-family:Georgia,serif;font-weight:400;font-size:26px;margin:12px 0 8px}
+.renoxis .auth-legal{display:flex;justify-content:center;gap:16px;font-size:12px;margin-top:20px}
+.cixy-help{background:#e2ece3;border:1px solid #d0ded3;border-radius:16px;padding:22px}
+.cixy-help-head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.cixy-help-head img{width:72px;height:72px;border-radius:50% 50% 14px 14px;object-fit:cover;border:3px solid #f8fbf6;box-shadow:0 6px 18px #103e2820;flex-shrink:0}
+.renoxis .cixy-help h2{font-family:Georgia,serif;font-weight:400;font-size:22px;letter-spacing:-.3px;margin-top:6px}
+.cixy-help details{border-top:1px solid #cddcd1;padding:10px 0}
+.cixy-help summary{cursor:pointer;font-weight:600;font-size:13px;color:#142e2c;list-style:none}
+.cixy-help summary::-webkit-details-marker{display:none}
+.cixy-help summary:before{content:"+";display:inline-block;width:16px;color:#075e4b;font-weight:700}
+.cixy-help details[open] summary:before{content:"−"}
+.renoxis .cixy-help details p{font-size:13px;line-height:1.65;color:#48615a;margin:6px 0 0 16px}
+.renoxis .cixy-help-ask{display:block;text-align:center;margin-top:12px;padding:10px 14px;border:1px solid #9fc2ad;border-radius:9px;background:#f8fbf6;font-weight:600}
+.renoxis .cixy-help-ask:hover{background:#fff}
+.cixy-help-compact{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-top:18px;border-radius:12px}
+.cixy-help-compact img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #f8fbf6}
+.renoxis .cixy-help-compact p{margin:0;font-size:13px;color:#48615a}
+.cixy-help-compact a{font-weight:700}
+@media(max-width:700px){
+  .auth-main{grid-template-columns:1fr;padding:24px 5% 40px;gap:18px}
+  .auth-card{padding:24px 20px}
+  .welcome-header nav>a.auth-home-link{display:inline-block}
+}

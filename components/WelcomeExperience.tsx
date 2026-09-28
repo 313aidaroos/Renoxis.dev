@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import CixyAvatar, { type Mood } from './CixyAvatar';
 import { LoginForm } from './LoginForm';
+import { CixyHelp } from './CixyHelp';
 import { paintedSignatureLook } from '@/lib/renoxis/customization';
 import { orderedTour } from '@/lib/renoxis/tour';
 import './command-desk.css';
 import './welcome.css';
+import './auth.css';
 
 type Screen = 'welcome' | 'questions' | 'tour' | 'finish';
 const roles = ['Real estate agent','Real estate developer','Brokerage','Just exploring'];
@@ -121,6 +123,6 @@ export default function WelcomeExperience({ startInTour = false, destination = '
       </section>}
     </main>
     <footer className="welcome-footer"><span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span><div><Link href="/pricing">Pricing</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link><button className="text-button" onClick={() => setMotion(!motion)} aria-pressed={!motion}>{motion ? "Pause motion" : "Enable motion"}</button></div></footer>
-    <dialog className="welcome-login" ref={dialog} aria-labelledby="welcome-login-title"><button className="welcome-close" onClick={() => dialog.current?.close()} aria-label="Close sign in">×</button><span className="welcome-kicker">YOUR RENOXIS WORKSPACE</span><h2 id="welcome-login-title">Welcome. Let’s get you settled.</h2><p>We’ll email you a secure sign-in link. New here? The same link starts your account.</p><LoginForm next={next}/><p className="tour-note">Signing in is free. Workspace access requires activation and a monthly seat.</p></dialog>
+    <dialog className="welcome-login" ref={dialog} aria-labelledby="welcome-login-title"><button className="welcome-close" onClick={() => dialog.current?.close()} aria-label="Close sign in">×</button><span className="welcome-kicker">YOUR RENOXIS WORKSPACE</span><h2 id="welcome-login-title">Welcome. Let’s get you settled.</h2><p>Log in with Apixis ID, or we’ll email you a secure sign-in link. New here? The same link starts your account.</p><a className="primary auth-apixis" href={`/auth/apixis/start?next=${encodeURIComponent(next)}`}>Log in with Apixis ID</a><div className="auth-divider">or email me a link</div><LoginForm next={next}/><p className="tour-note">Signing in is free. Workspace access requires activation and a monthly seat. Prefer a password? <Link href={`/login?mode=password&next=${encodeURIComponent(next)}`}>Log in with a password</Link>.</p><CixyHelp compact /></dialog>
   </div>;
 }

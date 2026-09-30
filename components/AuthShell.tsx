@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CixyHelp } from "./CixyHelp";
 import "./command-desk.css";
+import OtherIxisCompanies from "./OtherIxisCompanies";
 import "./welcome.css";
 import "./auth.css";
 
@@ -33,6 +34,7 @@ export function AuthShell({ children, help = true }: { children: React.ReactNode
           <Link href="/terms">Terms</Link>
           <Link href="/tour">Tour with Cixy</Link>
         </div>
+        <OtherIxisCompanies />
       </footer>
     </div>
   );

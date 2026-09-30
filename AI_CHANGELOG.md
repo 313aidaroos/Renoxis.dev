@@ -15,3 +15,7 @@ Entry format:
 ## 2026-09-28 — JunoAI
 - Changed: created this file
 - Why: owner's standing rule — every AI that touches this repo must log its changes here
+
+## 2026-09-29 — Grok Bot
+- Changed: "Other Ixis companies" footer row on /, /tour, /pricing, /login — lib/renoxis/ixis-companies.ts, components/OtherIxisCompanies.tsx, WelcomeExperience.tsx, AuthShell.tsx, app/pricing/page.tsx, components/welcome.css, tests/ixis-companies.test.ts; WORKBOARD.md claim; NOTES/GROK.md entry + catch-up for PRs #24/#25
+- Why: owner (Awad) asked for plain-text links to the other Ixis company sites in the footer

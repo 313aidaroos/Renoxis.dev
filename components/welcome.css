@@ -5,3 +5,6 @@
 .tour-demo{margin:18px 0;padding:18px;border-radius:8px;background:#e7f0e8;border:1px solid #cfdfd2}.tour-demo label{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:600}.tour-demo input:not([type=checkbox]),.tour-demo select{width:100%;min-height:44px;border:1px solid #acc3b3;border-radius:6px;background:#fff;color:#142e2c;padding:9px 12px;margin-bottom:10px}.tour-demo .tour-task-check{flex-direction:row;align-items:center;gap:12px}.tour-demo input[type=checkbox]{width:20px;height:20px;accent-color:#075e4b}.tour-demo p{font-size:13px;margin-top:12px}.tour-demo ul{padding-left:20px;font-size:14px;line-height:2}.tour-box h2:focus{outline:3px solid #e3b856;outline-offset:5px}.welcome-footer>div{flex-wrap:wrap}
 
 .welcome-header nav>.welcome-dashboard-link{display:inline-block}
+/* 2026-09-29 Grok Bot: "Other Ixis companies" footer row. Reuses .welcome-footer tokens (font, color, border, gap). */
+.welcome-footer{flex-wrap:wrap}.welcome-footer-ixis{flex:1 1 100%;display:flex;gap:10px 20px;padding-top:18px;border-top:1px solid #dce7e1}.welcome-footer-ixis>span{flex-shrink:0}.welcome-footer-ixis>div{display:flex;flex-wrap:wrap;gap:8px 22px;min-width:0}
+@media(max-width:700px){.welcome-footer-ixis{flex:none;flex-direction:column}}

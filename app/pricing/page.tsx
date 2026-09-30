@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ACTIVATE_IXIS, MONTHLY_IXIS, ACTIVATE_USD, MONTHLY_USD } from "@/lib/renoxis/billing";
+import OtherIxisCompanies from "@/components/OtherIxisCompanies";
 import "@/components/welcome.css";
 
 export const metadata = { title: "Renoxis pricing — one activation, one monthly seat, paid in Ixis" };
@@ -68,6 +69,7 @@ export default async function PricingPage() {
       <footer className="welcome-footer">
         <span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span>
         <div><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link></div>
+        <OtherIxisCompanies />
       </footer>
     </div>
   );

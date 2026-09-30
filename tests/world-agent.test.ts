@@ -31,8 +31,8 @@ function deps() {
   };
 }
 
-test("sdk list matches the 13 Apixis.dev clients", () => {
-  assert.equal(APIXIS_ENTER_CLIENTS.length, 13);
+test("sdk list matches the 15 Apixis.dev clients", () => {
+  assert.equal(APIXIS_ENTER_CLIENTS.length, 15);
   for (const c of ["renoxis", "halaxis", "contentbot", "nurserytoons"]) assert.ok((APIXIS_ENTER_CLIENTS as readonly string[]).includes(c));
   assert.ok(!(APIXIS_ENTER_CLIENTS as readonly string[]).includes("awadbot"));
 });

@@ -1,7 +1,6 @@
 /**
  * Send someone from an Ixis product into the Apixis world with their own agent.
- * Copied from Apixis.dev sdk/apixis-world.ts (synced 2026-09-28 with Apixis.dev PR #51: 13 clients,
- * origin www.apixis.dev because the apex 308-redirects there).
+ * Draft for copying into ApixisWallet/sdk/ (and from there into each product as lib/apixis-world.ts).
  * Browser- and server-safe: no secrets, no network calls. Apixis.dev does the sign-in (Apixis ID)
  * and validates `from` and `next` again on its side, so this helper is a convenience, not a gate.
  *
@@ -10,10 +9,15 @@
  *     → https://www.apixis.dev/enter?from=socixis&next=%2Fworld.html%23market
  *
  * What happens: /enter → Apixis ID (Wallet sign-in, instant if already signed in) → Apixis.dev
- * creates or reuses the person's citizen + agent (default look, 200 starter Ixis once) → the world,
+ * creates or reuses the person's citizen + agent (default look, 1,000 starter Ixis once) → the world,
  * with a "Back to <product>" link for `from`.
+ *
+ * Products also create the agent automatically at signup with sdk/apixis-world-provision.ts (server only),
+ * then show a "Your agent is ready" card linking to enterApixisUrl(<client>).
+ * Not clients (by design): AwadBot and COMMAND.
  */
 
+// www: the apex 308-redirects to www, so linking www saves a hop (same host Apixis.dev validates).
 export const APIXIS_WORLD_ORIGIN = "https://www.apixis.dev";
 
 /** Products Apixis.dev accepts as `from`. Anything else is ignored there (no back link). */
@@ -31,6 +35,8 @@ export const APIXIS_ENTER_CLIENTS = [
   "geoxis",
   "contentbot",
   "nurserytoons",
+  "ominix",
+  "wattixis",
 ] as const;
 
 export type ApixisEnterClient = (typeof APIXIS_ENTER_CLIENTS)[number];

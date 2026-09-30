@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "test:sql": "node scripts/test-seat-sql.mjs"
+    "test:sql": "node scripts/test-seat-sql.mjs",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.127.0",

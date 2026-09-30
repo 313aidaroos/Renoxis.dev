@@ -35,3 +35,16 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Where: list in `lib/renoxis/ixis-companies.ts` (swap URLs there only); component `components/OtherIxisCompanies.tsx`; used in the `.welcome-footer` of `components/WelcomeExperience.tsx` (/ and /tour), `components/AuthShell.tsx` (/login and other auth pages) and `app/pricing/page.tsx`. Styling: one appended rule in `components/welcome.css` reusing the footer's font, colour (#627773), border (#dce7e1) and gap; wraps on mobile. Test: `tests/ixis-companies.test.ts`. The signed-in Command Desk and legal-page footers are not changed.
 - Who: Grok Bot for Awad (owner approved). PR from `feat/footer-other-ixis`, Vercel preview only — not merged, not deployed to production.
 - Undo: revert the PR (or its merge commit once merged: `git revert <merge sha>`). No env, DB, auth or payment changes.
+
+## 2026-09-29 (CT) — Grok Bot (Renoxis Lead): one Apixis ID = one Wallet = one world agent (verification, no code change)
+- What: checked the hub brief against `main` (115fdd0) and live production. Nothing needed fixing.
+  - Signup → agent: `app/dashboard/page.tsx` → `ensureRenoxisWorldAgent` (`lib/renoxis/world-agent*.ts`) → Apixis.dev `POST /api/agent/provision` with `APIXIS_WORLD_KEY` (on Vercel `renoxis`, production + preview). Stores `app_metadata.apixis_world_agent_at/_id/_name` and skips later calls. Card "Your agent is ready. Enter the Apixis world." shows once; the sidebar "Apixis World ↗" link is always there.
+  - Balance: `WalletPill` in the Command Desk header on every board, from `/api/wallet/balance` (shared Apixis Wallet). The public pages (/, /tour, /pricing) show "Open dashboard ↗" instead of a pill when signed in.
+  - Sign-in: "Log in with Apixis ID" (Wallet SSO). Renoxis has no local balance, wallet or card checkout; the seat uses the Wallet redeem API (`lib/renoxis/wallet-charge.ts`).
+- Live test 2026-09-29 ~20:48–20:53 CT, throwaway grok-renoxis-1790732864@uberip.com (mail.tm inbox): Apixis ID signup from renoxis.dev/login (Wallet magic link, then password) → /dashboard.
+  - Renoxis user de2b8352-9af1-42ae-9b19-841ce4a018bb has apixis_sub f1cda329-… (= Wallet user id) and agent 5620a954-7df1-4cf3-b151-41a99ca5c5fe "Grok Renoxis 1790732864" (agent_at 20:49:09 CT, unchanged after 3 more dashboard loads and a sign-out plus second Apixis ID sign-in).
+  - Apixis.dev (myfclypikkcvfurkbzmj): 1 citizen, 1 agent, 1 starter row of 200, agent balance 200, default Apixis body.
+  - Pill shows "0 Ixis" (linked). Fresh browser → www.apixis.dev/login → Continue with Apixis Wallet → same password → world.html shows Wallet 0 Ixis + Agent · 200 IXIS; `/api/agent` returns the same agent id and name.
+  - Screenshots: /workspace/renoxis-one-account/ on the Grok box.
+- Who: Grok Bot for Awad (hub request). Test account safe to delete (Renoxis auth user, Wallet auth user, Apixis citizen + agent).
+- Undo: nothing to undo (notes only).

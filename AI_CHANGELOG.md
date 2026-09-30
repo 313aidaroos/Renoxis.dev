@@ -19,3 +19,7 @@ Entry format:
 ## 2026-09-29 — Grok Bot
 - Changed: "Other Ixis companies" footer row on /, /tour, /pricing, /login — lib/renoxis/ixis-companies.ts, components/OtherIxisCompanies.tsx, WelcomeExperience.tsx, AuthShell.tsx, app/pricing/page.tsx, components/welcome.css, tests/ixis-companies.test.ts; WORKBOARD.md claim; NOTES/GROK.md entry + catch-up for PRs #24/#25
 - Why: owner (Awad) asked for plain-text links to the other Ixis company sites in the footer (11 sites; Qahwah World and Nursery Toons removed at the owner's request)
+
+## 2026-09-29 — Grok Bot (verification)
+- Changed: WORKBOARD.md claim + NOTES/GROK.md entry only (one account / one agent / one wallet check)
+- Why: hub brief from the owner; live test passed, so no code change was needed

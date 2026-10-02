@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./host.css";
 import type { CSSProperties } from "react";
 import "./companies.css";
@@ -20,7 +21,7 @@ const companies = [
   { name: "Wattixis", description: "Energy commerce connecting producers, buyers, storage operators, and project partners.", kind: "energy", color: "#f4c65b", path: "M27 5 12 27h12l-3 16 17-24H26z" },
 ];
 
-export function CompaniesDirectory({ host }: { host: string }) {
+function CompaniesDirectory({ host }: { host: string }) {
   return (
     <section className="ix-family" data-host={host} aria-labelledby="ix-family-title">
       <div className="ix-family-inner">
@@ -53,5 +54,5 @@ export function CompaniesDirectory({ host }: { host: string }) {
 }
 
 export default function CompaniesPage() {
-  return (<><header className="ix-host-header"><a href="/" aria-label="Renoxis home"><strong>R</strong><span>RENOXIS</span></a><nav aria-label="Main navigation"><a href="/">Home</a><a href="/tour">Tour</a><a href="/companies" aria-current="page">Companies</a></nav></header><CompaniesDirectory host="renoxis" /></>);
+  return (<><header className="ix-host-header"><Link href="/" aria-label="Renoxis home"><strong>R</strong><span>RENOXIS</span></Link><nav aria-label="Main navigation"><Link href="/">Home</Link><Link href="/tour">Tour</Link><Link href="/companies" aria-current="page">Companies</Link></nav></header><CompaniesDirectory host="renoxis" /></>);
 }

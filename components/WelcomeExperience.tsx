@@ -60,7 +60,7 @@ export default function WelcomeExperience({ startInTour = false, destination = '
       <Link href="/" className="welcome-brand" aria-label="Renoxis home"><span className="welcome-monogram">R</span><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
       <nav aria-label="Welcome navigation">
         <Link href="/tour">Explore with Cixy</Link>
-        <Link href="/companies">Companies</Link>
+        <Link href="/companies">Apixis Companies</Link>
         <button className="text-button" onClick={() => setMotion(!motion)} aria-pressed={!motion}>{motion ? 'Pause Cixy motion' : 'Enable Cixy motion'}</button>
         {signedIn ? <Link className="primary welcome-dashboard-link" href={destination}>Open dashboard ↗</Link> : <button className="primary" onClick={signIn}>Sign in <span aria-hidden="true">↗</span></button>}
       </nav>

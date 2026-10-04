@@ -3,6 +3,7 @@ import { redeem, WalletError } from "@/lib/apixis-wallet";
 import { apixisSubOf } from "@/lib/apixis-login";
 import { IXIS_SKU, type IxisSku } from "./ixis";
 import { walletEntryUrl } from "./wallet";
+import { isOwner } from "./owners";
 
 export type WalletCharge<T> =
   | { ok: true; result: T; receiptId: string | null; cost: number }
@@ -19,7 +20,7 @@ export function walletOwner(user: Pick<User, "email" | "app_metadata">): string 
  * confirms the charge did not go through. Free SKUs skip the Wallet entirely.
  */
 export async function chargeFromWallet<T>(
-  user: Pick<User, "email" | "app_metadata">,
+  user: Pick<User, "email" | "app_metadata"> & { email_confirmed_at?: string | null },
   sku: IxisSku,
   ref: string,
   provision: () => Promise<T>,
@@ -27,6 +28,8 @@ export async function chargeFromWallet<T>(
 ): Promise<WalletCharge<T>> {
   const cost = IXIS_SKU[sku];
   if (cost === 0) return { ok: true, result: await provision(), receiptId: null, cost };
+  // Owner bypass (owners.ts): product feature with no Ixis charge; the Wallet is not called.
+  if (isOwner(user)) return { ok: true, result: await provision(), receiptId: null, cost: 0 };
   const owner = walletOwner(user);
   if (!owner) return { ok: false, status: 400, body: { error: "Sign in with Apixis to spend Ixis." } };
   try {

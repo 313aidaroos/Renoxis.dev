@@ -34,3 +34,10 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - For You is the unfiltered mix of all companies (including the agents' daily reports); no source_site filter by default.
 - Who: Grok (for Awad). No DB/env/Wallet changes. No SVGs.
 - Undo: `git revert <merge sha>` of this PR.
+
+## 2026-10-04 — Owner allowlist (Grok)
+- What: lib/renoxis/owners.ts adds isOwner(user), which needs a confirmed email that is alaidaroosawad@gmail.com, awad@apixis.dev or in ADMIN_EMAILS (Vercel env). An owner gets seat access with no seat row: serverEntitlement returns source admin_beta / activatedAt "owner-bypass", so records, chat, listings/generate and cixy/draft open. Paid office actions (email_draft 50, offer_letter 100 Ixis) skip the Wallet for an owner. These are product gates only: no entitlement row, no Wallet call, no ledger entry. His real Wallet seat redemptions still work as normal. Both owner accounts in Supabase loyjbfqpanskcecvpolt were confirmed by a real email step.
+- Not changed: brokerage roles (owner/broker/agent/assistant) are per-office membership enforced in RLS. There is no platform admin page, and no new admin UI was built. He is owner of any office he creates.
+- Where: lib/renoxis/owners.ts, lib/renoxis/entitlements.ts, lib/renoxis/wallet-charge.ts, tests/owners.test.ts. ADMIN_EMAILS was added to the Vercel project renoxis (production + preview).
+- Who: Grok.
+- Undo: revert this PR and remove ADMIN_EMAILS from Vercel.

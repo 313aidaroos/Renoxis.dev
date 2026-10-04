@@ -1,8 +1,9 @@
 import type { Entitlement } from "./billing.ts";
 import { isSeatCurrent } from "./billing.ts";
 import { createAdminClient } from "../supabase/admin.ts";
+import { isOwner } from "./owners.ts";
 
-type UserIdentity = { id: string; email?: string | null };
+type UserIdentity = { id: string; email?: string | null; email_confirmed_at?: string | null };
 
 function csv(name: string) {
   return new Set(
@@ -24,6 +25,8 @@ function csv(name: string) {
  * a customer could have granted themselves a seat. That kind is gone from the CHECK constraint.
  */
 export async function serverEntitlement(user: UserIdentity): Promise<Entitlement> {
+  // Owner bypass (owners.ts): a confirmed owner email has seat access with no seat row.
+  if (isOwner(user)) return { activatedAt: "owner-bypass", seatPeriodEnd: null, source: "admin_beta" };
   try {
     const admin = createAdminClient();
     const { data, error } = await admin

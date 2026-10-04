@@ -41,7 +41,7 @@ export function ApixisWorldWelcome({ view, look, enterHref }: { view: WorldAgent
         </p>
         <ul className="apixis-agent-facts" aria-label="Your agent">
           <li className="apixis-agent-chip"><b aria-hidden="true">✦</b>{ready ? name : "Your agent"}</li>
-          <li>200 in-world Ixis to start</li>
+          <li>1,000 in-world Ixis to start</li>
           <li>Sign in with Apixis ID</li>
         </ul>
       </div>

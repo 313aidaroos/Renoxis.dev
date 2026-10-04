@@ -11,7 +11,7 @@ export function useFeedSession(client: FeedClient) {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const off = client.onSession(setS);
-    client.loadSession().finally(() => setLoading(false));
+    void client.loadSession().finally(() => setLoading(false));
     return off;
   }, [client]);
   return { profile: s.profile, signedIn: Boolean(s.profile), loading };
@@ -38,11 +38,11 @@ export function usePaged<T>(fetchPage: (cursor: string | null) => Promise<Page<T
     } catch (e) { if (g === gen.current) { setError(feedErrorText(e)); if (reset) setItems([]); } }
     finally { if (g === gen.current) setLoading(false); }
   }, []);
-  useEffect(() => { if (enabled) { setItems([]); setCursor(null); setDone(false); load(true, null); } }, [key, enabled, load]);
+  useEffect(() => { if (enabled) { setItems([]); setCursor(null); setDone(false); void load(true, null); } }, [key, enabled, load]);
   return {
     items, setItems, loading, error, hasMore: !done && Boolean(cursor),
-    more: () => { if (!loading && !done && !error && cursor) load(false, cursor); },
-    reload: () => load(true, null),
+    more: () => { if (!loading && !done && !error && cursor) void load(false, cursor); },
+    reload: () => { void load(true, null); },
   };
 }
 
@@ -148,11 +148,12 @@ export function useAutoplay(client: FeedClient, postId: string, enabled: boolean
     const v = ref.current;
     if (!v || !enabled || typeof IntersectionObserver === "undefined") return;
     let started = 0;
-    const io = new IntersectionObserver(([e]) => {
+    const io = new IntersectionObserver((entries) => {
+      const e = entries[0]; if (!e) return;
       if (e.isIntersecting && e.intersectionRatio >= 0.6) { v.play().catch(() => null); started = Date.now(); }
       else {
         v.pause();
-        if (started) { client.view(postId, (Date.now() - started) / 1000, Number.isFinite(v.duration) ? v.duration : undefined); started = 0; }
+        if (started) { void client.view(postId, (Date.now() - started) / 1000, Number.isFinite(v.duration) ? v.duration : undefined); started = 0; }
       }
     }, { threshold: [0, 0.6] });
     io.observe(v);

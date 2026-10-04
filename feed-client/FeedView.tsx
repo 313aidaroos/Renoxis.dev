@@ -185,7 +185,7 @@ function Stream({ ctx, kind, empty, lead }: { ctx: Ctx; kind: FeedKind; empty: s
   const end = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = end.current; if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) feed.more(); }, { rootMargin: "600px" });
+    const io = new IntersectionObserver((entries) => { if (entries[0]?.isIntersecting) feed.more(); }, { rootMargin: "600px" });
     io.observe(el); return () => io.disconnect();
   }, [feed.items.length, feed.hasMore, feed.error]);
   const items = lead ? [lead, ...feed.items.filter((p) => p.id !== lead.id)] : feed.items;
@@ -420,13 +420,13 @@ function ReportBox({ ctx, targetType, id }: { ctx: Ctx; targetType: "post" | "co
   const [details, setDetails] = useState("");
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
   const [err, setErr] = useState<string | null>(null);
-  if (state === "done") return <p role="status">Thanks for telling us. We'll review this {targetType}.</p>;
+  if (state === "done") return <p role="status">Thanks for telling us. We’ll review this {targetType}.</p>;
   return (
     <form className="fx-report" onSubmit={async (e) => {
       e.preventDefault(); setState("busy"); setErr(null);
       try { await ctx.client.report(targetType, id, reason, details); setState("done"); } catch (x) { setErr(feedErrorText(x)); setState("idle"); }
     }}>
-      <label className={cx("fx-field", ctx.skin.label)}>What's wrong?
+      <label className={cx("fx-field", ctx.skin.label)}>What’s wrong?
         <select className={ctx.skin.input} value={reason} onChange={(e) => setReason(e.target.value as ReportReason)}>
           {REASONS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
         </select>
@@ -497,7 +497,7 @@ function Composer({ ctx, onDone }: { ctx: Ctx; onDone: (p: Post) => void }) {
     return (
       <div role="status">
         <p className={ctx.skin.notice || ctx.skin.muted}>{result.status === "held" ? `Your post is waiting for review. ${result.moderation?.reason || ""}` : result.status === "pending" ? "Checking your post…" : "This post can't be shown."}</p>
-        <p className={ctx.skin.muted}>Only you can see it until it's approved. You'll find it under You → My posts.</p>
+        <p className={ctx.skin.muted}>Only you can see it until it’s approved. You’ll find it under You → My posts.</p>
       </div>
     );
   }
@@ -672,7 +672,7 @@ function MeSettings({ ctx, me, siteName }: { ctx: Ctx; me: Profile; siteName: st
   }
   return (
     <div className="fx-settings">
-      <form className={ctx.skin.card} onSubmit={(e) => { e.preventDefault(); save({ ...(form.username !== me.username ? { username: form.username } : {}), display_name: form.display_name, bio: form.bio }); }}>
+      <form className={ctx.skin.card} onSubmit={(e) => { e.preventDefault(); void save({ ...(form.username !== me.username ? { username: form.username } : {}), display_name: form.display_name, bio: form.bio }); }}>
         <h2 className={ctx.skin.title}>Profile</h2>
         <label className={cx("fx-field", ctx.skin.label)}>Username<input className={ctx.skin.input} value={form.username} pattern="[a-z0-9_.]{3,24}" onChange={(e) => setForm({ ...form, username: e.target.value.toLowerCase() })} /></label>
         <label className={cx("fx-field", ctx.skin.label)}>Display name<input className={ctx.skin.input} value={form.display_name} maxLength={60} onChange={(e) => setForm({ ...form, display_name: e.target.value })} /></label>

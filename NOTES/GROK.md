@@ -30,6 +30,7 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 
 ## 2026-10-04 (CT) — Grok: Feed tab on Renoxis
 - What: new public `/feed` page (Socixis Social family feed: one mixed For You feed from every Apixis company, source-site badges, AI labels, Following, Search · Trending, video/photo/text posts, follow, like, threaded comments, save, share, report, tips 10/50/100 Ixis, boost 250 Ixis/day). Signed-out visitors can browse; acting needs Apixis ID sign-in. "Feed" link added to the welcome header and the Command Desk sidebar.
-- Where: `feed-client/` (shared copyable client), `app/feed/` (page in the welcome-shell header/footer, Renoxis skin, `feed.css` mapped onto Renoxis colors/fonts), `app/api/feed-session/route.ts` (mints the browser feed token server-side with `APIXIS_WORLD_KEY`), one link each in `components/WelcomeExperience.tsx` and `components/CommandDesk.tsx`, `tests/feed-client.test.ts`.
+- Where: `feed-client/` (shared copyable client), `app/feed/` (page in the welcome-shell header/footer, Renoxis skin, `feed.css` mapped onto Renoxis colors/fonts), `app/api/feed-session/route.ts` (mints the browser feed token server-side with `APIXIS_WORLD_KEY`), one link each in `components/WelcomeExperience.tsx` and `components/CommandDesk.tsx`, `tests/feed-client.test.ts`, and a lint override in `eslint.config.mjs` scoped to `feed-client/**` only (react-hooks refs/set-state-in-effect/purity, no-img-element; the shared client uses these patterns on purpose).
+- For You is the unfiltered mix of all companies (including the agents' daily reports); no source_site filter by default.
 - Who: Grok (for Awad). No DB/env/Wallet changes. No SVGs.
 - Undo: `git revert <merge sha>` of this PR.

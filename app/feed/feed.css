@@ -41,7 +41,8 @@
 .fx-layout-single { grid-template-columns: minmax(0, 680px); }
 .fx-main { min-width: 0; display: grid; gap: var(--fx-gap, 14px); }
 .fx-aside { display: grid; gap: var(--fx-gap, 14px); position: sticky; top: var(--fx-sticky-top, 16px); }
-.fx-stream { display: grid; gap: var(--fx-gap, 14px); max-height: calc(100dvh - var(--fx-offset, 200px)); min-height: 320px; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; padding: 2px 6px 6px 2px; scrollbar-width: thin; }
+.fx-stream { display: grid; gap: var(--fx-gap, 14px); max-height: calc(100dvh - var(--fx-offset, 200px)); min-height: 320px; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; padding: 2px 6px 6px 2px; scrollbar-width: thin; align-content: start; }
+.fx-stream-empty { min-height: 0; }
 .fx-post { scroll-snap-align: start; display: flex; flex-direction: column; gap: 10px; min-height: min(calc(100dvh - var(--fx-offset, 200px) - 8px), 760px); margin: 0; }
 .fx-post-text { min-height: min(calc(100dvh - var(--fx-offset, 200px) - 8px), 520px); }
 .fx-post-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

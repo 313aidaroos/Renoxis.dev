@@ -191,7 +191,7 @@ function Stream({ ctx, kind, empty, lead }: { ctx: Ctx; kind: FeedKind; empty: s
   const items = lead ? [lead, ...feed.items.filter((p) => p.id !== lead.id)] : feed.items;
   const remove = (id: string) => feed.setItems((xs) => xs.filter((x) => x.id !== id));
   return (
-    <div className="fx-stream">
+    <div className={cx("fx-stream", !items.length && "fx-stream-empty")}>
       {items.map((p) => <PostCard key={p.id} ctx={ctx} initial={p} onRemoved={() => remove(p.id)} />)}
       {feed.error && (
         <div className={cx("fx-state", ctx.skin.card)}>

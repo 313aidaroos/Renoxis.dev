@@ -3,7 +3,7 @@
  *
  * Right after a new account exists (first dashboard load after signup / first Apixis ID sign-in), the
  * server asks Apixis.dev to create that person's own world agent (default Apixis body, customizable
- * hair/outfit/colors, 200 in-world Ixis once). Renoxis records it on the Supabase auth user
+ * hair/outfit/colors, 1000 in-world Ixis once). Renoxis records it on the Supabase auth user
  * (app_metadata.apixis_world_agent_at / _id / _name) so later loads skip the call. Apixis.dev is
  * idempotent by verified email, so a retry never creates a second agent or a second grant.
  * Then the desk shows the one-time "Your agent is ready" card (components/ApixisWorldWelcome.tsx).

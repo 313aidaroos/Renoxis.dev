@@ -23,7 +23,7 @@ function deps() {
     d: {
       provision: async (input: unknown) => {
         calls.push(input);
-        return { ok: true as const, created: true, starterGrantedNow: true, starterIxis: 200, agent: { id: "agent-1", name: "New", status: "active", ixix_balance: 200 }, enterUrl: "https://www.apixis.dev/enter?from=renoxis" };
+        return { ok: true as const, created: true, starterGrantedNow: true, starterIxis: 1000, agent: { id: "agent-1", name: "New", status: "active", ixix_balance: 1000 }, enterUrl: "https://www.apixis.dev/enter?from=renoxis" };
       },
       saveAppMetadata: async (_id: string, m: Record<string, unknown>) => { saved.push(m); },
       now: () => new Date("2026-09-28T08:00:00.000Z"),

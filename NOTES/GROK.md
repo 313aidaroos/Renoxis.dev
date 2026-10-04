@@ -1,5 +1,20 @@
 # NOTES/GROK.md
 
+## 2026-10-04 summary
+
+- **Grok:** shipped the Socixis Social Feed tab and verified-owner seat/payment bypass.
+- **Lead:** made the shared-feed sync, empty-state, and share-link fixes on the feed branch.
+- **Claude:** merged PR #41 (`8a8360e`) around 6:31 PM CT for the full-portfolio notes review; the later Renoxis lock-fix PR #42 (`0b1ff67`) corrected 1,000-Ixis copy and secular Cixy wording, with undo entries below.
+- **Hermes:** no 2026-10-04 commit or merged PR identified in this repository.
+- **Juno:** no 2026-10-04 commit or merged PR identified in this repository.
+
+## Catch-up correction — 2026-10-04 (CT)
+
+Claude activity was present; the earlier “no Claude activity” line was incorrect. Each item below has an undo pointer.
+
+- **Claude/lead audit, 2026-10-04 6:54 PM CT — PR #42, merge `0b1ff6702d744d48e0b53154b8a44626ff38d306`:** corrected Renoxis 1,000-Ixis signup copy, secularized Cixy outside Halaxis, clarified the shared Wallet/Apixis ID lock, and repaired the notes summary/header; no env, DB, Stripe or Wallet change. Undo: `git revert 0b1ff6702d744d48e0b53154b8a44626ff38d306` (or close the preview PR if treated as not approved).
+- **Claude, 2026-10-04 6:31 PM CT — PR #41, merge `8a8360e774c7a34712fd116e131d5985b6f86c92`:** notes: Claude full-portfolio review 2026-10-04 (NOTES/CLAUDE.md, AI_CHANGELOG); added `NOTES/CLAUDE.md` and `AI_CHANGELOG.md` (notes/docs only). Undo: `git revert 8a8360e774c7a34712fd116e131d5985b6f86c92`.
+
 Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry here so Claude, Hermes and Codex stay on the same page.
 
 ## 2026-09-27 (CT) — Apixis Wallet balance pill (PR #26, merge 58dee45)
@@ -47,3 +62,68 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Where: feed client `FeedView.tsx` (tab label) and the shared layout section of the site's feed CSS.
 - Who: Grok Bot (for Awad). No merge, no production deploy.
 - Undo: revert this commit on the PR branch.
+## 2026-10-04 — Owner allowlist (Grok)
+- What: lib/renoxis/owners.ts adds isOwner(user), which needs a confirmed email that is alaidaroosawad@gmail.com, awad@apixis.dev or in ADMIN_EMAILS (Vercel env). An owner gets seat access with no seat row: serverEntitlement returns source admin_beta / activatedAt "owner-bypass", so records, chat, listings/generate and cixy/draft open. Paid office actions (email_draft 50, offer_letter 100 Ixis) skip the Wallet for an owner. These are product gates only: no entitlement row, no Wallet call, no ledger entry. His real Wallet seat redemptions still work as normal. Both owner accounts in Supabase loyjbfqpanskcecvpolt were confirmed by a real email step.
+- Not changed: brokerage roles (owner/broker/agent/assistant) are per-office membership enforced in RLS. There is no platform admin page, and no new admin UI was built. He is owner of any office he creates.
+- Where: lib/renoxis/owners.ts, lib/renoxis/entitlements.ts, lib/renoxis/wallet-charge.ts, tests/owners.test.ts. ADMIN_EMAILS was added to the Vercel project renoxis (production + preview).
+- Who: Grok.
+- Undo: revert this PR and remove ADMIN_EMAILS from Vercel.
+## 2026-10-04 catch-up provenance (CT)
+
+The entries below record the day's observed commits and merged PRs. Existing detailed entries above remain the change descriptions; this section supplies exact provenance and undo pointers.
+
+### Commits
+- `178c662` (2026-10-04T17:39:56-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: share links keep the page hash; sync shared feed-client. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `2c96eb4` (2026-10-04T17:29:29-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: sync latest shared feed-client, scope lint override to feed-client. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `592d655` (2026-10-04T17:33:56-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: no empty gap under an empty feed. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `7b7d1f3` (2026-10-04T17:17:36-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: Socixis Social family feed at /feed (shared feed-client + Renoxis skin). Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `a044c43` (2026-10-04T17:44:12-05:00, 313aidaroos; alaidaroosawad@gmail.com) — Feed tab: Socixis Social family feed at /feed (#38). Undo: undo via the merged PR below: git revert a044c43.
+- `a714939` (2026-10-04T18:14:55-05:00, 313aidaroos; alaidaroosawad@gmail.com) — Owner allowlist: confirmed owner emails skip seat gate and per-use Ixis charges (#40). Undo: undo via the merged PR below: git revert a714939.
+- `bbae5b2` (2026-10-04T18:09:08-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed: text posts size to content in the body font, modals above everything, 'You' tab when signed out. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+
+### Merged PRs
+- PR #40, merge `a714939`, `grok/owner-allowlist` → `main`, merged 2026-10-04 CT by 313aidaroos: Owner allowlist: confirmed owner emails skip seat gate and per-use Ixis charges. Undo: `git revert a714939`.
+- PR #38, merge `a044c43`, `grok/feed-tab` → `main`, merged 2026-10-04 CT by 313aidaroos: Feed tab: Socixis Social family feed at /feed. Undo: `git revert a044c43`.
+
+## 2026-10-04 (CT) — Grok audit: catch-up entries for work that had no note here
+Written by Grok Bot (Renoxis lead) after Claude's full-portfolio pass. These entries record work by other agents that was missing from this file. The dates are CT unless marked otherwise.
+
+### 2026-09-28 — JunoAI: AI change log rule (PR #30, squash 115fdd0) and shared CI (PR #31, closed)
+- What: #30 added `AI_CHANGELOG.md` (every AI must log a dated entry) and linked it from `AGENTS.md` / `CLAUDE.md`. #31 (`junoai/ci`, a shared CI caller plus JunoAI notes) was **closed without merging**. Claude's #34 later replaced it.
+- Where: `AI_CHANGELOG.md`, `AGENTS.md`, `CLAUDE.md`. Branches `junoai/ai-changelog` (merged) and `junoai/ci` (stale, unmerged, 5 commits).
+- Who: JunoAI, merged by 313aidaroos.
+- Undo: `git revert 115fdd0`. `junoai/ci` can be deleted if nobody wants it.
+
+### 2026-09-30 — Claude: re-synced Apixis kits (PR #33, squash 732c65a)
+- What: `lib/apixis-login.ts` was re-copied from the canonical Wallet login kit (`verifyOtp({ type: "email" })`). `lib/apixis-wallet.ts` moved to SDK v3.1 (adds `marketplaceOrder` / `marketplaceSettle`). `lib/apixis-world.ts` and `lib/apixis-world-provision.ts` were re-synced with Apixis.dev (15 clients, comments say 1,000 starter Ixis). `tests/world-agent.test.ts` now expects 15 clients. No UI, theme, SVG, env or DB change.
+- Who: Claude (Claude Code session 012qJHsN…), co-author trailer `Claude <noreply@anthropic.com>`, merged by 313aidaroos.
+- Undo: `git revert 732c65a`. This brings back the old `magiclink` OTP type, which breaks new-address email sign-in, so revert only together with the Wallet kit.
+
+### 2026-09-30 (Oct 1 early, per AI_CHANGELOG) — Claude: CI on push/PR (PR #34, squash 210e42f)
+- What: `.github/workflows/ci.yml` calls `313aidaroos/github-actions/node-ci` on push and PR. `package.json` gained a `typecheck` script.
+- Who: Claude (same session), merged by 313aidaroos.
+- Undo: `git revert 210e42f`.
+
+### 2026-10-02 — Codex: Apixis Companies page (PRs #35 55d4aea, #36 9293338, #37 488674a)
+- What: `/companies` lists the 15 family companies with photo cards and motion. A "Companies" link was added to the welcome header. #37 fixed the Recovra link. **None of these PRs added an `AI_CHANGELOG.md` entry.**
+- Lock issue (not fixed here, needs Awad / hub): `app/companies/page.tsx` draws **15 inline SVG icons**, which breaks the no-SVG rule. Ominix still links to `nexxis-tau.vercel.app`, which Claude's review calls a retired host. It still answers 200, and the new host is not known here.
+- Who: Codex, merged by 313aidaroos.
+- Undo: `git revert 488674a 9293338 55d4aea`.
+
+### 2026-10-02 → 2026-10-04 — production freeze at 488674a
+- What: from #37 (2026-10-02 01:18 PT, 03:18 CT) until #38 deployed (2026-10-04 17:44 CT), production `renoxis.dev` stayed on `488674a`, and nothing merged to main. After the freeze, #38, #40, 2eac753 and #41 each deployed to production. Production is now `8a8360e` (`dpl_2MwXMwqNxs2rcGqTTzasMfcfgMwR`, READY).
+- Undo: to return to the freeze point, promote the old `488674a` production deployment in Vercel (Instant Rollback). Do not force-push main.
+
+### 2026-10-04 — Claude: full-portfolio review notes (PR #41, squash 8a8360e)
+- What: added `NOTES/CLAUDE.md` (this repo's status: live / open / owner / drift) and an `AI_CHANGELOG.md` line. Notes only, with no code, env, DB, theme or SVG change. Its open items are the 200→1,000 copy, the Ominix host, `ANTHROPIC_MODEL` default drift, and missing AI_CHANGELOG entries for #37/#38. The 200→1,000 copy is fixed in the PR below. The rest stay open.
+- Who: Claude (Claude Code session 01AQ6sDz…), merged by 313aidaroos with Awad's approval.
+- Undo: `git revert 8a8360e`.
+
+## 2026-10-04 (CT) — Grok: lock fixes, 1,000 Ixis copy + secular Cixy prompt (branch `grok/renoxis-claude-audit-20261004`, preview only)
+- Before (live on renoxis.dev, checked 2026-10-04 ~19:00 CT): /login said "**200 Ixis** to start", and the signed-in "Your agent is ready" card said "200 in-world Ixis to start". The Cixy system prompt (`lib/renoxis/cixy-prompts.ts`, there since db9004d, 2026-09-22) said Cixy "draws on Arab and Muslim culture", allowed "insha'Allah" / "alhamdulillah", and had a HALAL-CONSCIOUS block (riba / Shariah advisor / gharar). That breaks the no-religious-content-outside-Halaxis lock. The prompt also said sign-in was "magic-link first" and mentioned "office ledger debits".
+- What: the copy now says 1,000 Ixis in `app/login/page.tsx` and `components/ApixisWorldWelcome.tsx`, plus comments in `lib/renoxis/apixis-entry.ts` and `lib/renoxis/world-agent.ts`, docs `docs/APIXIS_FAMILY.md`, `docs/CIXY_BRAIN.md`, `docs/LAUNCH_STATUS.md` (the 09-28 verification keeps 200 as history), and the test mock `tests/world-agent.test.ts`. This reuses the reviewed 2026-09-29 WIP from `chore/signup-grant-1000`. The canonical `lib/apixis-world*.ts` parts were already done by Claude's #33, so they were dropped. In the Cixy prompt I removed the religious identity, phrases and HALAL block and kept one neutral line: "Honest dealing: no deceptive marketing and no hidden material terms". Sign-in is now described as "Log in with Apixis ID" first, and the prompt states there is no Renoxis balance, the Wallet is shared, and 1,000 Ixis is granted on Apixis.dev. `tests/cixy-prompts.test.ts` now guards these points. The grant itself is unchanged: there is still no local grant, and it is given on Apixis.dev.
+- Not touched: theme (red default coat + Emerald/Sunset/Night switcher, as live), SVGs, Stripe, Wallet code, env, DB, layout.
+- Checks: 71/71 node tests, `tsc --noEmit`, `npm run lint` (0 errors), `npm run build`.
+- Who: Grok Bot for Awad. Not merged, not deployed.
+- Undo: close the PR, or `git revert <merge sha>` after a merge.
+

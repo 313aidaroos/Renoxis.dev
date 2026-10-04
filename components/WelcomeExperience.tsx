@@ -61,6 +61,7 @@ export default function WelcomeExperience({ startInTour = false, destination = '
       <nav aria-label="Welcome navigation">
         <Link href="/tour">Explore with Cixy</Link>
         <Link href="/companies">Apixis Companies</Link>
+        <Link href="/feed">Feed</Link>
         <button className="text-button" onClick={() => setMotion(!motion)} aria-pressed={!motion}>{motion ? 'Pause Cixy motion' : 'Enable Cixy motion'}</button>
         {signedIn ? <Link className="primary welcome-dashboard-link" href={destination}>Open dashboard ↗</Link> : <button className="primary" onClick={signIn}>Sign in <span aria-hidden="true">↗</span></button>}
       </nav>

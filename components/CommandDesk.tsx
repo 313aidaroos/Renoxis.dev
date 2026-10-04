@@ -1194,6 +1194,12 @@ export default function CommandDesk({
             </button>
           ))}
           {!preview && (
+            <a className="nav-link" href="/feed">
+              <span aria-hidden="true">▶</span>
+              Feed
+            </a>
+          )}
+          {!preview && (
             <a className="nav-link" href={RENOXIS_APIXIS_WORLD_URL}>
               <span aria-hidden="true">✦</span>
               Apixis World ↗

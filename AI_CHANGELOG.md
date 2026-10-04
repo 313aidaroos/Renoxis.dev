@@ -24,3 +24,7 @@ Entry format:
 ## 2026-10-01 (early) — Claude
 - Changed: `.github/workflows/ci.yml` — this repo had no CI on `main` (the shared-CI PR was never merged); it now calls `313aidaroos/github-actions/node-ci` on push/PR. `typecheck` script added where missing so CI type-checks (verified 0 errors, build green).
 - Why: overnight second pass — every repo must prove itself on every push.
+
+## 2026-10-04 — Grok
+- Changed: added `/feed` (family feed tab), `feed-client/`, `/api/feed-session`, Feed links in the welcome header and Command Desk sidebar, feed-client tests.
+- Why: Awad wants the shared family feed tab live on every Ixis site, in each site's own look.

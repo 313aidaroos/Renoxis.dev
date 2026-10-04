@@ -27,3 +27,9 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Undo: `git revert 969cd3314db38d327a1c1dd0f049864cd02c2ec2`.
 
 - 2026-09-28 (CT) follow-up: PR #28 squash `a77319d`, PR #29 squash `9f3c91e` (guide label polish). Production deploy READY. Live test: grok-agent-renoxis-1790579024@uberip.com (magic-link signup → agent created on first desk load → Enter → Apixis ID signup on the Wallet → world with "Back to Renoxis" → back; 1 agent, 1 starter grant of 200) and grok-agent-renoxis-1790579475@uberip.com ("Not now" hides the card). Both are throwaway test accounts (Renoxis auth user; account 1 also has a Wallet auth user) and safe to delete. Screenshots: /workspace/audit/agent-onboarding/renoxis/ on the Grok box. Undo #28: `git revert a77319d` (and #29: `git revert 9f3c91e`).
+
+## 2026-10-04 (CT) — Grok: Feed tab on Renoxis
+- What: new public `/feed` page (Socixis Social family feed: one mixed For You feed from every Apixis company, source-site badges, AI labels, Following, Search · Trending, video/photo/text posts, follow, like, threaded comments, save, share, report, tips 10/50/100 Ixis, boost 250 Ixis/day). Signed-out visitors can browse; acting needs Apixis ID sign-in. "Feed" link added to the welcome header and the Command Desk sidebar.
+- Where: `feed-client/` (shared copyable client), `app/feed/` (page in the welcome-shell header/footer, Renoxis skin, `feed.css` mapped onto Renoxis colors/fonts), `app/api/feed-session/route.ts` (mints the browser feed token server-side with `APIXIS_WORLD_KEY`), one link each in `components/WelcomeExperience.tsx` and `components/CommandDesk.tsx`, `tests/feed-client.test.ts`.
+- Who: Grok (for Awad). No DB/env/Wallet changes. No SVGs.
+- Undo: `git revert <merge sha>` of this PR.

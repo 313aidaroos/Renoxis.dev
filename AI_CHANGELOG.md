@@ -28,3 +28,7 @@ Entry format:
 ## 2026-10-04 — Grok
 - Changed: added `/feed` (family feed tab), `feed-client/`, `/api/feed-session`, Feed links in the welcome header and Command Desk sidebar, feed-client tests.
 - Why: Awad wants the shared family feed tab live on every Ixis site, in each site's own look.
+
+## 2026-10-04 — Claude (Claude Code, full-portfolio review)
+- Changed: `NOTES/CLAUDE.md` — this repo's slice of the 24-repo review (what is live, what is open, who owns each item, drift found). No code, env, database or deploy changes.
+- Why: Awad asked for every repo to be read twice with a done / to-do / owner status, and for the notes in each repo to be updated. Notes only; Awad approved the merge on 2026-10-04.

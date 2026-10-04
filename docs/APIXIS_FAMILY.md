@@ -31,6 +31,6 @@ Apply `supabase/migrations/20260925024222_seat_payment_attempts.sql` before depl
 
 ## Apixis world + Apixis Bank (2026-09-27)
 
-- **World entry:** every signup gets their own Apixis world agent through Apixis ID. Renoxis links to `https://www.apixis.dev/enter?from=renoxis` (`lib/renoxis/apixis-entry.ts`, PR #23): a one-time first-run card on the Command Desk and a persistent sidebar link. Agent creation and the 200 in-world Ixis happen on Apixis.dev, not here.
+- **World entry:** every signup gets their own Apixis world agent through Apixis ID. Renoxis links to `https://www.apixis.dev/enter?from=renoxis` (`lib/renoxis/apixis-entry.ts`, PR #23): a one-time first-run card on the Command Desk and a persistent sidebar link. Agent creation and the 1,000 in-world Ixis happen on Apixis.dev, not here.
 - **Apixis Bank fee:** 5% (500 bps) on every transaction in the Apixis universe, including agent-to-agent deals. The Wallet / Apixis.dev applies it. Renoxis never computes or collects it; Renoxis's own closed-deal record still logs a 5% platform cut as pending.
 - **Payments only via Apixis Wallet.**

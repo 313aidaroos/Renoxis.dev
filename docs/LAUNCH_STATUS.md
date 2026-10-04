@@ -14,7 +14,7 @@ This file replaces the Sep 20 brief. It records only what was checked on 2026-09
 - **Paid drafts** from the person's own Wallet via redeem: `renoxis.email_draft` 50, `renoxis.offer_letter` 100. Property record and contact tracking are free. The office Ixis ledger was retired in PR #18 (manual grants return 410).
 - **Platform cut:** closed-deal fees record a 5% (500 bps) cut as pending.
 - **Apixis Bank (2026-09-27):** Apixis takes 5% of every transaction in the Apixis universe, including in-world Ixis transfers, trades, purchases and agent-to-agent deals. That fee is applied by Apixis Wallet / Apixis.dev, not by Renoxis code.
-- **Apixis world agent (2026-09-27):** every signup gets their own Apixis world agent through Apixis ID (Wallet SSO). Entry: `https://www.apixis.dev/enter?from=renoxis`. Cixy stays the guide, not the user's avatar. Arrivals start with 200 in-world Ixis on Apixis.dev. Rollout order: Apixis.dev, then Renoxis, then other products.
+- **Apixis world agent (2026-09-27):** every signup gets their own Apixis world agent through Apixis ID (Wallet SSO). Entry: `https://www.apixis.dev/enter?from=renoxis`. Cixy stays the guide, not the user's avatar. Arrivals start with 1,000 in-world Ixis on Apixis.dev. Rollout order: Apixis.dev, then Renoxis, then other products.
 - "A Apixis Company" badge on every surface including mobile. Emerald CommandDesk theme is a hard rule.
 
 ## Done (live on production)
@@ -40,7 +40,7 @@ Local checks on `main` (2026-09-27): 60/60 unit tests pass (Node 22), `tsc --noE
 1. iPhone Safari pass and mobile badge check on a real device.
 2. Signed-in end-to-end smoke of Sign in with Apixis (Wallet SSO) on production after PR #18/#20.
 3. Real Wallet redeem rehearsal on production for Activate, monthly renewal, email draft and offer letter (the Stripe sandbox browser rehearsal is still pending on the Wallet side).
-4. Apixis world entry verified end to end: signup, then own agent created on Apixis.dev with 200 in-world Ixis.
+4. Apixis world entry verified end to end: signup, then own agent created on Apixis.dev with 200 in-world Ixis (the grant at that time; raised to 1,000 for new signups on 2026-09-29).
 5. Invite restriction check for closed beta (who can reach a paid seat without Wallet capture).
 6. Phase B outbound send (Approve-gated outbox). Deferred.
 7. Google OAuth, Outlook, MLS feeds. Deferred.

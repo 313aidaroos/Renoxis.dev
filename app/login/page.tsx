@@ -134,7 +134,7 @@ function LoginContent() {
           <h1>Log in with Apixis ID</h1>
           <p className="auth-lede">One account for Renoxis, Apixis Wallet and every Apixis company.</p>
           <a className="primary auth-apixis" href={apixisHref}>Log in with Apixis ID</a>
-          <p className="auth-note">New here? Your account comes with your own Apixis world agent and <strong>200 Ixis</strong> to start. Ixis has no cash value.</p>
+          <p className="auth-note">New here? Your account comes with your own Apixis world agent and <strong>1,000 Ixis</strong> to start. Ixis has no cash value.</p>
           <div className="auth-divider">or use your Renoxis email</div>
           <div className="auth-tabs" role="tablist" aria-label="How to log in">
             <button type="button" role="tab" id="tab-magic" aria-controls="panel-login" aria-selected={mode === "magic"} onClick={() => go("magic")}>Email link</button>

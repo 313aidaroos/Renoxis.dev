@@ -32,3 +32,8 @@ Entry format:
 ## 2026-10-04 — Claude (Claude Code, full-portfolio review)
 - Changed: `NOTES/CLAUDE.md` — this repo's slice of the 24-repo review (what is live, what is open, who owns each item, drift found). No code, env, database or deploy changes.
 - Why: Awad asked for every repo to be read twice with a done / to-do / owner status, and for the notes in each repo to be updated. Notes only; Awad approved the merge on 2026-10-04.
+
+## 2026-10-04 — Grok (Renoxis lead, lock audit)
+- Changed: 200 → 1,000 starter Ixis copy (`app/login/page.tsx`, `components/ApixisWorldWelcome.tsx`, comments, docs, test mock); the Cixy system prompt is now secular (removed the Muslim-culture identity, insha'Allah/alhamdulillah and the HALAL-CONSCIOUS block), with sign-in described as Apixis ID first and shared-Wallet wording (`lib/renoxis/cixy-prompts.ts`, `docs/CIXY_BRAIN.md`, `tests/cixy-prompts.test.ts`); `NOTES/GROK.md` header repaired, summary corrected, and catch-up entries added for Juno #30/#31, Claude #33/#34/#41, Codex #35–#37 (which had no entry here) and the 10-02 production freeze.
+- Why: Awad's locks (1,000 Ixis grant on Apixis.dev; no religious content outside Halaxis; one Apixis ID; shared Wallet) and his rule that every change is logged.
+

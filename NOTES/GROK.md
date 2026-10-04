@@ -1,13 +1,21 @@
 # NOTES/GROK.md
 
-Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry here so Claude, Hermes and Codex stay on the same page.
-
 ## 2026-10-04 summary
-- **Grok:** shipped the Socixis Social Feed tab (#38) and verified-owner seat/payment bypass (#40).
-- **Lead:** made the shared-feed sync, empty-state, and share-link fixes on the feed branch.
-- **Claude:** merged #41 at 18:31 CT (notes only: `NOTES/CLAUDE.md`, `AI_CHANGELOG.md`). *(Corrected 2026-10-04 CT by Grok: the first version of this summary, commit 2eac753, said Claude had no merged PRs today. That was written before #41 merged.)*
-- **Hermes / Juno:** no commits or merged PRs in this repo on 2026-10-04 CT.
 
+- **Grok:** shipped the Socixis Social Feed tab and verified-owner seat/payment bypass.
+- **Lead:** made the shared-feed sync, empty-state, and share-link fixes on the feed branch.
+- **Claude:** merged PR #41 (`8a8360e`) around 6:31 PM CT for the full-portfolio notes review; the later Renoxis lock-fix PR #42 (`0b1ff67`) corrected 1,000-Ixis copy and secular Cixy wording, with undo entries below.
+- **Hermes:** no 2026-10-04 commit or merged PR identified in this repository.
+- **Juno:** no 2026-10-04 commit or merged PR identified in this repository.
+
+## Catch-up correction — 2026-10-04 (CT)
+
+Claude activity was present; the earlier “no Claude activity” line was incorrect. Each item below has an undo pointer.
+
+- **Claude/lead audit, 2026-10-04 6:54 PM CT — PR #42, merge `0b1ff6702d744d48e0b53154b8a44626ff38d306`:** corrected Renoxis 1,000-Ixis signup copy, secularized Cixy outside Halaxis, clarified the shared Wallet/Apixis ID lock, and repaired the notes summary/header; no env, DB, Stripe or Wallet change. Undo: `git revert 0b1ff6702d744d48e0b53154b8a44626ff38d306` (or close the preview PR if treated as not approved).
+- **Claude, 2026-10-04 6:31 PM CT — PR #41, merge `8a8360e774c7a34712fd116e131d5985b6f86c92`:** notes: Claude full-portfolio review 2026-10-04 (NOTES/CLAUDE.md, AI_CHANGELOG); added `NOTES/CLAUDE.md` and `AI_CHANGELOG.md` (notes/docs only). Undo: `git revert 8a8360e774c7a34712fd116e131d5985b6f86c92`.
+
+Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry here so Claude, Hermes and Codex stay on the same page.
 
 ## 2026-09-27 (CT) — Apixis Wallet balance pill (PR #26, merge 58dee45)
 - What: header pill on every Command Desk board shows the signed-in person's Apixis Wallet Ixis balance (links to Buy Ixis); a small "Sign in with Apixis" link shows when the account has no Apixis ID link. Balance refetches on focus / visibilitychange / pageshow, so it updates on return from Apixis Wallet.

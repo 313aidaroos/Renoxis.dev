@@ -1,6 +1,11 @@
-# NOTES/GROK.md
+## 2026-10-04 summary
+## 2026-10-04 summary
 
-Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry here so Claude, Hermes and Codex stay on the same page.
+- **Grok:** shipped the Socixis Social Feed tab and verified-owner seat/payment bypass.
+- **Lead:** made the shared-feed sync, empty-state, and share-link fixes on the feed branch.
+- **Claude/Hermes/Codex/Juno:** Claude, Hermes, and Juno had no commits or merged PRs in this repo on 2026-10-04 CT.
+
+
 
 ## 2026-09-27 (CT) — Apixis Wallet balance pill (PR #26, merge 58dee45)
 - What: header pill on every Command Desk board shows the signed-in person's Apixis Wallet Ixis balance (links to Buy Ixis); a small "Sign in with Apixis" link shows when the account has no Apixis ID link. Balance refetches on focus / visibilitychange / pageshow, so it updates on return from Apixis Wallet.
@@ -41,3 +46,19 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Where: lib/renoxis/owners.ts, lib/renoxis/entitlements.ts, lib/renoxis/wallet-charge.ts, tests/owners.test.ts. ADMIN_EMAILS was added to the Vercel project renoxis (production + preview).
 - Who: Grok.
 - Undo: revert this PR and remove ADMIN_EMAILS from Vercel.
+## 2026-10-04 catch-up provenance (CT)
+
+The entries below record the day's observed commits and merged PRs. Existing detailed entries above remain the change descriptions; this section supplies exact provenance and undo pointers.
+
+### Commits
+- `178c662` (2026-10-04T17:39:56-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: share links keep the page hash; sync shared feed-client. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `2c96eb4` (2026-10-04T17:29:29-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: sync latest shared feed-client, scope lint override to feed-client. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `592d655` (2026-10-04T17:33:56-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: no empty gap under an empty feed. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `7b7d1f3` (2026-10-04T17:17:36-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed tab: Socixis Social family feed at /feed (shared feed-client + Renoxis skin). Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+- `a044c43` (2026-10-04T17:44:12-05:00, 313aidaroos; alaidaroosawad@gmail.com) — Feed tab: Socixis Social family feed at /feed (#38). Undo: undo via the merged PR below: git revert a044c43.
+- `a714939` (2026-10-04T18:14:55-05:00, 313aidaroos; alaidaroosawad@gmail.com) — Owner allowlist: confirmed owner emails skip seat gate and per-use Ixis charges (#40). Undo: undo via the merged PR below: git revert a714939.
+- `bbae5b2` (2026-10-04T18:09:08-05:00, 313aidaroos; 313aidaroos@users.noreply.github.com) — Feed: text posts size to content in the body font, modals above everything, 'You' tab when signed out. Undo: no main change; close/delete the branch (or revert the branch commit before reuse).
+
+### Merged PRs
+- PR #40, merge `a714939`, `grok/owner-allowlist` → `main`, merged 2026-10-04 CT by 313aidaroos: Owner allowlist: confirmed owner emails skip seat gate and per-use Ixis charges. Undo: `git revert a714939`.
+- PR #38, merge `a044c43`, `grok/feed-tab` → `main`, merged 2026-10-04 CT by 313aidaroos: Feed tab: Socixis Social family feed at /feed. Undo: `git revert a044c43`.

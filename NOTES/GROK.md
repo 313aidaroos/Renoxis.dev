@@ -41,3 +41,9 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Where: `app/feed/feed.css` (shared layout part + removed the Georgia text-post override), `feed-client/` synced from the canonical client. Theme (header, fonts, colors, buttons, footer) unchanged. No SVGs, no DB/env/API change.
 - Who: Grok Bot (for Awad).
 - Undo: close this PR, or `git revert <squash sha>` if it is ever merged.
+
+## 2026-10-04 19:00 (CT) — Grok Bot: Feed phone tab fit (same PR, still NOT merged)
+- What: at 375px the 4th "You" tab was pushed off-screen by "Search · Trending". Under 560px the tab now reads "Search", tabs are tighter, and if a wide site font still can't fit the tabs and "+ Post" on one row, Post drops to its own row instead of covering "You". Desktop is unchanged; the site's colors, fonts and buttons are untouched; no SVGs.
+- Where: feed client `FeedView.tsx` (tab label) and the shared layout section of the site's feed CSS.
+- Who: Grok Bot (for Awad). No merge, no production deploy.
+- Undo: revert this commit on the PR branch.

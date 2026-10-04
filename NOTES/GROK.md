@@ -34,3 +34,10 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - For You is the unfiltered mix of all companies (including the agents' daily reports); no source_site filter by default.
 - Who: Grok (for Awad). No DB/env/Wallet changes. No SVGs.
 - Undo: `git revert <merge sha>` of this PR.
+
+## 2026-10-04 (CT) — Grok Bot: Feed visual fixes on Renoxis.dev (preview only, NOT merged)
+- Why: same lessons as the Socixis fix (Socixis PR #63). Awad put feed changes on hold, so this PR is for preview review only; do not merge until Awad says so.
+- What: (1) Text-only posts use this site's normal body font (not the display/serif headline font), wrap long words and hashtags, and size to their content; no forced 450–520px empty card. Video/photo posts keep the full-height layout. (2) Feed modals and toasts sit above everything (z-index 2147483000, own stacking context); any element marked `data-floating-widget` hides while a feed modal is open. (3) Signed out, the 4th tab says "You" and shows the sign-in card; there is no "Sign in" tab button.
+- Where: `app/feed/feed.css` (shared layout part + removed the Georgia text-post override), `feed-client/` synced from the canonical client. Theme (header, fonts, colors, buttons, footer) unchanged. No SVGs, no DB/env/API change.
+- Who: Grok Bot (for Awad).
+- Undo: close this PR, or `git revert <squash sha>` if it is ever merged.

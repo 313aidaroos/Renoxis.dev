@@ -249,6 +249,8 @@ export function feedErrorText(e: unknown): string {
     case "banned": return "This account can't post or comment right now.";
     case "insufficient_ixis": return "You don't have enough Ixis for that yet.";
     case "wallet_min_order": return "Small tips are coming soon. The 100 Ixis tip works now.";
+    case "apixis_sign_in_required": return typeof e.data.message === "string" && e.data.message ? e.data.message
+      : e.data.side === "seller" ? "This creator needs to sign in with their Apixis ID before they can receive Ixis." : "Sign in with your Apixis ID to send Ixis.";
     case "wallet_unavailable": return "The Apixis Wallet is busy right now. Nothing was charged. Try again soon.";
     case "invalid_media": return "That file can't be posted. Use a photo (JPG, PNG, WebP) or a video (MP4, WebM, MOV).";
     case "not_found": return "That post isn't available anymore.";

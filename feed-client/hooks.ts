@@ -126,7 +126,7 @@ export function usePost(client: FeedClient, initial: Post, onNeedSignIn: () => b
       (p) => ({ ...p, viewer: { ...viewer, follows_author: !viewer.follows_author } }),
       () => (viewer.follows_author ? client.unfollow(post.author.username) : client.follow(post.author.username))),
     share: async () => {
-      const url = `${window.location.origin}${window.location.pathname}?post=${encodeURIComponent(post.id)}`;
+      const url = `${window.location.origin}${window.location.pathname}?post=${encodeURIComponent(post.id)}${window.location.hash}`;
       let shared = false;
       try {
         if (navigator.share) { await navigator.share({ title: post.author.display_name, text: post.caption.slice(0, 120), url }); shared = true; }

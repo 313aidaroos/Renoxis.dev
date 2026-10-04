@@ -55,7 +55,7 @@ export class FeedError extends Error {
 export interface FeedClientOptions {
   /** Feed API base, default https://www.apixis.dev/api/feed ("/api/feed" on apixis.dev itself). */
   base?: string;
-  /** This site's allow-listed client key (socixis, renoxis, ...). Used as the default source_site. */
+  /** This site's allow-listed client key (socixis, renoxis, ...). Stamped as source_site on new posts (feeds are never filtered by it by default). */
   client: string;
   /** Same-origin route on THIS site that mints a feed token for the signed-in person; null = cookie auth (apixis.dev). */
   sessionUrl?: string | null;

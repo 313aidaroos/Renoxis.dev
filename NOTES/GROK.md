@@ -50,6 +50,18 @@ Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry h
 - Who: Grok (for Awad). No DB/env/Wallet changes. No SVGs.
 - Undo: `git revert <merge sha>` of this PR.
 
+## 2026-10-04 (CT) — Grok Bot: Feed visual fixes on Renoxis.dev (preview only, NOT merged)
+- Why: same lessons as the Socixis fix (Socixis PR #63). Awad put feed changes on hold, so this PR is for preview review only; do not merge until Awad says so.
+- What: (1) Text-only posts use this site's normal body font (not the display/serif headline font), wrap long words and hashtags, and size to their content; no forced 450–520px empty card. Video/photo posts keep the full-height layout. (2) Feed modals and toasts sit above everything (z-index 2147483000, own stacking context); any element marked `data-floating-widget` hides while a feed modal is open. (3) Signed out, the 4th tab says "You" and shows the sign-in card; there is no "Sign in" tab button.
+- Where: `app/feed/feed.css` (shared layout part + removed the Georgia text-post override), `feed-client/` synced from the canonical client. Theme (header, fonts, colors, buttons, footer) unchanged. No SVGs, no DB/env/API change.
+- Who: Grok Bot (for Awad).
+- Undo: close this PR, or `git revert <squash sha>` if it is ever merged.
+
+## 2026-10-04 19:00 (CT) — Grok Bot: Feed phone tab fit (same PR, still NOT merged)
+- What: at 375px the 4th "You" tab was pushed off-screen by "Search · Trending". Under 560px the tab now reads "Search", tabs are tighter, and if a wide site font still can't fit the tabs and "+ Post" on one row, Post drops to its own row instead of covering "You". Desktop is unchanged; the site's colors, fonts and buttons are untouched; no SVGs.
+- Where: feed client `FeedView.tsx` (tab label) and the shared layout section of the site's feed CSS.
+- Who: Grok Bot (for Awad). No merge, no production deploy.
+- Undo: revert this commit on the PR branch.
 ## 2026-10-04 — Owner allowlist (Grok)
 - What: lib/renoxis/owners.ts adds isOwner(user), which needs a confirmed email that is alaidaroosawad@gmail.com, awad@apixis.dev or in ADMIN_EMAILS (Vercel env). An owner gets seat access with no seat row: serverEntitlement returns source admin_beta / activatedAt "owner-bypass", so records, chat, listings/generate and cixy/draft open. Paid office actions (email_draft 50, offer_letter 100 Ixis) skip the Wallet for an owner. These are product gates only: no entitlement row, no Wallet call, no ledger entry. His real Wallet seat redemptions still work as normal. Both owner accounts in Supabase loyjbfqpanskcecvpolt were confirmed by a real email step.
 - Not changed: brokerage roles (owner/broker/agent/assistant) are per-office membership enforced in RLS. There is no platform admin page, and no new admin UI was built. He is owner of any office he creates.
@@ -166,3 +178,9 @@ Written by Grok Bot (Renoxis lead) after Claude's full-portfolio pass. These ent
 - Why: Awad's lock — no religious content in Cixy on any product except Halaxis; she declines only genuinely harmful, deceptive or illegal content, never on religious grounds (9/30). Kit = ApixisWallet `sdk/apixis-cixy.*` v2 (3a22244, PR #50) with two hub edits pending canonical: the religion-derived "clean recommendations" rule (gambling) is replaced by "decline only harmful, deceptive or illegal, never on religious grounds", and the character line reads "draws on Arab culture". Ominix links point to https://ominix-app.vercel.app (checked 200 on 2026-10-04 ~6:55 PM CT).
 - Who: Grok (Developer Bot hub), branch `grok/cixy-v2-20261004`, one squash-merged PR.
 - Undo: `git revert <squash sha of this PR>` (sha recorded in the PR), then redeploy prod.
+
+## 2026-10-04 19:13 (CT) — Grok Bot: Feed PR #39 approved for production by Awad
+- Why: Awad said "make it live" at 7:13 PM CT on Oct 4, 2026, approving the squash-merge of this PR and the production deploy that follows from main.
+- What: squash-merge of PR #39 (feed files + Feed nav entry only); Vercel's Git integration deploys main to production.
+- Who: Grok Bot (for Awad).
+- Undo: `git revert <squash sha of PR #39>` on main and push (the squash sha is on the PR page and in /workspace/feed/STATUS.md), or in Vercel promote the previous production deployment (instant rollback) and then revert.

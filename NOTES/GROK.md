@@ -159,3 +159,10 @@ Written by Grok Bot (Renoxis lead) after Claude's full-portfolio pass. These ent
 - (a) `ANTHROPIC_MODEL=claude-sonnet-5` stays. The hub confirms the model already serves Cixy on Apixis.dev and Rawixis. For 1 hour after #43 merges, production logs on `/api/chat` are watched for model errors. Rollback: set `ANTHROPIC_MODEL=claude-sonnet-4-6` on Vercel `renoxis` and redeploy production.
 - (b) Supabase project `loyjbfqpanskcecvpolt` keeps project-level email signups **ON on purpose**. Turning them off can block the first-time Apixis ID user creation (`lib/apixis-login.ts`, admin `createUser`). The app-level control is `shouldCreateUser: false` on every Renoxis email-link call (`lib/renoxis/email-link.ts`). Undo: none needed (no setting was changed). If the decision changes, test Apixis ID first sign-in right after flipping it.
 - Who: Grok Bot, recording the hub's decision for Awad.
+
+## 2026-10-04 (CT) — Grok (Developer Bot hub): Cixy persona v2 sync + Ominix link
+- What: Follow-up to lead PRs #42 and #43 (merged; #43 already added the Arab-culture character line): added 'decline only harmful, deceptive or illegal, never on religious grounds' to CORE IDENTITY; test fixture greeting now 'Hello'. Ominix link on /companies now https://ominix-app.vercel.app (URL string only; no SVG/design change).
+- Files: app/companies/page.tsx lib/renoxis/cixy-prompts.ts tests/chat-turns.test.ts 
+- Why: Awad's lock — no religious content in Cixy on any product except Halaxis; she declines only genuinely harmful, deceptive or illegal content, never on religious grounds (9/30). Kit = ApixisWallet `sdk/apixis-cixy.*` v2 (3a22244, PR #50) with two hub edits pending canonical: the religion-derived "clean recommendations" rule (gambling) is replaced by "decline only harmful, deceptive or illegal, never on religious grounds", and the character line reads "draws on Arab culture". Ominix links point to https://ominix-app.vercel.app (checked 200 on 2026-10-04 ~6:55 PM CT).
+- Who: Grok (Developer Bot hub), branch `grok/cixy-v2-20261004`, one squash-merged PR.
+- Undo: `git revert <squash sha of this PR>` (sha recorded in the PR), then redeploy prod.

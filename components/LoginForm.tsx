@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { emailLinkError, emailLinkOptions } from "@/lib/renoxis/email-link";
 
 export function LoginForm({ next = "/dashboard" }: { next?: string }) {
   const [email, setEmail] = useState("");
@@ -16,8 +17,8 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOtp({ email, options: {emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next.startsWith("/dashboard") && !next.includes("\\") ? next : "/dashboard")}`} });
-      setMessage(error ? error.message : "Check your email for the login link!");
+      const { error } = await supabase.auth.signInWithOtp({ email, options: emailLinkOptions(`${window.location.origin}/auth/callback?next=${encodeURIComponent(next.startsWith("/dashboard") && !next.includes("\\") ? next : "/dashboard")}`) });
+      setMessage(error ? (emailLinkError(error.message) ?? error.message) : "Check your email for the login link!");
     } catch {
       setMessage("Unable to connect. Please check your connection and try again.");
     } finally { setLoading(false); }

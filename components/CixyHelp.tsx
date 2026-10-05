@@ -15,7 +15,7 @@ const FAQ: [string, string][] = [
   ],
   [
     "How does the email link work?",
-    "Enter your email and we send a one-time sign-in link. Open it on this device within an hour. New here? The same link starts your account.",
+    "Enter your email and we send a one-time sign-in link. Open it on this device within an hour. The link is for existing Renoxis email accounts. New here? Choose Log in with Apixis ID to create your account.",
   ],
 ];
 

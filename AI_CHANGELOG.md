@@ -37,3 +37,7 @@ Entry format:
 - Changed: 200 → 1,000 starter Ixis copy (`app/login/page.tsx`, `components/ApixisWorldWelcome.tsx`, comments, docs, test mock); the Cixy system prompt is now secular (removed the Muslim-culture identity, insha'Allah/alhamdulillah and the HALAL-CONSCIOUS block), with sign-in described as Apixis ID first and shared-Wallet wording (`lib/renoxis/cixy-prompts.ts`, `docs/CIXY_BRAIN.md`, `tests/cixy-prompts.test.ts`); `NOTES/GROK.md` header repaired, summary corrected, and catch-up entries added for Juno #30/#31, Claude #33/#34/#41, Codex #35–#37 (which had no entry here) and the 10-02 production freeze.
 - Why: Awad's locks (1,000 Ixis grant on Apixis.dev; no religious content outside Halaxis; one Apixis ID; shared Wallet) and his rule that every change is logged.
 
+## 2026-10-04 — Grok (Renoxis lead, Awad decisions via hub)
+- Changed: the Cixy prompt now says "draws on Arab culture" (nothing religious; tests ban Muslim, insha'Allah, alhamdulillah, halal). Apixis ID is the only signup: the email link uses `shouldCreateUser: false` through `lib/renoxis/email-link.ts`, the /login, home dialog and Cixy help copy is updated, and a test was added. NOTES corrects the #42 attribution and logs the Vercel env changes (`APIXIS_WORLD_KEY` → sensitive, `ANTHROPIC_MODEL` → claude-sonnet-5) and the production redeploy.
+- Why: Awad's decisions after the 2026-10-04 lock audit.
+

@@ -154,3 +154,8 @@ Written by Grok Bot (Renoxis lead) after Claude's full-portfolio pass. These ent
 - Cixy on `claude-sonnet-5`: **not verified end to end.** `/api/chat` returns 402 (no seat) for the test account, and I did not grant one (no DB or Wallet change). The code sends `thinking: {type:"disabled"}` with no sampling parameters, which Anthropic's Sonnet 5 docs list as accepted. The response carries no model header.
 - Runtime logs for the new deployment show no error, warning or fatal lines. Status codes: 200, 302, 307, and one 402 (the test above).
 - Undo: promote `dpl_nUFugR4mxHQmDkV9uowQvyrCt5yL` back in Vercel (same code, older env snapshot).
+
+## 2026-10-04 (CT) — Grok: hub decisions recorded before merging #43
+- (a) `ANTHROPIC_MODEL=claude-sonnet-5` stays. The hub confirms the model already serves Cixy on Apixis.dev and Rawixis. For 1 hour after #43 merges, production logs on `/api/chat` are watched for model errors. Rollback: set `ANTHROPIC_MODEL=claude-sonnet-4-6` on Vercel `renoxis` and redeploy production.
+- (b) Supabase project `loyjbfqpanskcecvpolt` keeps project-level email signups **ON on purpose**. Turning them off can block the first-time Apixis ID user creation (`lib/apixis-login.ts`, admin `createUser`). The app-level control is `shouldCreateUser: false` on every Renoxis email-link call (`lib/renoxis/email-link.ts`). Undo: none needed (no setting was changed). If the decision changes, test Apixis ID first sign-in right after flipping it.
+- Who: Grok Bot, recording the hub's decision for Awad.

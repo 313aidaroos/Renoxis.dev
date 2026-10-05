@@ -12,7 +12,7 @@
 
 Claude activity was present; the earlier “no Claude activity” line was incorrect. Each item below has an undo pointer.
 
-- **Claude/lead audit, 2026-10-04 6:54 PM CT — PR #42, merge `0b1ff6702d744d48e0b53154b8a44626ff38d306`:** corrected Renoxis 1,000-Ixis signup copy, secularized Cixy outside Halaxis, clarified the shared Wallet/Apixis ID lock, and repaired the notes summary/header; no env, DB, Stripe or Wallet change. Undo: `git revert 0b1ff6702d744d48e0b53154b8a44626ff38d306` (or close the preview PR if treated as not approved).
+- **Grok (Renoxis lead) audit, 2026-10-04 6:54 PM CT — PR #42, merge `0b1ff6702d744d48e0b53154b8a44626ff38d306`:** corrected Renoxis 1,000-Ixis signup copy, secularized Cixy outside Halaxis, clarified the shared Wallet/Apixis ID lock, and repaired the notes summary/header; no env, DB, Stripe or Wallet change. Undo: `git revert 0b1ff6702d744d48e0b53154b8a44626ff38d306` (or close the preview PR if treated as not approved).
 - **Claude, 2026-10-04 6:31 PM CT — PR #41, merge `8a8360e774c7a34712fd116e131d5985b6f86c92`:** notes: Claude full-portfolio review 2026-10-04 (NOTES/CLAUDE.md, AI_CHANGELOG); added `NOTES/CLAUDE.md` and `AI_CHANGELOG.md` (notes/docs only). Undo: `git revert 8a8360e774c7a34712fd116e131d5985b6f86c92`.
 
 Grok Bot notes. Every change Grok Bot makes to this product gets a dated entry here so Claude, Hermes and Codex stay on the same page.
@@ -124,6 +124,57 @@ Written by Grok Bot (Renoxis lead) after Claude's full-portfolio pass. These ent
 - What: the copy now says 1,000 Ixis in `app/login/page.tsx` and `components/ApixisWorldWelcome.tsx`, plus comments in `lib/renoxis/apixis-entry.ts` and `lib/renoxis/world-agent.ts`, docs `docs/APIXIS_FAMILY.md`, `docs/CIXY_BRAIN.md`, `docs/LAUNCH_STATUS.md` (the 09-28 verification keeps 200 as history), and the test mock `tests/world-agent.test.ts`. This reuses the reviewed 2026-09-29 WIP from `chore/signup-grant-1000`. The canonical `lib/apixis-world*.ts` parts were already done by Claude's #33, so they were dropped. In the Cixy prompt I removed the religious identity, phrases and HALAL block and kept one neutral line: "Honest dealing: no deceptive marketing and no hidden material terms". Sign-in is now described as "Log in with Apixis ID" first, and the prompt states there is no Renoxis balance, the Wallet is shared, and 1,000 Ixis is granted on Apixis.dev. `tests/cixy-prompts.test.ts` now guards these points. The grant itself is unchanged: there is still no local grant, and it is given on Apixis.dev.
 - Not touched: theme (red default coat + Emerald/Sunset/Night switcher, as live), SVGs, Stripe, Wallet code, env, DB, layout.
 - Checks: 71/71 node tests, `tsc --noEmit`, `npm run lint` (0 errors), `npm run build`.
-- Who: Grok Bot for Awad. Not merged, not deployed.
-- Undo: close the PR, or `git revert <merge sha>` after a merge.
+- Who: Grok Bot for Awad. Opened as preview-only. 313aidaroos merged it at 18:54 CT as squash `0b1ff67`, and it went to production (`dpl_AkrNuzCMW93UqLoVs7PWxsVt4XMR`, then `8168cd0`).
+- Undo: `git revert 0b1ff6702d744d48e0b53154b8a44626ff38d306`.
 
+## 2026-10-04 (CT) — Grok: correction to the 8168cd0 catch-up note
+- What: commit `8168cd0` ("notes: fix 10-04 catch-up") credited PR #42 to "Claude/lead audit". Grok Bot (Renoxis lead) wrote #42, not Claude. Claude's only work today is #41. I fixed that one line. The top summary stays as 8168cd0 left it.
+- Undo: revert this PR's merge commit.
+
+## 2026-10-04 (CT) — Grok: Cixy character "draws on Arab culture" (Awad's decision via hub)
+- What: the Cixy system prompt line now reads "your character draws on Arab culture". It does not say "Muslim" and has nothing religious. Tests require "draws on Arab culture" and still ban muslim / halal / shariah / riba / gharar / insha'Allah / alhamdulillah / salaam / prayer.
+- Where: `lib/renoxis/cixy-prompts.ts`, `tests/cixy-prompts.test.ts`.
+- Who: Grok Bot for Awad.
+- Undo: revert this PR's merge commit, which takes the line back to #42's version with no culture mention.
+
+## 2026-10-04 (CT) — Grok: Apixis ID is the only signup (Awad's decision via hub)
+- Before: the Renoxis email link (`signInWithOtp`) created a Supabase user for any new email, and /login, the home sign-in dialog and the Cixy help said "New here? The link starts your account".
+- What: both `signInWithOtp` calls (`app/login/page.tsx` email-link tab and `components/LoginForm.tsx` in the home dialog) now pass `emailLinkOptions()` from the new `lib/renoxis/email-link.ts`, which always sets `shouldCreateUser: false`. Existing Renoxis email accounts still get their link. An unknown email gets "There’s no Renoxis email account for that address. New here? Choose Log in with Apixis ID to create your account." Updated copy:
+  - /login: "New here? Create your account with Apixis ID. It comes with your own Apixis world agent and 1,000 Ixis to start." The divider reads "Already have a Renoxis email account?" and the email tab note reads "Already have a Renoxis email account? Sign in with your email link. New here? Use Log in with Apixis ID above."
+  - The home dialog and the Cixy help card say the same. No restyle: the same elements and classes are used.
+  - Apixis ID sign-in still creates the Renoxis user server-side (`lib/apixis-login.ts`, admin `createUser`). That is unchanged.
+  - The Password tab only signs in. It never signed anyone up.
+- Where: `lib/renoxis/email-link.ts` (new), `app/login/page.tsx`, `components/LoginForm.tsx`, `components/WelcomeExperience.tsx`, `components/CixyHelp.tsx`, `tests/email-link.test.ts` (new: asserts `shouldCreateUser === false` and that every `signInWithOtp` call uses the helper).
+- Not done here, needs the hub or Awad: Supabase project `loyjbfqpanskcecvpolt` still allows email signups at the Auth settings level. This change closes the app path only. If someone turns off "Allow new users to sign up" there, test Apixis ID first-time sign-in right after, because it creates users through admin `createUser`. No DB or Auth-config change was made.
+- Who: Grok Bot for Awad.
+- Undo: revert this PR's merge commit.
+
+## 2026-10-04 (CT) — Grok: Vercel env changes on project `renoxis` + production redeploy (Awad approved via hub)
+- `APIXIS_WORLD_KEY`: re-saved as type **sensitive** with the same value on Production and Preview. I pulled the value with `vercel env pull` into a mode-700 temp dir in /tmp, outside the repo, and deleted the dir right after. The value was never printed. Production and Preview had the same value (I compared length and a short hash only). Steps, back to back within seconds: (1) narrowed the old `encrypted` record `x4e5y01asH7DmSaN` to Development only, because a sensitive var cannot target Development; (2) `vercel env add APIXIS_WORLD_KEY production --sensitive` and the same for `preview`, with the value piped through stdin. Development keeps the old readable record. No new key was minted.
+- `ANTHROPIC_MODEL`: `claude-sonnet-4-6` → `claude-sonnet-5` on record `rNDLwDla9IQVr3qy`. That one record covers Production, Preview and Development, so Development changed too.
+- Redeploy: production was redeployed from the current main (`8168cd0`, which already includes #42) with `vercel redeploy` of the live production deployment. Nothing from this PR was promoted. See the smoke-test entry for the deployment ID.
+- Who: Grok Bot for Awad (approved through the hub).
+- Undo: set `ANTHROPIC_MODEL` back to `claude-sonnet-4-6`. For `APIXIS_WORLD_KEY`, delete the two sensitive records and set record `x4e5y01asH7DmSaN` back to targets production, preview and development. Then redeploy production.
+
+
+## 2026-10-04 (CT) — Grok: production redeploy + smoke test after the env changes
+- Deploy: `vercel redeploy` of the live production deployment (`dpl_nUFugR4mxHQmDkV9uowQvyrCt5yL`, `8168cd0`) produced `dpl_2nbsTXLKjAQcua4jW7ESEavcxjB6` (renoxis-30tx87v1l…), READY at about 18:57 CT on main `8168cd0d4b2a108afde1d305c85867f63b6205ae`, aliased to renoxis.dev.
+- Smoke test (test account grok-renoxis-1790732864@uberip.com):
+  - Apixis ID sign-in reached /dashboard.
+  - The balance pill (`/api/wallet/balance` 200, linked) and the "Your agent is ready" card (now says 1,000) load.
+  - `/api/feed-session` returned 200 with ok:true and a token. That route calls Apixis.dev with `APIXIS_WORLD_KEY`, so the sensitive key works in production.
+- Cixy on `claude-sonnet-5`: **not verified end to end.** `/api/chat` returns 402 (no seat) for the test account, and I did not grant one (no DB or Wallet change). The code sends `thinking: {type:"disabled"}` with no sampling parameters, which Anthropic's Sonnet 5 docs list as accepted. The response carries no model header.
+- Runtime logs for the new deployment show no error, warning or fatal lines. Status codes: 200, 302, 307, and one 402 (the test above).
+- Undo: promote `dpl_nUFugR4mxHQmDkV9uowQvyrCt5yL` back in Vercel (same code, older env snapshot).
+
+## 2026-10-04 (CT) — Grok: hub decisions recorded before merging #43
+- (a) `ANTHROPIC_MODEL=claude-sonnet-5` stays. The hub confirms the model already serves Cixy on Apixis.dev and Rawixis. For 1 hour after #43 merges, production logs on `/api/chat` are watched for model errors. Rollback: set `ANTHROPIC_MODEL=claude-sonnet-4-6` on Vercel `renoxis` and redeploy production.
+- (b) Supabase project `loyjbfqpanskcecvpolt` keeps project-level email signups **ON on purpose**. Turning them off can block the first-time Apixis ID user creation (`lib/apixis-login.ts`, admin `createUser`). The app-level control is `shouldCreateUser: false` on every Renoxis email-link call (`lib/renoxis/email-link.ts`). Undo: none needed (no setting was changed). If the decision changes, test Apixis ID first sign-in right after flipping it.
+- Who: Grok Bot, recording the hub's decision for Awad.
+
+## 2026-10-04 (CT) — Grok (Developer Bot hub): Cixy persona v2 sync + Ominix link
+- What: Follow-up to lead PRs #42 and #43 (merged; #43 already added the Arab-culture character line): added 'decline only harmful, deceptive or illegal, never on religious grounds' to CORE IDENTITY; test fixture greeting now 'Hello'. Ominix link on /companies now https://ominix-app.vercel.app (URL string only; no SVG/design change).
+- Files: app/companies/page.tsx lib/renoxis/cixy-prompts.ts tests/chat-turns.test.ts 
+- Why: Awad's lock — no religious content in Cixy on any product except Halaxis; she declines only genuinely harmful, deceptive or illegal content, never on religious grounds (9/30). Kit = ApixisWallet `sdk/apixis-cixy.*` v2 (3a22244, PR #50) with two hub edits pending canonical: the religion-derived "clean recommendations" rule (gambling) is replaced by "decline only harmful, deceptive or illegal, never on religious grounds", and the character line reads "draws on Arab culture". Ominix links point to https://ominix-app.vercel.app (checked 200 on 2026-10-04 ~6:55 PM CT).
+- Who: Grok (Developer Bot hub), branch `grok/cixy-v2-20261004`, one squash-merged PR.
+- Undo: `git revert <squash sha of this PR>` (sha recorded in the PR), then redeploy prod.

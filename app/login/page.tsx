@@ -8,10 +8,13 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { AuthShell } from "@/components/AuthShell";
+import { emailLinkError, emailLinkOptions } from "@/lib/renoxis/email-link";
 
 type Mode = "magic" | "password" | "forgot" | "sent";
 
 function friendly(message: string): string {
+  const noAccount = emailLinkError(message);
+  if (noAccount) return noAccount;
   if (/invalid login credentials/i.test(message)) return "Invalid email or password.";
   if (/email not confirmed/i.test(message)) return "Please confirm your email first. Check your inbox for the confirmation link.";
   if (/rate limit|too many/i.test(message)) return "Too many attempts. Please wait a minute and try again.";
@@ -50,7 +53,7 @@ function LoginContent() {
     setLoading(true);
     setError("");
     try {
-      const { error } = await createClient().auth.signInWithOtp({ email, options: { emailRedirectTo: callback(next) } });
+      const { error } = await createClient().auth.signInWithOtp({ email, options: emailLinkOptions(callback(next)) });
       if (error) setError(friendly(error.message));
       else {
         setSent({ title: "Check your email", body: `We sent a sign-in link to ${email}. Open it on this device within an hour.` });
@@ -134,8 +137,8 @@ function LoginContent() {
           <h1>Log in with Apixis ID</h1>
           <p className="auth-lede">One account for Renoxis, Apixis Wallet and every Apixis company.</p>
           <a className="primary auth-apixis" href={apixisHref}>Log in with Apixis ID</a>
-          <p className="auth-note">New here? Your account comes with your own Apixis world agent and <strong>1,000 Ixis</strong> to start. Ixis has no cash value.</p>
-          <div className="auth-divider">or use your Renoxis email</div>
+          <p className="auth-note">New here? Create your account with Apixis ID. It comes with your own Apixis world agent and <strong>1,000 Ixis</strong> to start. Ixis has no cash value.</p>
+          <div className="auth-divider">Already have a Renoxis email account?</div>
           <div className="auth-tabs" role="tablist" aria-label="How to log in">
             <button type="button" role="tab" id="tab-magic" aria-controls="panel-login" aria-selected={mode === "magic"} onClick={() => go("magic")}>Email link</button>
             <button type="button" role="tab" id="tab-password" aria-controls="panel-login" aria-selected={mode === "password"} onClick={() => go("password")}>Password</button>
@@ -146,7 +149,7 @@ function LoginContent() {
               <label htmlFor="email">Email</label>
               <input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               <button type="submit" className="primary" disabled={loading}>{loading ? "Sending…" : "Email me a sign-in link"}</button>
-              <p className="auth-note">No password needed. New here? The link starts your account.</p>
+              <p className="auth-note">Already have a Renoxis email account? Sign in with your email link. New here? Use Log in with Apixis ID above.</p>
             </form>
           ) : (
             <form id="panel-login" role="tabpanel" aria-labelledby="tab-password" className="auth-form" onSubmit={handlePassword}>

@@ -4,7 +4,7 @@ import { chatTurnsForApi } from "../lib/renoxis/chat-turns.ts";
 
 test("chatTurnsForApi strips leading welcome assistant bubble", () => {
   const out = chatTurnsForApi([
-    { role: "assistant", content: "As-salamu alaykum. I'm Cixy." },
+    { role: "assistant", content: "Hello. I'm Cixy." },
     { role: "user", content: "hi cixy" },
   ]);
   assert.deepEqual(out, [{ role: "user", content: "hi cixy" }]);

@@ -192,3 +192,9 @@ Recorded by Grok (Developer Bot, notes and status sync at 9:25 PM CT). Every cha
 - 7:05 PM, PR #43, `bdc5363`: Apixis ID-only signup, Cixy 'draws on Arab culture', env + redeploy notes (preview only — DO NOT MERGE). Undo: `git revert bdc5363` on `main`, then redeploy production.
 - 7:10 PM, PR #44, `f93a735`: Cixy persona v2 sync (no religious content outside Halaxis) + Ominix link to ominix-app.vercel.app. Undo: `git revert f93a735` on `main`, then redeploy production.
 - 7:17 PM, PR #39, `2aee5da`: Feed visual fixes: text posts size to content, modals on top, 'You' tab. Undo: `git revert 2aee5da` on `main`, then redeploy production.
+
+## 2026-10-04 (CT) — Grok: new accounts only through Apixis ID (branch `grok/apixis-id-only-signup`)
+- Approval: Awad said go at 10:00 PM CT, Oct 4 2026 ("every Ixis product must allow NEW account creation only through Apixis ID", the shared Wallet SSO at apixis-wallet.vercel.app/sso/authorize).
+- What changed: Re-verify only, no code change. Confirmed after PR #43 (`bdc5363`): every `signInWithOtp` goes through `emailLinkOptions` (`shouldCreateUser: false`, pinned by `tests/email-link.test.ts`); there is no `signUp` / password signup; `/signup` is not a route (404); the only user creation is the Apixis ID callback (`lib/apixis-login.ts`, admin `createUser` after Wallet SSO).
+- Not changed: Supabase project setting "Allow new users to sign up" stays ON (Apixis SSO callback may create users through it). Theme, layout and styles unchanged. No Wallet, Stripe or Cixy files touched.
+- Undo: `git revert <squash sha of this PR>` (the sha is recorded in the PR and in /workspace/apixisid/STATUS.md on the box).

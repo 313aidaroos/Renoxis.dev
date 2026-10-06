@@ -259,7 +259,7 @@ begin
     return jsonb_build_object('ok', false, 'error', 'You are not an active member of this office.');
   end if;
   cost := case sku
-    when 'property_lookup' then 0  -- saves typed facts only; no data source yet → free until real
+    when 'property_lookup' then 25
     when 'track_contact' then 0
     when 'email_draft' then 50
     when 'offer_letter' then 100
@@ -534,8 +534,21 @@ create policy renoxis_member_read on public.brokerage_members
 drop policy if exists renoxis_member_update on public.brokerage_members;
 create policy renoxis_member_update on public.brokerage_members
   for update to authenticated
-  using (renoxis_private.member_role(brokerage_id) = 'owner')
-  with check (renoxis_private.member_role(brokerage_id) = 'owner');
+  using (
+    renoxis_private.member_role(brokerage_id) = 'owner'
+    or (
+      renoxis_private.member_role(brokerage_id) = 'broker'
+      and role in ('agent', 'assistant')
+    )
+  )
+  with check (
+    renoxis_private.member_role(brokerage_id) = 'owner'
+    or (
+      renoxis_private.member_role(brokerage_id) = 'broker'
+      and role in ('agent', 'assistant')
+      and status in ('active', 'invited', 'removed')
+    )
+  );
 
 drop policy if exists renoxis_invite_read on public.brokerage_invites;
 create policy renoxis_invite_read on public.brokerage_invites

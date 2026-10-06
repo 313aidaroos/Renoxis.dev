@@ -1,25 +1,26 @@
 /**
  * Soft-launch billing for Renoxis.
  * Cash buy stays on Apixis Wallet. No Renoxis Stripe.
- * Activate + monthly seat: 5000 Ixis ($50) each per Awad lock 2026-09-21.
- * Paid Cixy drafts use the person’s shared Apixis Wallet (see wallet-charge.ts).
- * Wallet SKUs locked by hub: renoxis.activate + renoxis.agent.monthly @ 5000
- * (do NOT invent Wallet balances; revise monthly off 30000 — no new seat.monthly key).
- * Wallet catalog SKUs are LIVE (activate + agent.monthly @ 5000).
+ * Start fee: 5000 Ixis ($50) once. Monthly plan: 10000 Ixis ($100), renews every month.
+ * Awad lock 2026-10-06. Pay by card or with Ixis (100 Ixis = $1). Card checkout is not
+ * built here. The Ixis path is still renoxis.activate and renoxis.agent.monthly.
+ * The Wallet catalog must price renoxis.agent.monthly at 10000. This repo does not
+ * edit Apixis Wallet.
+ * Cixy jobs inside a brokerage bill the office owner's Apixis Wallet (see office-billing.ts).
  * Entitlements stay empty until redeem capture — do not invent balances.
  */
 
 import { RENOXIS_APP_ORIGIN, walletBuyUrl } from "./wallet-link.ts";
 
 export const ACTIVATE_IXIS = 5000;
-export const MONTHLY_IXIS = 5000;
+export const MONTHLY_IXIS = 10000;
 export const ACTIVATE_USD = 50;
-export const MONTHLY_USD = 50;
+export const MONTHLY_USD = 100;
 
-/** Locked Wallet product keys (Wallet Lead prices at 5000). */
+/** Wallet product keys. Monthly must be 10,000 Ixis on the Wallet catalog. */
 export const WALLET_SKU = {
   activate: "renoxis.activate",
-  /** Existing catalog key — revise to 5000/mo; do not invent renoxis.seat.monthly. */
+  /** Existing catalog key. Wallet SKU price must be 10000, not 5000. */
   monthly: "renoxis.agent.monthly",
 } as const;
 
@@ -99,7 +100,20 @@ export function activateCopy() {
 }
 
 export function renewCopy() {
-  return `Keep running · ${MONTHLY_IXIS.toLocaleString()} Ixis / mo ($${MONTHLY_USD})`;
+  return `Monthly plan · ${MONTHLY_IXIS.toLocaleString()} Ixis / mo ($${MONTHLY_USD})`;
+}
+
+export function startFeeCopy() {
+  return `$${ACTIVATE_USD} one-time start fee (${ACTIVATE_IXIS.toLocaleString()} Ixis).`;
+}
+
+export function monthlyPlanCopy() {
+  return `$${MONTHLY_USD}/month (${MONTHLY_IXIS.toLocaleString()} Ixis). It renews automatically every month.`;
+}
+
+/** Shown wherever the start fee or monthly plan is offered. No card form here. */
+export function payChoiceCopy() {
+  return "Pay by card or with Ixis. 100 Ixis = $1.";
 }
 
 /** Copy after Wallet return — catalog live; entitlement empty until capture. */

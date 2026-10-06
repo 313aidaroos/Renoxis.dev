@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ACTIVATE_IXIS, MONTHLY_IXIS, ACTIVATE_USD, MONTHLY_USD } from "@/lib/renoxis/billing";
+import { ACTIVATE_IXIS, MONTHLY_IXIS, ACTIVATE_USD, MONTHLY_USD, payChoiceCopy } from "@/lib/renoxis/billing";
 import "@/components/welcome.css";
 
-export const metadata = { title: "Renoxis pricing — one activation, one monthly seat, paid in Ixis" };
+export const metadata = { title: "Renoxis pricing — $50 to start, $100 a month" };
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
@@ -25,16 +25,16 @@ export default async function PricingPage() {
 
       <main className="welcome-main">
         <section className="welcome-hero">
-          <span className="welcome-kicker">PRICING · PAID IN IXIS</span>
-          <h1>One activation.<br />One monthly seat.<br /><em>Nothing hidden.</em></h1>
-          <p>Renoxis is the workspace for real estate agents, real estate developers and brokerages, with Cixy beside you: contacts, properties, deals, calendar and drafts in one desk. You pay with Ixis — the Apixis family credit — through Apixis Wallet. 100 Ixis = $1. Paid Ixis never expires.</p>
+          <span className="welcome-kicker">PRICING</span>
+          <h1>A clear start.<br />A monthly plan.<br /><em>Nothing hidden.</em></h1>
+          <p>Renoxis is the workspace for real estate agents, real estate developers and brokerages, with Cixy beside you: contacts, properties, deals, calendar and drafts in one desk. {payChoiceCopy()} Paid Ixis never expires.</p>
         </section>
 
         <section className="tour-price" aria-labelledby="price-title">
           <h2 id="price-title" className="welcome-small">What it costs</h2>
-          <div><span>One-time activation</span><strong>${ACTIVATE_USD} <small>· {fmt(ACTIVATE_IXIS)} Ixis</small></strong></div>
-          <div><span>Monthly seat</span><strong>${MONTHLY_USD}/month <small>· {fmt(MONTHLY_IXIS)} Ixis</small></strong></div>
-          <p>Activation and the first month are separate: ${ACTIVATE_USD + MONTHLY_USD} / {fmt(ACTIVATE_IXIS + MONTHLY_IXIS)} Ixis to begin. Your seat runs 30 days from each renewal. Signing in is free and never charges you.</p>
+          <div><span>One-time start fee</span><strong>${ACTIVATE_USD} <small>· {fmt(ACTIVATE_IXIS)} Ixis</small></strong></div>
+          <div><span>Monthly plan</span><strong>${MONTHLY_USD}/month <small>· {fmt(MONTHLY_IXIS)} Ixis</small></strong></div>
+          <p>The start fee and the first month are separate: ${ACTIVATE_USD + MONTHLY_USD} / {fmt(ACTIVATE_IXIS + MONTHLY_IXIS)} Ixis to begin. The monthly plan renews automatically every month. {payChoiceCopy()} Signing in is free and never charges you.</p>
         </section>
 
         <section className="welcome-how">
@@ -47,8 +47,8 @@ export default async function PricingPage() {
           </ul>
           <h2>What costs extra (your Apixis Wallet)</h2>
           <ul>
-            <li>Email draft · 50 Ixis. Offer letter draft · 100 Ixis. Paid from your personal Apixis Wallet.</li>
-            <li>Saving a property or tracking a contact is free.</li>
+            <li>Email · 50 Ixis. Offer letter · 100 Ixis. Property lookup · 25 Ixis. In a brokerage, the office pays for these.</li>
+            <li>Saving a contact is free. Apixis keeps 5% of a closed-deal fee.</li>
           </ul>
           <h2>What Renoxis does not do yet</h2>
           <ul>

@@ -15,9 +15,10 @@ export function walletOwner(user: Pick<User, "email" | "app_metadata">): string 
 }
 
 /**
- * Pay for a Renoxis action from the person's ONE Apixis Wallet balance (no office ledger).
- * `provision` writes the result while the Ixis are held; `unprovision` undoes it if the Wallet
- * confirms the charge did not go through. Free SKUs skip the Wallet entirely.
+ * Pay for a Renoxis action from one Apixis Wallet.
+ * Pass `payer` (the office owner's Apixis id or email) to bill that Wallet instead of the person
+ * who clicked. `provision` writes the result while the Ixis are held; `unprovision` undoes it if
+ * the Wallet confirms the charge did not go through. Free SKUs skip the Wallet entirely.
  */
 export async function chargeFromWallet<T>(
   user: Pick<User, "email" | "app_metadata"> & { email_confirmed_at?: string | null },
@@ -25,13 +26,24 @@ export async function chargeFromWallet<T>(
   ref: string,
   provision: () => Promise<T>,
   unprovision?: (result: T) => Promise<void>,
+  payer?: string | null,
 ): Promise<WalletCharge<T>> {
   const cost = IXIS_SKU[sku];
   if (cost === 0) return { ok: true, result: await provision(), receiptId: null, cost };
-  // Owner bypass (owners.ts): product feature with no Ixis charge; the Wallet is not called.
+  // Owner bypass (owners.ts): the signed-in platform admin is not charged. The Wallet is not called.
   if (isOwner(user)) return { ok: true, result: await provision(), receiptId: null, cost: 0 };
-  const owner = walletOwner(user);
-  if (!owner) return { ok: false, status: 400, body: { error: "Sign in with Apixis to spend Ixis." } };
+  const officeBill = Boolean(payer);
+  const owner = payer || walletOwner(user);
+  if (!owner)
+    return {
+      ok: false,
+      status: 400,
+      body: {
+        error: officeBill
+          ? "This brokerage has no office Wallet yet. The owner needs to sign in with Apixis."
+          : "Sign in with Apixis to spend Ixis.",
+      },
+    };
   try {
     const outcome = await redeem<T>({
       owner,
@@ -45,9 +57,12 @@ export async function chargeFromWallet<T>(
         ok: false,
         status: 402,
         body: {
-          error: `This costs ${cost} Ixis and your Apixis Wallet doesn't have enough. Buy Ixis and you'll come straight back.`,
+          error: officeBill
+            ? `This costs ${cost} Ixis and the office Wallet doesn't have enough. An owner can add Ixis on Apixis Wallet.`
+            : `This costs ${cost} Ixis and your Apixis Wallet doesn't have enough. Buy Ixis and you'll come straight back.`,
           cost,
           buy: walletEntryUrl(process.env.APP_URL),
+          billedToOffice: officeBill,
         },
       };
     }

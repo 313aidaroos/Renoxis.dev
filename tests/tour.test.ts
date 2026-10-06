@@ -11,7 +11,7 @@ test('each personalized path covers every box once and prioritizes the chosen fo
   }
 });
 test('all dashboard boards and utility boxes have interactive explanations', () => {
-  for (const board of ['Overview','Email','Calendar','Leads','Clients','Properties','Transactions','Renovation Studio','Social Studio','Documents','Analytics','Cixy Studio','Connections','Team','FAQs']) assert.ok(tourStops.some(s => s.board === board), board);
+  for (const board of ['Overview','Email','Calendar','Leads','Clients','Properties','Transactions','Renovation Studio','Social Studio','Documents','Analytics','Cixy Studio','Connections','Brokerage','Team','FAQs']) assert.ok(tourStops.some(s => s.board === board), board);
   for (const id of ['pipeline','forecast','tasks','search','add','refresh','navigation','wallet']) assert.ok(tourStops.some(s => s.id === id), id);
   for (const stop of tourStops) { assert.equal(stop.choices.length, stop.replies.length); assert.ok(stop.explanation && stop.question); }
 });

@@ -2576,6 +2576,17 @@
   }
 }
 
+.brokerage-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:14px; }
+.brokerage-head h2 { margin:4px 0; }
+.cixy-page-help { display:inline-flex; align-items:center; gap:8px; padding:4px 12px 4px 4px; border-radius:999px; background:#fff; }
+.cixy-page-help img { width:28px; height:28px; border-radius:50%; object-fit:cover; }
+.cixy-page-help-dialog { border:1px solid var(--line); border-radius:16px; padding:22px; max-width:440px; width:calc(100% - 32px); background:#fff; color:var(--ink); }
+.cixy-page-help-dialog::backdrop { background:#06392f66; }
+.cixy-page-help-dialog h2 { margin:6px 0 10px; font-size:22px; }
+.cixy-page-help-dialog ol { margin:0 0 16px; padding-left:18px; }
+.cixy-page-help-dialog li { margin:8px 0; }
+@media (max-width: 720px) { .brokerage-head { flex-wrap:wrap; } }
+
 .desk-tour-entry { display:flex;align-items:center;gap:18px;padding:18px 22px;margin-bottom:20px;border:1px solid var(--line);border-radius:12px;background:var(--mint); }
 .desk-tour-avatar { width:76px;flex-shrink:0;border-radius:12px;overflow:hidden; }
 .desk-tour-entry>div:nth-child(2) { flex:1; }

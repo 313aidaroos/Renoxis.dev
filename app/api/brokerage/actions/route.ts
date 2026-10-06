@@ -2,8 +2,8 @@ import { recordVisibility } from "@/lib/renoxis/access";
 import { isUuid } from "@/lib/renoxis/brokerage";
 import { notReady, officesOf } from "@/lib/renoxis/firm-store";
 import { body, failure, json, session } from "@/lib/renoxis/http";
-import { isSku, type IxisSku } from "@/lib/renoxis/ixis";
-import { chargeFromWallet } from "@/lib/renoxis/wallet-charge";
+import { isSku, IXIS_SKU, type IxisSku } from "@/lib/renoxis/ixis";
+import { chargeOfficeJob } from "@/lib/renoxis/office-billing";
 import { validateRecord } from "@/lib/renoxis/records";
 import { randomUUID } from "node:crypto";
 
@@ -62,15 +62,16 @@ export async function POST(request: Request) {
         return json({
           outbox: existing,
           idempotent: true,
-          billedToOffice: false,
+          billedToOffice: true,
           sent: false,
         });
-      // Paid from the person's one Apixis Wallet balance (no office ledger).
-      const charge = await chargeFromWallet(
-        user,
+      // Paid from the office Wallet (the owner's Apixis Wallet), not the person who clicked.
+      const charge = await chargeOfficeJob({
+        actor: user,
         sku,
         ref,
-        async () => {
+        brokerageId: office.id,
+        provision: async () => {
           const { data, error } = await db
             .from("renoxis_outbox")
             .insert({
@@ -90,11 +91,11 @@ export async function POST(request: Request) {
           if (error) throw new Error("The draft did not save. Nothing was charged. Try again.");
           return data;
         },
-        async (outbox) => {
+        unprovision: async (outbox) => {
           await db.from("renoxis_outbox").delete().eq("id", outbox.id);
         },
-      );
-      if (!charge.ok) return json({ ...charge.body, billedToOffice: false }, charge.status);
+      });
+      if (!charge.ok) return json({ ...charge.body, billedToOffice: true }, charge.status);
       if (sku === "email_draft") {
         const record = validateRecord("draft", {
           title: draft.subject,
@@ -113,12 +114,12 @@ export async function POST(request: Request) {
       return json(
         {
           outbox: charge.result,
-          billedToOffice: false,
+          billedToOffice: true,
           paidFromWallet: true,
           cost: charge.cost,
           receiptId: charge.receiptId,
           sent: false,
-          message: "Draft saved. Paid from your Apixis Wallet. Nothing was sent.",
+          message: "Draft saved. Paid from the office Wallet. Nothing was sent.",
         },
         201,
       );
@@ -133,8 +134,44 @@ export async function POST(request: Request) {
       .eq("external_ref", ref)
       .maybeSingle();
     if (existing)
-      return json({ record: existing, idempotent: true, billedToOffice: false });
-    // Saving a property or tracking a contact is free: no Wallet charge.
+      return json({ record: existing, idempotent: true, billedToOffice: IXIS_SKU[sku] > 0 });
+    if (IXIS_SKU[sku] > 0) {
+      const charge = await chargeOfficeJob({
+        actor: user,
+        sku,
+        ref,
+        brokerageId: office.id,
+        provision: async () => {
+          const { data, error } = await db
+            .from("renoxis_records")
+            .insert({
+              ...record,
+              user_id: user.id,
+              brokerage_id: office.id,
+              owner_agent_id: user.id,
+              visibility,
+              external_ref: ref,
+            })
+            .select(recordColumns)
+            .single();
+          if (error) throw new Error("The record did not save. Nothing was charged. Try again.");
+          return data;
+        },
+        unprovision: async (saved) => {
+          await db.from("renoxis_records").delete().eq("id", saved.id);
+        },
+      });
+      if (!charge.ok) return json({ ...charge.body, billedToOffice: true, ref }, charge.status);
+      return json(
+        {
+          record: charge.result,
+          billedToOffice: true,
+          cost: charge.cost,
+          message: "Property lookup saved. Paid from the office Wallet.",
+        },
+        201,
+      );
+    }
     const { data, error } = await db
       .from("renoxis_records")
       .insert({

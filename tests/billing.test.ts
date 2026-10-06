@@ -17,9 +17,9 @@ import {
   type Entitlement,
 } from "../lib/renoxis/billing.ts";
 
-test("pricing lock is 5000 Ixis activate and monthly", () => {
+test("pricing lock is 5000 Ixis to start and 10000 Ixis each month", () => {
   assert.equal(ACTIVATE_IXIS, 5000);
-  assert.equal(MONTHLY_IXIS, 5000);
+  assert.equal(MONTHLY_IXIS, 10000);
 });
 
 test("Wallet SKUs are activate + agent.monthly (not seat.monthly)", () => {

@@ -27,7 +27,7 @@ Lead developer: Claude (backend). Owner: Awad. The source of truth for the whole
 
 Apply `supabase/migrations/20260925024222_seat_payment_attempts.sql` before deploying this version. It adds a private attempt journal and server-only RPCs; existing paid seats remain intact. Seat purchases stage dates without granting access, then commit only after a Wallet capture receipt. Same-attempt retries do not extend twice, and late releases cannot overwrite newer paid access. Pending attempts are recovered from the database after tab closure. A released attempt can be retried once to acknowledge its state, then a new attempt starts.
 
-`npm run test:sql` requires isolated local Postgres and refuses remote hosts. It covers real SQL concurrency plus the shared SDK with simulated Wallet responses. It is not evidence of a completed Stripe browser rehearsal. Monthly access lasts exactly 720 hours. Renewal remains manual.
+`npm run test:sql` requires isolated local Postgres and refuses remote hosts. It covers real SQL concurrency plus the shared SDK with simulated Wallet responses. It is not evidence of a completed Stripe browser rehearsal. The Ixis start-fee and monthly redeem path is unchanged. Displayed prices as of 2026-10-06 are a $50 start fee (5,000 Ixis) and a $100 monthly plan (10,000 Ixis) that renews every month. The Wallet SKU `renoxis.agent.monthly` must be priced at 10,000 in Apixis Wallet. Card checkout is not built here.
 
 ## Apixis world + Apixis Bank (2026-09-27)
 

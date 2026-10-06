@@ -13,11 +13,11 @@ Renoxis does **not** maintain a second brain. Knowledge comes from the Apixis hu
 | Audience | Agents, developers, brokerages |
 | Origin | `https://renoxis.dev` |
 | Auth story | "Log in with Apixis ID" first (Wallet SSO, one ID for every Apixis company); Renoxis email link + password tab also exist |
-| Activate | 5,000 Ixis one-time (Wallet) |
-| Keep running | 5,000 Ixis / mo (Wallet) |
-| Property lookup | **0 Ixis** (typed facts; no paid data source yet) |
-| Email draft | 50 Ixis from the person’s shared Apixis Wallet |
-| Offer letter | 100 Ixis from the person’s shared Apixis Wallet |
+| Start fee | $50 · 5,000 Ixis one time (Wallet) |
+| Monthly plan | $100 · 10,000 Ixis / month, renews every month. Wallet SKU `renoxis.agent.monthly` must be 10,000 |
+| Property lookup | **25 Ixis**, billed to the office Wallet inside a brokerage |
+| Email draft | 50 Ixis, office Wallet inside a brokerage |
+| Offer letter | 100 Ixis, office Wallet inside a brokerage |
 | Track contact | 0 Ixis |
 | Platform cut | 5% (500 bps) pending on closed-deal fees |
 | Ixis peg | 100 Ixis = $1; cash buy on Wallet; closed-loop |

@@ -78,10 +78,12 @@ export default function TermsOfService() {
         Outlook, MLS feeds, and external CRM sync are not part of this beta.
       </p>
       <p>
-        Buy Ixis and Wallet open Apixis Wallet. Renoxis does not run checkout,
-        store card details, or credit Ixis from a card payment. Cash credit
-        happens only on Apixis Wallet. No purchase is completed inside Renoxis.
-        A price marked “to be set” or “coming soon” is not an offer.
+        The workspace has a $50 one-time start fee and a $100 monthly plan that
+        renews every month. You can pay by card or with Ixis (100 Ixis = $1).
+        Renoxis does not store card details. Ixis payments open Apixis Wallet.
+        Inside a brokerage, email, offer letters, and property lookups are paid
+        from the office Wallet. Apixis keeps 5% of a closed-deal fee. A price
+        marked “to be set” or “coming soon” is not an offer.
       </p>
 
       <h2>No professional advice</h2>

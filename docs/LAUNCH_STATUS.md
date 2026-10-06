@@ -10,7 +10,7 @@ This file replaces the Sep 20 brief. It records only what was checked on 2026-09
 ## Locks (owner, current)
 
 - **Payments only via Apixis Wallet.** No Renoxis Stripe, no Renoxis Ixis balance. 100 Ixis = $1, closed-loop credit.
-- **Seat:** `renoxis.activate` 5,000 Ixis one-time, `renoxis.agent.monthly` 5,000 Ixis per 30 days (manual renewal). Server-side entitlement only.
+- **Plan:** `renoxis.activate` 5,000 Ixis ($50) one time, `renoxis.agent.monthly` 10,000 Ixis ($100) every month. Pay by card or with Ixis. The Ixis redeem path is unchanged. The Wallet catalog for `renoxis.agent.monthly` must be 10,000. Server-side entitlement only.
 - **Paid drafts** from the person's own Wallet via redeem: `renoxis.email_draft` 50, `renoxis.offer_letter` 100. Property record and contact tracking are free. The office Ixis ledger was retired in PR #18 (manual grants return 410).
 - **Platform cut:** closed-deal fees record a 5% (500 bps) cut as pending.
 - **Apixis Bank (2026-09-27):** Apixis takes 5% of every transaction in the Apixis universe, including in-world Ixis transfers, trades, purchases and agent-to-agent deals. That fee is applied by Apixis Wallet / Apixis.dev, not by Renoxis code.

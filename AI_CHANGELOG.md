@@ -41,3 +41,7 @@ Entry format:
 - Changed: the Cixy prompt now says "draws on Arab culture" (nothing religious; tests ban Muslim, insha'Allah, alhamdulillah, halal). Apixis ID is the only signup: the email link uses `shouldCreateUser: false` through `lib/renoxis/email-link.ts`, the /login, home dialog and Cixy help copy is updated, and a test was added. NOTES corrects the #42 attribution and logs the Vercel env changes (`APIXIS_WORLD_KEY` → sensitive, `ANTHROPIC_MODEL` → claude-sonnet-5) and the production redeploy.
 - Why: Awad's decisions after the 2026-10-04 lock audit.
 
+## 2026-10-06 — Grok
+- Changed: a working Brokerage tab (create or rename a brokerage, add and remove people, roster with status and Cixy spend, office Wallet balance with the existing Apixis Wallet link, recent jobs, and an agent view that says the office pays). Cixy jobs inside a brokerage bill the owner's Apixis Wallet. Property lookup is 25 Ixis. Displayed plan prices are a $50 start fee (5,000 Ixis) and a $100 monthly plan (10,000 Ixis). Migration `supabase/migrations/20261006120000_brokerage_office_wallet.sql` is in the repo and was not applied to production.
+- Why: Awad asked for a brokerage an office can use today, with jobs billed to the office, and for the new price lock.
+

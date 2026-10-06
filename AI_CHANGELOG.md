@@ -41,3 +41,6 @@ Entry format:
 - Changed: the Cixy prompt now says "draws on Arab culture" (nothing religious; tests ban Muslim, insha'Allah, alhamdulillah, halal). Apixis ID is the only signup: the email link uses `shouldCreateUser: false` through `lib/renoxis/email-link.ts`, the /login, home dialog and Cixy help copy is updated, and a test was added. NOTES corrects the #42 attribution and logs the Vercel env changes (`APIXIS_WORLD_KEY` → sensitive, `ANTHROPIC_MODEL` → claude-sonnet-5) and the production redeploy.
 - Why: Awad's decisions after the 2026-10-04 lock audit.
 
+## 2026-10-06 — Claude (family lead): AI Receptionist notes (D18)
+- Changed: AI Receptionist section in the family notes (see `docs/AI_RECEPTIONIST.md` in ApixisWallet); notes only, no code.
+- Why: Awad approved an AI Receptionist add-on at $100/month for every customer-facing family site and asked every bot and agent to follow one plan.

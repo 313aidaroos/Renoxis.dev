@@ -1,0 +1,11 @@
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+.footer-social:hover,
+.desk footer a.footer-social:hover,
+.legal-page > footer a.footer-social:hover {
+  text-decoration: none;
+}

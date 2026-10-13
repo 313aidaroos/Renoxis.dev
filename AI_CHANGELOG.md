@@ -56,3 +56,7 @@ Entry format:
 ## 2026-10-13 — Grok
 - Changed: `LAUNCH_DATE` is now `2027-01-01T06:00:00.000Z` (midnight Central on 2027-01-01). The launch-date TODO is gone. `getMonthlyPrice` switches to $100/month (10,000 Ixis, SKU `renoxis.agent.monthly.10000`) at `2027-02-01T06:00:00.000Z`. Wallet Lead is publishing that SKU id, so the id stays.
 - Why: Awad set the official launch date. Production merge stays with Awad.
+
+## 2026-10-13 — Grok
+- Changed: Instagram icon link in the existing site footers (home, tour, pricing, feed, login, legal, and the desk). It opens https://www.instagram.com/renoxis.dev/ in a new tab. No Facebook link. No new icon package and no .svg file.
+- Why: The footer should point at the Renoxis brand accounts. Instagram oEmbed confirms “Renoxis RE Company (@renoxis.dev)”. facebook.com/renoxis.dev could not be confirmed as a real page, so that link was left out.

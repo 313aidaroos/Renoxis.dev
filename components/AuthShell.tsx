@@ -1,6 +1,7 @@
 // 2026-09-28 Grok Developer Bot: shared shell for /login, /set-password and /auth/error with the
 // same header, fonts and colours as the Renoxis home page, plus the Cixy sign-in help card.
 import Link from "next/link";
+import { FooterSocial } from "./FooterSocial";
 import { CixyHelp } from "./CixyHelp";
 import "./command-desk.css";
 import "./welcome.css";
@@ -32,6 +33,7 @@ export function AuthShell({ children, help = true }: { children: React.ReactNode
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/tour">Tour with Cixy</Link>
+          <FooterSocial />
         </div>
       </footer>
     </div>

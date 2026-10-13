@@ -7,6 +7,7 @@ import {
 } from "@/lib/renoxis/access";
 import type { Office } from "@/lib/renoxis/brokerage";
 import { IXIS_SKU } from "@/lib/renoxis/ixis";
+import { CLOSED_DEAL_FEE_BPS, closedDealFeeLabel } from "@/lib/renoxis/pricing";
 import { WalletLinks } from "./WalletLinks";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 
@@ -566,7 +567,7 @@ export function TeamDesk({
       </Panel>
       <Panel title="Platform commission">
         <p className="muted">
-          Closed deals record a 5% (500 bps) platform cut as pending. Nothing is
+          Closed deals record a {closedDealFeeLabel()} ({CLOSED_DEAL_FEE_BPS} bps) platform cut as pending. Nothing is
           collected until a hub wallet exists.
         </p>
         {firm.commissions.length ? (

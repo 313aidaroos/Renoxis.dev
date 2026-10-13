@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { chatTurnsForApi } from "@/lib/renoxis/chat-turns";
 import { DRAFT_DISCLAIMER } from "@/lib/renoxis/draft-file";
+import { JOB_IXIS } from "@/lib/renoxis/pricing";
 import { renderChatMarkdown } from "./CixyMarkdown";
 
 type Message = {
@@ -237,7 +238,7 @@ export function CixyChat({
                             void materialize(msg.content, "email_draft", true)
                           }
                         >
-                          Email draft · 50 Ixis
+                          Email draft · {JOB_IXIS.email} Ixis
                         </button>
                         <button
                           type="button"
@@ -246,7 +247,7 @@ export function CixyChat({
                             void materialize(msg.content, "offer_letter", true)
                           }
                         >
-                          Offer letter · 100 Ixis
+                          Offer letter · {JOB_IXIS.offerLetter} Ixis
                         </button>
                       </>
                     ) : null}

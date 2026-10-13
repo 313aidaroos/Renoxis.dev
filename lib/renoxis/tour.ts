@@ -1,3 +1,5 @@
+import { IXIS_PER_USD, JOB_IXIS, PROMO_END, START_FEE, formatIxis, getMonthlyPrice } from "./pricing.ts";
+
 export type TourStop = { id: string; title: string; board: string; group: string; explanation: string; example: string; question: string; choices: [string, string]; replies: [string, string] };
 export const tourStops: TourStop[] = [
   {id:'overview',title:'Command Desk',board:'Overview',group:'Your day',explanation:"I'm Cixy. This is where your day comes together: appointments, follow-ups, property records and your pipeline. Your real workspace starts empty and grows with the records you save.",example:'One place for your next move.',question:'What would you like to focus on?',choices:['Follow-ups','My schedule'],replies:['I’ll help you keep the next conversation in sight.','We’ll keep appointments and tasks easy to find.']},
@@ -27,10 +29,32 @@ export const tourStops: TourStop[] = [
   {id:'navigation',title:'Navigation, account & themes',board:'Connections',group:'Desk controls',explanation:'The sidebar opens every board. The top shortcuts open the same destinations: My Day is Calendar, Pipeline is Leads and Marketing is Social Studio. Your account control opens Connections. Themes change the desk palette; the mobile menu keeps navigation within reach.',example:'Same workspace · Sidebar, shortcuts and mobile menu',question:'How would you move around?',choices:['Use the sidebar','Use quick shortcuts'],replies:['Every board is available there, including Brokerage.','Shortcuts take you to the most common destinations.']},
   {id:'faqs',title:'FAQs & help',board:'FAQs',group:'Your workspace',explanation:'FAQs explains privacy, connections, customization, installation and feature limits. You can replay this tour from there whenever you need a refresher. The installable web app still needs an internet connection.',example:'A little clarity, whenever you need it.',question:'Ready for your own workspace?',choices:['Let’s get started','I want to explore more'],replies:['Your real workspace will start with your own records.','Choose any box in the tour index to revisit it.']},
 ];
+function withLivePrices(stop: TourStop): TourStop {
+  const monthly = getMonthlyPrice();
+  const later = getMonthlyPrice(PROMO_END);
+  if (stop.id === "wallet") {
+    return {
+      ...stop,
+      explanation: `Ixis live in Apixis Wallet (${IXIS_PER_USD} Ixis = $1). Inside a brokerage, email (${JOB_IXIS.email}), offer letters (${JOB_IXIS.offerLetter}), and property lookups (${JOB_IXIS.propertyLookup}) are paid from the office Wallet, which is the owner’s Apixis Wallet. Add Ixis there. Saving a contact is free. Buying Ixis does not by itself unlock a premium outfit.`,
+      example: `Office Wallet · Email ${JOB_IXIS.email} · Offer letter ${JOB_IXIS.offerLetter} · Property lookup ${JOB_IXIS.propertyLookup}`,
+    };
+  }
+  if (stop.id === "connections") {
+    const month = monthly.phase === "promo"
+      ? `a $${monthly.usd} monthly plan (${formatIxis(monthly.ixis)} Ixis) for the first month from launch, then $${later.usd}/month`
+      : `a $${monthly.usd} monthly plan (${formatIxis(monthly.ixis)} Ixis)`;
+    return {
+      ...stop,
+      explanation: `Connect supported services, review workspace preferences, and manage access here. Renoxis has a $${START_FEE.usd} one-time start fee (${formatIxis(START_FEE.ixis)} Ixis) and ${month} that renews every month. Pay with Ixis through Apixis Wallet. Card billing is coming soon. Setup and provider availability determine which connected tools work.`,
+      example: `Access · $${START_FEE.usd} start · $${monthly.usd} each month`,
+    };
+  }
+  return stop;
+}
 export function orderedTour(focus: string) {
   const priority = focus === 'Properties' ? ['properties','renovation','transactions'] : focus === 'Calendar' ? ['day','calendar','tasks'] : ['leads','clients','pipeline'];
   const ids = ['overview', ...priority];
-  return [...ids.map(id => tourStops.find(s => s.id === id)!), ...tourStops.filter(s => !ids.includes(s.id))];
+  return [...ids.map(id => tourStops.find(s => s.id === id)!), ...tourStops.filter(s => !ids.includes(s.id))].map(withLivePrices);
 }
 export function dashboardDestination(params: Record<string, string | string[] | undefined>) {
   const query = new URLSearchParams();

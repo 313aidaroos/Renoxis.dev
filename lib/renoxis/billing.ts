@@ -1,27 +1,29 @@
 /**
  * Soft-launch billing for Renoxis.
- * Cash buy stays on Apixis Wallet. No Renoxis Stripe.
- * Start fee: 5000 Ixis ($50) once. Monthly plan: 10000 Ixis ($100), renews every month.
- * Awad lock 2026-10-06. Pay by card or with Ixis (100 Ixis = $1). Card checkout is not
- * built here. The Ixis path is still renoxis.activate and renoxis.agent.monthly.
- * The Wallet catalog must price renoxis.agent.monthly at 10000. This repo does not
- * edit Apixis Wallet.
+ * Amounts and SKUs live in pricing.ts (Awad, 2026-10-13). No Renoxis Stripe.
  * Cixy jobs inside a brokerage bill the office owner's Apixis Wallet (see office-billing.ts).
  * Entitlements stay empty until redeem capture — do not invent balances.
  */
 
 import { RENOXIS_APP_ORIGIN, walletBuyUrl } from "./wallet-link.ts";
+import {
+  IXIS_PER_USD,
+  MONTHLY_PROMO_SKU,
+  MONTHLY_STANDARD_SKU,
+  PROMO_END,
+  START_FEE,
+  formatIxis,
+  getMonthlyPrice,
+} from "./pricing.ts";
 
-export const ACTIVATE_IXIS = 5000;
-export const MONTHLY_IXIS = 10000;
-export const ACTIVATE_USD = 50;
-export const MONTHLY_USD = 100;
+export const ACTIVATE_IXIS = START_FEE.ixis;
+export const ACTIVATE_USD = START_FEE.usd;
 
-/** Wallet product keys. Monthly must be 10,000 Ixis on the Wallet catalog. */
+/** Wallet product keys. The standard monthly id is a TODO until the hub publishes it. */
 export const WALLET_SKU = {
-  activate: "renoxis.activate",
-  /** Existing catalog key. Wallet SKU price must be 10000, not 5000. */
-  monthly: "renoxis.agent.monthly",
+  activate: START_FEE.sku,
+  monthlyPromo: MONTHLY_PROMO_SKU,
+  monthlyStandard: MONTHLY_STANDARD_SKU,
 } as const;
 
 /** Hub aliases for the same SKUs. */
@@ -96,33 +98,40 @@ export function renewWalletHref() {
 }
 
 export function activateCopy() {
-  return `Activate · ${ACTIVATE_IXIS.toLocaleString()} Ixis ($${ACTIVATE_USD})`;
+  return `Activate · ${formatIxis(ACTIVATE_IXIS)} Ixis ($${ACTIVATE_USD})`;
 }
 
-export function renewCopy() {
-  return `Monthly plan · ${MONTHLY_IXIS.toLocaleString()} Ixis / mo ($${MONTHLY_USD})`;
+export function renewCopy(now = new Date()) {
+  const price = getMonthlyPrice(now);
+  return `Monthly plan · ${formatIxis(price.ixis)} Ixis / mo ($${price.usd})`;
 }
 
 export function startFeeCopy() {
-  return `$${ACTIVATE_USD} one-time start fee (${ACTIVATE_IXIS.toLocaleString()} Ixis).`;
+  return `$${ACTIVATE_USD} one-time start fee (${formatIxis(ACTIVATE_IXIS)} Ixis).`;
 }
 
-export function monthlyPlanCopy() {
-  return `$${MONTHLY_USD}/month (${MONTHLY_IXIS.toLocaleString()} Ixis). It renews automatically every month.`;
+export function monthlyPlanCopy(now = new Date()) {
+  const price = getMonthlyPrice(now);
+  const renews = "It renews automatically every month.";
+  if (price.phase === "promo") {
+    const later = getMonthlyPrice(PROMO_END);
+    return `$${price.usd}/month (${formatIxis(price.ixis)} Ixis) for the first month from launch, then $${later.usd}/month (${formatIxis(later.ixis)} Ixis). ${renews}`;
+  }
+  return `$${price.usd}/month (${formatIxis(price.ixis)} Ixis). ${renews}`;
 }
 
 /** Shown wherever the start fee or monthly plan is offered. No card form here. */
 export function payChoiceCopy() {
-  return "Pay by card or with Ixis. 100 Ixis = $1.";
+  return `Pay with Ixis now. Card subscription billing is coming soon. ${IXIS_PER_USD} Ixis = $1.`;
 }
 
 /** Copy after Wallet return — catalog live; entitlement empty until capture. */
-export function redeemAwaitingCaptureCopy(intent: "activate" | "renew") {
-  const sku =
-    intent === "activate" ? WALLET_SKU.activate : WALLET_SKU.monthly;
-  const amount = intent === "activate" ? ACTIVATE_IXIS : MONTHLY_IXIS;
+export function redeemAwaitingCaptureCopy(intent: "activate" | "renew", now = new Date()) {
+  const monthly = getMonthlyPrice(now);
+  const sku = intent === "activate" ? WALLET_SKU.activate : monthly.sku;
+  const amount = intent === "activate" ? ACTIVATE_IXIS : monthly.ixis;
   return (
-    `Wallet catalog is live (${sku} · ${amount.toLocaleString()} Ixis). ` +
+    `Wallet catalog is live (${sku} · ${formatIxis(amount)} Ixis). ` +
     "Seat unlocks after redeem capture — entitlements stay empty until then (no invented balances)."
   );
 }

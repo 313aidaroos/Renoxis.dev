@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { IXIS_SKU } from "@/lib/renoxis/ixis";
+import { JOB_IXIS, closedDealFeeLabel } from "@/lib/renoxis/pricing";
 import { roleLabel, statusLabel } from "@/lib/renoxis/office-access";
 import type { FirmDesk } from "./TeamDesk";
 import { CixyPageHelp } from "./CixyPageHelp";
@@ -32,12 +33,12 @@ const managerSteps = [
   "Add an agent by email. If they already have an account, they join now. If not, share the link. Mail is not sent for you.",
   "Check the office Wallet. Add Ixis on Apixis Wallet. Agent jobs are paid from that Wallet, not from the agent.",
   "Read each person's status and how many Ixis their Cixy jobs have used.",
-  "Review recent office activity. Apixis keeps 5% of a closed-deal fee.",
+  `Review recent office activity. Apixis keeps ${closedDealFeeLabel()} of a closed-deal fee.`,
 ];
 
 const agentSteps = [
   "This page shows the brokerage you belong to.",
-  "Email is 50 Ixis, an offer letter is 100 Ixis, and a property lookup is 25 Ixis. The office pays, not you.",
+  `Email is ${JOB_IXIS.email} Ixis, an offer letter is ${JOB_IXIS.offerLetter} Ixis, and a property lookup is ${JOB_IXIS.propertyLookup} Ixis. The office pays, not you.`,
   "Saving a contact is free. Nothing on this page sends mail.",
 ];
 
@@ -199,7 +200,7 @@ export function BrokerageDesk({
             are paid by the office, not from your personal Ixis.
           </p>
           <p className="muted">
-            Saving a contact is free. Apixis keeps 5% of a closed-deal fee.
+            Saving a contact is free. Apixis keeps {closedDealFeeLabel()} of a closed-deal fee.
             Nothing here sends mail.
           </p>
         </Panel>
@@ -380,7 +381,7 @@ export function BrokerageDesk({
           </Panel>
           <Panel title="Closed-deal fees">
             <p className="muted">
-              Apixis keeps 5% of a closed-deal fee. It is recorded as pending.
+              Apixis keeps {closedDealFeeLabel()} of a closed-deal fee. It is recorded as pending.
               It is not taken from the office Wallet on this page.
             </p>
             {firm.commissions.length ? (
@@ -389,7 +390,7 @@ export function BrokerageDesk({
                   <div>
                     <strong>{Number(row.amount).toLocaleString()} pending</strong>
                     <div className="record-meta">
-                      <span className="tag">5%</span>
+                      <span className="tag">{closedDealFeeLabel()}</span>
                       <span>of {row.fee_base}</span>
                     </div>
                   </div>

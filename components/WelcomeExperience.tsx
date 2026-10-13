@@ -7,6 +7,7 @@ import { LoginForm } from './LoginForm';
 import { CixyHelp } from './CixyHelp';
 import { paintedSignatureLook } from '@/lib/renoxis/customization';
 import { orderedTour } from '@/lib/renoxis/tour';
+import { IXIS_PER_USD, JOB_IXIS, PROMO_END, START_FEE, beginCharge, formatIxis, getMonthlyPrice } from '@/lib/renoxis/pricing';
 import './command-desk.css';
 import './welcome.css';
 import './auth.css';
@@ -32,6 +33,9 @@ export default function WelcomeExperience({ startInTour = false, destination = '
   const heading = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
   const stops = orderedTour(focus);
+  const monthly = getMonthlyPrice();
+  const later = getMonthlyPrice(PROMO_END);
+  const opening = beginCharge();
   const stop = stops[index];
   const answer = answers[stop.id];
   const mood: Mood = screen === 'tour' && stop.id === 'studio' && answer === 1 ? 'Coffee' : 'Wave';
@@ -121,7 +125,7 @@ export default function WelcomeExperience({ startInTour = false, destination = '
       </>}
       {screen === 'finish' && <section className="tour-setup tour-finish">
         <aside className="tour-guide"><div className="tour-portrait">{avatar}</div><span className="welcome-kicker">CIXY · HERE WHEN YOU NEED ME</span><h2>Your next chapter is yours.</h2><p>We’ll begin with {focus === 'Leads' ? 'people and follow-ups' : focus === 'Properties' ? 'properties and deals' : 'your day and appointments'}. Your own workspace starts with your real records.</p></aside>
-        <div className="tour-questions"><span className="welcome-kicker">FROM EXPLORING TO DOING</span><h1 ref={heading} tabIndex={-1}>Ready to make it yours?</h1><p>You explored {visited.length} of {stops.length} boxes. You can come back for the rest whenever you like.</p><div className="tour-summary"><span>{role || 'Exploring real estate'}</span><span>{team}</span><span>{focuses.find(f => f.value === focus)?.label}</span></div><h2>A clear start.</h2><p>Create or sign in to your account, then activate access through Apixis Wallet. Your tour choices open the board you want to focus on; sample records stay here.</p><div className="tour-price"><div><span>One-time start fee</span><strong>$50 <small>· 5,000 Ixis</small></strong></div><div><span>Monthly plan</span><strong>$100/month <small>· 10,000 Ixis</small></strong></div><p>The start fee and the first month are separate: $150 / 15,000 Ixis to begin. The monthly plan renews automatically every month. Pay by card or with Ixis (100 Ixis = $1). Email is 50 Ixis, an offer letter is 100, and a property lookup is 25. In a brokerage, the office pays for those jobs. Signing in does not charge you.</p></div><div className="welcome-actions"><button className="primary" onClick={signIn}>Create your workspace →</button><button onClick={() => setScreen('tour')}>Keep exploring</button></div><p className="tour-note">Have an account? <Link href={next}>Open your dashboard →</Link> · <Link href="/pricing">Full pricing</Link></p></div>
+        <div className="tour-questions"><span className="welcome-kicker">FROM EXPLORING TO DOING</span><h1 ref={heading} tabIndex={-1}>Ready to make it yours?</h1><p>You explored {visited.length} of {stops.length} boxes. You can come back for the rest whenever you like.</p><div className="tour-summary"><span>{role || 'Exploring real estate'}</span><span>{team}</span><span>{focuses.find(f => f.value === focus)?.label}</span></div><h2>A clear start.</h2><p>Create or sign in to your account, then activate access through Apixis Wallet. Your tour choices open the board you want to focus on; sample records stay here.</p><div className="tour-price"><div><span>One-time start fee</span><strong>${START_FEE.usd} <small>· {formatIxis(START_FEE.ixis)} Ixis</small></strong></div><div><span>Monthly plan</span><strong>${monthly.usd}/month <small>· {formatIxis(monthly.ixis)} Ixis</small></strong></div><p>The start fee and the first month are separate: ${opening.usd} / {formatIxis(opening.ixis)} Ixis to begin. The monthly plan renews automatically every month.{monthly.phase === 'promo' ? ` Launch rate for the first month from launch, then $${later.usd}/month (${formatIxis(later.ixis)} Ixis).` : ''} Pay with Ixis ({IXIS_PER_USD} Ixis = $1). Card billing is coming soon. Email is {JOB_IXIS.email} Ixis, an offer letter is {JOB_IXIS.offerLetter}, and a property lookup is {JOB_IXIS.propertyLookup}. In a brokerage, the office pays for those jobs. Signing in does not charge you.</p></div><div className="welcome-actions"><button className="primary" onClick={signIn}>Create your workspace →</button><button onClick={() => setScreen('tour')}>Keep exploring</button></div><p className="tour-note">Have an account? <Link href={next}>Open your dashboard →</Link> · <Link href="/pricing">Full pricing</Link></p></div>
       </section>}
     </main>
     <footer className="welcome-footer"><span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span><div><Link href="/pricing">Pricing</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link><button className="text-button" onClick={() => setMotion(!motion)} aria-pressed={!motion}>{motion ? "Pause motion" : "Enable motion"}</button></div></footer>

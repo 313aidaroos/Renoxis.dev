@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { redeem } from "../apixis-wallet.ts";
 import type { Entitlement } from "./billing.ts";
+import { seatProductKey } from "./pricing.ts";
 
 export type SeatIntent = "activate" | "monthly";
 export type SeatStore = {
@@ -15,7 +16,7 @@ export async function purchaseSeat(input: { userId: string; owner: string; inten
   let reservationId = "";
   const result = await redeem<Entitlement>({
     owner: input.owner,
-    productKey: input.intent === "activate" ? "renoxis.activate" : "renoxis.agent.monthly",
+    productKey: seatProductKey(input.intent),
     idempotencyKey: seatPurchaseKey(input.userId, input.intent, input.attemptId),
     provision: async (reservation) => {
       reservationId = reservation.reservationId;

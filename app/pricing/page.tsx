@@ -1,20 +1,41 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { ACTIVATE_IXIS, MONTHLY_IXIS, ACTIVATE_USD, MONTHLY_USD, payChoiceCopy } from "@/lib/renoxis/billing";
+import { payChoiceCopy, startFeeCopy } from "@/lib/renoxis/billing";
+import {
+  CARD_BILLING_COPY,
+  IXIS_PER_USD,
+  JOB_IXIS,
+  START_FEE,
+  beginCharge,
+  closedDealFeeLabel,
+  formatIxis,
+  PROMO_END,
+  getMonthlyPrice,
+} from "@/lib/renoxis/pricing";
+import { walletBuyUrl } from "@/lib/renoxis/wallet-link";
+import { PricingCheckout } from "@/components/PricingCheckout";
 import "@/components/welcome.css";
 
-export const metadata = { title: "Renoxis pricing — $50 to start, $100 a month" };
-
-const fmt = (n: number) => n.toLocaleString("en-US");
+export async function generateMetadata() {
+  await connection();
+  const monthly = getMonthlyPrice();
+  return { title: `Renoxis pricing — $${START_FEE.usd} to start, $${monthly.usd} a month` };
+}
 
 export default async function PricingPage() {
+  await connection();
   let signedIn = false;
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     signedIn = !!user;
   }
-  const start = signedIn ? "/dashboard?board=Connections&billing=activate" : "/?board=Connections&billing=activate";
+  const start = signedIn ? "/dashboard?board=Connections&billing=activate" : "/login?next=%2Fdashboard%3Fboard%3DConnections%26billing%3Dactivate";
+  const monthly = getMonthlyPrice();
+  const later = getMonthlyPrice(PROMO_END);
+  const begin = beginCharge();
+  const buyHref = walletBuyUrl("https://renoxis.dev/pricing");
 
   return (
     <div className="welcome-shell">
@@ -32,9 +53,23 @@ export default async function PricingPage() {
 
         <section className="tour-price" aria-labelledby="price-title">
           <h2 id="price-title" className="welcome-small">What it costs</h2>
-          <div><span>One-time start fee</span><strong>${ACTIVATE_USD} <small>· {fmt(ACTIVATE_IXIS)} Ixis</small></strong></div>
-          <div><span>Monthly plan</span><strong>${MONTHLY_USD}/month <small>· {fmt(MONTHLY_IXIS)} Ixis</small></strong></div>
-          <p>The start fee and the first month are separate: ${ACTIVATE_USD + MONTHLY_USD} / {fmt(ACTIVATE_IXIS + MONTHLY_IXIS)} Ixis to begin. The monthly plan renews automatically every month. {payChoiceCopy()} Signing in is free and never charges you.</p>
+          <div><span>One-time start fee</span><strong>${START_FEE.usd} <small>· {formatIxis(START_FEE.ixis)} Ixis</small></strong></div>
+          <div><span>Monthly plan</span><strong>${monthly.usd}/month <small>· {formatIxis(monthly.ixis)} Ixis</small></strong></div>
+          <p>
+            {startFeeCopy()} {monthly.phase === "promo"
+              ? `Launch promo: $${monthly.usd}/month (${formatIxis(monthly.ixis)} Ixis) for the first month from launch, then $${later.usd}/month (${formatIxis(later.ixis)} Ixis).`
+              : `The monthly plan is $${monthly.usd}/month (${formatIxis(monthly.ixis)} Ixis).`}
+            {" "}The start fee and the first month are separate: ${begin.usd} / {formatIxis(begin.ixis)} Ixis to begin. The monthly plan renews automatically every month. {IXIS_PER_USD} Ixis = $1. Signing in is free and never charges you.
+          </p>
+        </section>
+
+        <section className="welcome-how" id="checkout">
+          <h2>How you pay</h2>
+          <ul>
+            <li>Pay with Ixis. After you sign in, Renoxis redeems the seat from Apixis Wallet. If the Wallet is short, Buy Ixis opens Apixis Wallet and brings you back.</li>
+            <li>Pay by card: {CARD_BILLING_COPY}</li>
+          </ul>
+          <PricingCheckout startHref={start} buyHref={buyHref} renewHref={signedIn ? "/dashboard?board=Connections&billing=renew" : "/login?next=%2Fdashboard%3Fboard%3DConnections%26billing%3Drenew"} />
         </section>
 
         <section className="welcome-how">
@@ -47,20 +82,21 @@ export default async function PricingPage() {
           </ul>
           <h2>What costs extra (your Apixis Wallet)</h2>
           <ul>
-            <li>Email · 50 Ixis. Offer letter · 100 Ixis. Property lookup · 25 Ixis. In a brokerage, the office pays for these.</li>
-            <li>Saving a contact is free. Apixis keeps 5% of a closed-deal fee.</li>
+            <li>Email · {JOB_IXIS.email} Ixis. Offer letter · {JOB_IXIS.offerLetter} Ixis. Property lookup · {JOB_IXIS.propertyLookup} Ixis. In a brokerage, the office pays for these.</li>
+            <li>Saving a contact is free. Apixis keeps {closedDealFeeLabel()} of a closed-deal fee.</li>
           </ul>
           <h2>What Renoxis does not do yet</h2>
           <ul>
             <li>Send email or publish posts for you — drafts are yours to review and send.</li>
             <li>Import MLS listings, look up property data, or generate renovation images.</li>
+            <li>Charge a card for the subscription. Card billing is coming soon.</li>
           </ul>
         </section>
 
         <section className="welcome-actions">
-          <Link className="primary" href={start}>Start · {fmt(ACTIVATE_IXIS)} Ixis →</Link>
+          <Link className="primary" href={start}>Pay with Ixis · {formatIxis(START_FEE.ixis)} to start →</Link>
           <Link href="/tour">Take the tour first</Link>
-          <a href="https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2Fpricing">Buy Ixis</a>
+          <a href={buyHref}>Buy Ixis</a>
         </section>
         <p className="tour-note">Ixis is a closed-loop platform credit for Apixis-family products. It is not a currency or investment and cannot be withdrawn.</p>
       </main>

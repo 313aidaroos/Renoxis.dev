@@ -3,7 +3,7 @@
 Renoxis does not keep its own Ixis balance and does not run card checkout. Ixis live in Apixis Wallet. The customer picks card or Ixis. Card subscription billing shows Coming soon. This repo has no Stripe code. Amounts live in `lib/renoxis/pricing.ts`.
 
 - Start fee: 5,000 Ixis ($50), one time, SKU `renoxis.activate`.
-- Monthly plan: $50 / 5,000 Ixis (`renoxis.agent.monthly`, which exists today) until one calendar month after `LAUNCH_DATE`, then $100 / 10,000 Ixis. The 10,000 SKU id is a TODO for Awad (`renoxis.agent.monthly.10000` until the hub publishes it). It renews every month. `getMonthlyPrice(now)` switches it. This repo does not change Apixis Wallet.
+- Monthly plan: $50 / 5,000 Ixis (`renoxis.agent.monthly`, which exists today) from launch on 2027-01-01 midnight Central until 2027-02-01, then $100 / 10,000 Ixis on `renoxis.agent.monthly.10000` (Wallet Lead is publishing that id). It renews every month. `getMonthlyPrice(now)` switches it. This repo does not change Apixis Wallet.
 - The start fee and the first month are separate. During the promo that is 10,000 Ixis ($100) to begin. After the promo it is 15,000 Ixis ($150).
 - Email draft: 50 Ixis. Offer letter: 100 Ixis. Property lookup: 25 Ixis.
 - Saving a contact is free.

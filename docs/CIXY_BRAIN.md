@@ -14,7 +14,7 @@ Renoxis does **not** maintain a second brain. Knowledge comes from the Apixis hu
 | Origin | `https://renoxis.dev` |
 | Auth story | "Log in with Apixis ID" first (Wallet SSO, one ID for every Apixis company); Renoxis email link + password tab also exist |
 | Start fee | $50 · 5,000 Ixis one time (Wallet) |
-| Monthly plan | Launch promo $50 · 5,000 Ixis (`renoxis.agent.monthly`) for the first month from launch, then $100 · 10,000 Ixis. SKU id for 10,000 is a TODO. See `lib/renoxis/pricing.ts`. Renews every month. |
+| Monthly plan | Launch 2027-01-01 midnight Central. Promo $50 · 5,000 Ixis (`renoxis.agent.monthly`) through that first month, then $100 · 10,000 Ixis on `renoxis.agent.monthly.10000` from 2027-02-01. See `lib/renoxis/pricing.ts`. Renews every month. |
 | Property lookup | **25 Ixis**, billed to the office Wallet inside a brokerage |
 | Email draft | 50 Ixis, office Wallet inside a brokerage |
 | Offer letter | 100 Ixis, office Wallet inside a brokerage |

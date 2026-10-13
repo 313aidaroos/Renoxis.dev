@@ -4,8 +4,8 @@
  * 100 Ixis = $1. This site does not grant Ixis and does not run Stripe.
  */
 
-/** TODO(Awad): set the real launch instant (UTC). Placeholder only — not the launch. */
-export const LAUNCH_DATE = new Date("2026-12-01T00:00:00.000Z");
+/** Midnight Central time on 2027-01-01 (CST, UTC−6). Set by Awad on 2026-10-13. */
+export const LAUNCH_DATE = new Date("2027-01-01T06:00:00.000Z");
 
 export const IXIS_PER_USD = 100;
 
@@ -19,7 +19,7 @@ export const START_FEE = {
 export const MONTHLY_PROMO_SKU = "renoxis.agent.monthly";
 
 /**
- * TODO(Awad): replace with the hub's 10,000 Ixis monthly SKU id when it is published.
+ * 10,000 Ixis monthly SKU. Wallet Lead is publishing this id.
  * Do not point this at renoxis.agent.monthly. That catalog row is 5,000 Ixis.
  */
 export const MONTHLY_STANDARD_SKU = "renoxis.agent.monthly.10000";
@@ -79,8 +79,8 @@ export function addOneUtcMonth(date: Date): Date {
 export const PROMO_END = addOneUtcMonth(LAUNCH_DATE);
 
 /**
- * Launch rate until PROMO_END, including dates before LAUNCH_DATE, so a future
- * placeholder does not advertise $100 early. At PROMO_END the price is $100
+ * Launch rate until PROMO_END (2027-02-01 06:00 UTC, midnight Central),
+ * including dates before LAUNCH_DATE. At PROMO_END the price is $100
  * and the standard SKU. The switch does not need a deploy.
  */
 export function getMonthlyPrice(now: Date = new Date()): MonthlyPrice {

@@ -78,10 +78,14 @@ test("insufficient Ixis buy link returns to the seat screen", () => {
   assert.match(seatBuyReturnUrl("https://renoxis.dev/", "activate"), /billing=activate/);
 });
 
-test("launch date and the 10000 SKU stay marked for Awad", async () => {
+test("launch is midnight Central on 2027-01-01 and $100 starts 2027-02-01", async () => {
+  assert.equal(LAUNCH_DATE.toISOString(), "2027-01-01T06:00:00.000Z");
+  assert.equal(PROMO_END.toISOString(), "2027-02-01T06:00:00.000Z");
+  assert.equal(getMonthlyPrice(new Date("2027-02-01T05:59:59.999Z")).usd, 50);
+  assert.equal(getMonthlyPrice(new Date("2027-02-01T06:00:00.000Z")).usd, 100);
+  assert.equal(MONTHLY_STANDARD_SKU, "renoxis.agent.monthly.10000");
   const source = await readFile(new URL("../lib/renoxis/pricing.ts", import.meta.url), "utf8");
-  assert.match(source, /TODO\(Awad\): set the real launch/);
-  assert.match(source, /TODO\(Awad\): replace with the hub's 10,000/);
+  assert.doesNotMatch(source, /TODO\(Awad\): set the real launch/);
   assert.match(CARD_BILLING_COPY, /coming soon/i);
 });
 

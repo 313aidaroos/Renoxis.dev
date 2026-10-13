@@ -19,7 +19,7 @@ import {
 export const ACTIVATE_IXIS = START_FEE.ixis;
 export const ACTIVATE_USD = START_FEE.usd;
 
-/** Wallet product keys. The standard monthly id is a TODO until the hub publishes it. */
+/** Wallet product keys. The standard monthly id is the one Wallet Lead is publishing. */
 export const WALLET_SKU = {
   activate: START_FEE.sku,
   monthlyPromo: MONTHLY_PROMO_SKU,

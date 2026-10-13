@@ -52,3 +52,7 @@ Entry format:
 ## 2026-10-13 — Grok
 - Changed: locked prices now live in `lib/renoxis/pricing.ts`. Start fee stays $50 (5,000 Ixis, `renoxis.activate`). Monthly is $50 (5,000 Ixis, `renoxis.agent.monthly`) until one calendar month after `LAUNCH_DATE`, then $100 (10,000 Ixis) on a SKU id Awad still has to set. Pages, tour, terms, and seat redeem read that module. The customer picks Ixis or card; Ixis uses the existing Wallet redeem, including Buy Ixis when the balance is short. Card subscription billing shows Coming soon. No Stripe. The Cixy system prompt was not edited. Migration `supabase/migrations/20261006120000_brokerage_office_wallet.sql` is still not applied.
 - Why: Awad locked the launch promo on 2026-10-13 and asked for one config so the price switches by itself. Production merge and deploy stay with Awad.
+
+## 2026-10-13 — Grok
+- Changed: `LAUNCH_DATE` is now `2027-01-01T06:00:00.000Z` (midnight Central on 2027-01-01). The launch-date TODO is gone. `getMonthlyPrice` switches to $100/month (10,000 Ixis, SKU `renoxis.agent.monthly.10000`) at `2027-02-01T06:00:00.000Z`. Wallet Lead is publishing that SKU id, so the id stays.
+- Why: Awad set the official launch date. Production merge stays with Awad.

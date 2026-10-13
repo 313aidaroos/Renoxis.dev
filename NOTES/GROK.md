@@ -223,3 +223,9 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Who: Grok, for Awad. Placeholder launch date and the 10,000 Ixis SKU id are marked TODO for Awad.
 - Not done: not applied to the live database, not merged, not deployed. Awad must approve production.
 - Undo: revert this commit. The price switch itself is the `LAUNCH_DATE` constant; set that date, or revert the file, to undo the promo.
+
+## 2026-10-13 — Grok: official launch date
+- What: Awad set the Renoxis launch to 2027-01-01 at midnight Central. `LAUNCH_DATE` is `2027-01-01T06:00:00.000Z`. The $50/month promo runs until `2027-02-01T06:00:00.000Z`, then the monthly price is $100. The launch-date TODO is removed. The 10,000 Ixis SKU stays `renoxis.agent.monthly.10000`; Wallet Lead is publishing that id.
+- Where: `lib/renoxis/pricing.ts`, `lib/renoxis/billing.ts`, `tests/pricing.test.ts`, `NOTES/PRICING.md`, `docs/BILLING_SOFT_GATE.md`, `docs/LAUNCH_STATUS.md`, `docs/CIXY_BRAIN.md`, `docs/APIXIS_FAMILY.md`.
+- Who: Grok, for Awad.
+- Undo: set `LAUNCH_DATE` back, or revert this commit. Do not merge to production from here.

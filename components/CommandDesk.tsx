@@ -8,6 +8,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { FooterSocial } from "./FooterSocial";
 import CixySetup, { type Connections } from "./CixySetup";
 import CixyAvatar, { moods, type Mood } from "./CixyAvatar";
 import {
@@ -2150,6 +2151,7 @@ export default function CommandDesk({
               <button onClick={() => setInstallMessage(!installMessage)}>
                 Install app ↗
               </button>
+              <FooterSocial />
             </div>
           </footer>
           {installMessage && (

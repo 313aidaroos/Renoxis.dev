@@ -229,3 +229,11 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Where: `lib/renoxis/pricing.ts`, `lib/renoxis/billing.ts`, `tests/pricing.test.ts`, `NOTES/PRICING.md`, `docs/BILLING_SOFT_GATE.md`, `docs/LAUNCH_STATUS.md`, `docs/CIXY_BRAIN.md`, `docs/APIXIS_FAMILY.md`.
 - Who: Grok, for Awad.
 - Undo: set `LAUNCH_DATE` back, or revert this commit. Do not merge to production from here.
+
+## 2026-10-13 — Grok: footer Instagram link
+- What: an Instagram icon in the existing footers (welcome, pricing, feed, auth, legal, Command Desk). Same footer layout and colors. The icon is inline JSX, colored with the footer link color. Link: https://www.instagram.com/renoxis.dev/ (`target="_blank"`, `rel="noopener noreferrer"`, `aria-label="Renoxis on Instagram"`).
+- Verified: Instagram oEmbed `https://www.instagram.com/api/v1/oembed/?url=https://www.instagram.com/renoxis.dev/` returned title “Renoxis RE Company's (@renoxis.dev) profile on Instagram” and author_url `https://www.instagram.com/renoxis.dev`. A nonexistent handle returns HTTP 404 “No Media Match”. The public profile page itself redirects to login, so the oEmbed title is the confirmation.
+- Left out: Facebook. `https://www.facebook.com/renoxis.dev` redirects to a login wall. Graph API `renoxis.dev` returns error subcode 33 (object does not exist or cannot be loaded); a real page such as `natgeo` returns a different error (`#200 Provide valid app ID`). Page search for “Renoxis.dev” showed Not Found. Web search only finds a different firm, Renoxis at renoxis.co, which is not this brand. No Facebook icon was added.
+- Where: `components/FooterSocial.tsx`, `components/footer-social.css`, `components/WelcomeExperience.tsx`, `components/AuthShell.tsx`, `components/LegalPage.tsx`, `components/CommandDesk.tsx`, `app/feed/page.tsx`, `app/pricing/page.tsx`.
+- Who: Grok, for Awad.
+- Undo: revert this commit.

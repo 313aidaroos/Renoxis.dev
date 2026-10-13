@@ -38,6 +38,7 @@ import {
 } from "@/lib/renoxis/records";
 import { canRollup } from "@/lib/renoxis/access";
 import { TeamDesk, type FirmDesk } from "./TeamDesk";
+import { BrokerageDesk } from "./BrokerageDesk";
 import {
   RENOXIS_APIXIS_WORLD_URL,
   apixisPromptSeenKey,
@@ -49,13 +50,22 @@ import { WalletLinks } from "./WalletLinks";
 import { FALLBACK_WALLET_HREF } from "@/lib/renoxis/wallet-link";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 import { WalletPill } from "@/components/WalletPill";
+import { SeatPay } from "./SeatPay";
+import {
+  IXIS_PER_USD,
+  JOB_IXIS,
+  closedDealFeeLabel,
+} from "@/lib/renoxis/pricing";
 import {
   activateCopy,
   canUseCixyChat,
   canUseWorkspace,
   emptyEntitlement,
+  monthlyPlanCopy,
+  payChoiceCopy,
   redeemAwaitingCaptureCopy,
   renewCopy,
+  startFeeCopy,
   seatStatus,
   type Entitlement,
 } from "@/lib/renoxis/billing";
@@ -77,6 +87,7 @@ const boards = [
   "Analytics",
   "Cixy Studio",
   "Connections",
+  "Brokerage",
   "Team",
   "FAQs",
 ] as const;
@@ -95,6 +106,7 @@ const symbols = [
   "↗",
   "♡",
   "⚙",
+  "▣",
   "⚑",
   "?",
 ];
@@ -198,7 +210,7 @@ const faqs = [
   ],
   [
     "Can Cixy send messages or act on her own?",
-    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Paid drafts on the Team board charge your shared personal Wallet and wait for Approve. Approve does not send mail.",
+    "Cixy chat can answer questions and draft text. It does not send email, place calls, publish posts, or spend Ixis. Paid drafts on the Team board are paid by the office Wallet and wait for Approve. Approve does not send mail.",
   ],
   [
     "How do I customize Cixy?",
@@ -206,7 +218,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    "Ixis is the Apixis points unit. Email drafts and offer drafts charge your shared personal Wallet. Saving a property and tracking a contact are free (there is no property-data lookup yet). Premium outfits have no Ixis price yet. Buy Ixis opens Apixis Wallet and returns to Cixy Studio. Renoxis does not capture cards or credit a balance from that purchase.",
+    `Ixis is the Apixis points unit. ${IXIS_PER_USD} Ixis = $1. ${startFeeCopy()} ${monthlyPlanCopy()} Email drafts are ${JOB_IXIS.email} Ixis, offer letters are ${JOB_IXIS.offerLetter}, and a property lookup is ${JOB_IXIS.propertyLookup}. In a brokerage those jobs are paid by the office Wallet. Saving a contact is free. Premium outfits have no Ixis price yet. Add Ixis on Apixis Wallet. Card billing is coming soon.`,
   ],
   [
     "How do I install the app?",
@@ -232,6 +244,7 @@ export default function CommandDesk({
   walletHref = FALLBACK_WALLET_HREF,
   entitlement = emptyEntitlement(),
   worldAgent,
+  demo,
 }: {
   preview?: boolean;
   account?: string;
@@ -240,13 +253,16 @@ export default function CommandDesk({
   entitlement?: Entitlement;
   /** Apixis world agent state from the server (lib/renoxis/world-agent.ts). */
   worldAgent?: WorldAgentView;
+  /** Signed-in fixture for local screenshots. Not used by the live dashboard. */
+  demo?: { firm: FirmDesk; board?: Board };
 }) {
-  const [board, setBoard] = useState<Board>("Overview");
+  const [board, setBoard] = useState<Board>(demo?.board || "Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
   const walletIxis = useWalletBalance();
-  const [loading, setLoading] = useState(!preview);
+  const [loading, setLoading] = useState(!preview && !demo);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [shortfall, setShortfall] = useState<{ message: string; buyUrl: string } | null>(null);
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState("All");
   const [busy, setBusy] = useState(false);
@@ -277,8 +293,8 @@ export default function CommandDesk({
   >([]);
   const [files, setFiles] = useState<{ name: string; id: string }[]>([]);
   const [userId, setUserId] = useState("");
-  const [firm, setFirm] = useState<FirmDesk | null>(null);
-  const [officeId, setOfficeId] = useState<string | null>(null);
+  const [firm, setFirm] = useState<FirmDesk | null>(demo?.firm ?? null);
+  const [officeId, setOfficeId] = useState<string | null>(demo?.firm.office?.id ?? null);
   const [scope, setScope] = useState<"book" | "team">("book");
   const [formKind, setFormKind] = useState<Kind>("task");
   const [editing, setEditing] = useState<RecordItem | null>(null);
@@ -336,6 +352,7 @@ export default function CommandDesk({
   // Hydrate browser-only preferences and initial network state after mount.
   /* eslint-disable react-hooks/set-state-in-effect -- Hydrate browser-only preferences and fetch account data after mount. */
   useEffect(() => {
+    if (demo) return;
     void (async () => {
       let listId: string | null = null;
       let listView: "book" | "team" = "book";
@@ -351,8 +368,8 @@ export default function CommandDesk({
             });
             setNotice(accepted.message || "You joined the office.");
             payload = await loadFirm(accepted.brokerageId);
-            setBoard("Team");
-            window.history.replaceState(null, "", "?board=Team");
+            setBoard("Brokerage");
+            window.history.replaceState(null, "", "?board=Brokerage");
           } catch (error) {
             setNotice(
               error instanceof Error ? error.message : "Invite was not accepted.",
@@ -422,7 +439,7 @@ export default function CommandDesk({
       void navigator.serviceWorker.register("/sw.js").catch(() => {});
     // Firm and record loads are started once. Later office changes call reload directly.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, preview]);
+  }, [account, preview, demo]);
   /* eslint-enable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (
@@ -457,8 +474,8 @@ export default function CommandDesk({
       setBoard("Connections");
       setNotice(
         seat === "signed_inactive"
-          ? "Activate your Renoxis seat ($50 / 5,000 Ixis) in Apixis Wallet to use the workspace."
-          : "Renew Keep running ($50 / 5,000 Ixis per month) in Apixis Wallet to continue.",
+          ? `Activate your Renoxis seat. ${startFeeCopy()} ${payChoiceCopy()}`
+          : `Renew the monthly plan. ${monthlyPlanCopy()} ${payChoiceCopy()}`,
       );
       return false;
     }
@@ -683,11 +700,20 @@ export default function CommandDesk({
       }
 
       if (!res.ok) {
-        // 402 = honest "not enough Ixis". No window.open (pop-up blockers) — the
-        // Buy Ixis button is right next to this one.
+        // 402 = honest "not enough Ixis". The Buy Ixis link uses the Wallet return URL.
+        if (res.status === 402 || data.insufficient) {
+          const buyUrl = typeof data.buyUrl === "string" && data.buyUrl ? data.buyUrl : walletHref;
+          setShortfall({
+            message: data.error || "Not enough Ixis. Buy Ixis, then come back.",
+            buyUrl,
+          });
+        } else {
+          setShortfall(null);
+        }
         setNotice(data.error || (res.status === 402 ? "Not enough Ixis. Use Buy Ixis, then come back." : "Payment status is uncertain. Retry the same attempt to confirm it."));
         return;
       }
+      setShortfall(null);
       setNotice(intent === "activate" ? "Activated! Reloading your workspace..." : "Seat renewed for 30 days. Reloading...");
       window.location.reload();
     } catch (error) {
@@ -1334,30 +1360,22 @@ export default function CommandDesk({
               </header>
               <p>
                 {seat === "signed_inactive"
-                  ? "One-time activate is 5,000 Ixis ($50) on Apixis Wallet. Chat basics are included in the monthly seat; paid Cixy drafts use your personal Apixis Wallet."
-                  : "Monthly seat is 5,000 Ixis ($50/mo) on Apixis Wallet. Your activate is on file; renew to unlock writes and Cixy chat."}
+                  ? `${startFeeCopy()} Chat basics are included in the monthly plan. In a brokerage, paid Cixy jobs use the office Wallet. ${payChoiceCopy()}`
+                  : `${monthlyPlanCopy()} Your start fee is on file. Renew to unlock writes and Cixy chat. ${payChoiceCopy()}`}
               </p>
-              <div className="actions">
-                {seat === "signed_inactive" ? (
-                  <button
-                    className="primary"
-                    onClick={handleActivate}
-                    disabled={busy}
-                  >
-                    {activateCopy()}
-                  </button>
-                ) : (
-                  <button className="primary" onClick={handleRenew} disabled={busy}>
-                    {renewCopy()}
-                  </button>
-                )}
-                <a className="soft-button" href={walletHref}>
-                  Buy Ixis
-                </a>
-              </div>
+              <SeatPay
+                busy={busy}
+                buyHref={walletHref}
+                shortfall={shortfall}
+                actions={
+                  seat === "signed_inactive"
+                    ? [{ id: "activate", label: activateCopy(), onRedeem: handleActivate }]
+                    : [{ id: "monthly", label: renewCopy(), onRedeem: handleRenew }]
+                }
+              />
               <p className="muted">
-                Ixis are redeemed on Apixis Wallet (100 Ixis = $1). Your seat unlocks the
-                moment the redeem is captured. Renoxis never takes a card.
+                Ixis are redeemed on Apixis Wallet ({IXIS_PER_USD} Ixis = $1). Your seat unlocks the
+                moment the redeem is captured. Card subscription billing is coming soon.
               </p>
             </section>
           )}
@@ -1517,9 +1535,9 @@ export default function CommandDesk({
                   <button
                     type="button"
                     className="text-button"
-                    onClick={() => go(firm?.office ? "Team" : "Cixy Studio")}
+                    onClick={() => go(firm?.office ? "Brokerage" : "Cixy Studio")}
                   >
-                    {firm?.office ? "Office ledger ↗" : "Explore customization ↗"}
+                    {firm?.office ? "Brokerage ↗" : "Explore customization ↗"}
                   </button>
                   <span>
                     <a href={walletHref}>Buy Ixis</a>
@@ -1901,7 +1919,7 @@ export default function CommandDesk({
                 <p className="muted">
                   Expected commission comes from your entries, excludes
                   cancelled transactions, and is not a cash balance. A closed
-                  deal also records a 5% platform cut as pending. Nothing is
+                  deal also records a {closedDealFeeLabel()} platform cut as pending. Nothing is
                   collected here. Marketing metrics appear only when a verified
                   source is connected.
                 </p>
@@ -1974,6 +1992,24 @@ export default function CommandDesk({
               </div>
             </>
           )}
+          {board === "Brokerage" && (
+            <BrokerageDesk
+              preview={preview}
+              firm={firm}
+              busy={busy}
+              walletHref={walletHref}
+              onNotice={setNotice}
+              onOffice={(id) => {
+                void (async () => {
+                  const payload = await loadFirm(id);
+                  await reload(id, payload?.office && (payload.office.role === "owner" || payload.office.role === "broker") ? "team" : "book");
+                })();
+              }}
+              onChanged={() => {
+                void loadFirm(officeId);
+              }}
+            />
+          )}
           {board === "Team" && (
             <TeamDesk
               preview={preview}
@@ -2024,26 +2060,21 @@ export default function CommandDesk({
                           ? "Sign in to activate"
                           : "Not activated"}
                   </strong>
-                  . Activate $50 (5,000 Ixis) once; Keep running $50/mo
-                  (5,000 Ixis). Paid Cixy drafts use your personal Apixis Wallet
-                  (lookup 0 · email 50 · offer 100). Chat basics are in the
-                  seat. Cash buy stays on Apixis Wallet — no Renoxis Stripe.
+                  . {startFeeCopy()} {monthlyPlanCopy()} {payChoiceCopy()} Paid
+                  Cixy jobs in a brokerage use the office Wallet (lookup {JOB_IXIS.propertyLookup} ·
+                  email {JOB_IXIS.email} · offer {JOB_IXIS.offerLetter}). Chat basics are in the plan. Ixis
+                  payments stay on Apixis Wallet.
                 </p>
-                <div className="actions">
-                  <button
-                    className="primary"
-                    onClick={handleActivate}
-                    disabled={busy || preview}
-                  >
-                    {activateCopy()}
-                  </button>
-                  <button className="soft-button" onClick={handleRenew} disabled={busy || preview}>
-                    {renewCopy()}
-                  </button>
-                  <a className="soft-button" href={walletHref}>
-                    Buy Ixis
-                  </a>
-                </div>
+                <SeatPay
+                  busy={busy}
+                  disabled={preview}
+                  buyHref={walletHref}
+                  shortfall={shortfall}
+                  actions={[
+                    { id: "activate", label: activateCopy(), onRedeem: handleActivate },
+                    { id: "monthly", label: renewCopy(), onRedeem: handleRenew },
+                  ]}
+                />
                 {!preview && seat !== "active" && (
                   <p className="muted">
                     Access remains blocked until Wallet capture is persisted or
@@ -2184,7 +2215,7 @@ export default function CommandDesk({
               editor.current?.close();
               setNotice(
                 saved.platformCommission?.ok
-                  ? "Saved. A 5% platform commission is pending. Nothing was collected."
+                  ? `Saved. A ${closedDealFeeLabel()} platform commission is pending. Nothing was collected.`
                   : "Saved to your account.",
               );
             } catch (e) {
@@ -2331,18 +2362,19 @@ export default function CommandDesk({
           <>
             <p>
               {seat === "signed_inactive"
-                ? "Activate your seat to chat with Cixy. Buy Ixis on Apixis Wallet — Renoxis does not take a card."
-                : "Renew your monthly seat to chat with Cixy — 5,000 Ixis ($50) for 30 days."}
+                ? `Activate your seat to chat with Cixy. ${startFeeCopy()} ${payChoiceCopy()}`
+                : `Renew your monthly plan to chat with Cixy. ${monthlyPlanCopy()}`}
             </p>
-            <div className="actions">
-              <button
-                className="primary"
-                onClick={seat === "signed_inactive" ? handleActivate : handleRenew}
-                disabled={busy}
-              >
-                {seat === "signed_inactive" ? activateCopy() : renewCopy()}
-              </button>
-            </div>
+            <SeatPay
+              busy={busy}
+              buyHref={walletHref}
+              shortfall={shortfall}
+              actions={
+                seat === "signed_inactive"
+                  ? [{ id: "activate", label: activateCopy(), onRedeem: handleActivate }]
+                  : [{ id: "monthly", label: renewCopy(), onRedeem: handleRenew }]
+              }
+            />
           </>
         ) : activeChat ? (
           <Chat key={cixyName} assistantName={cixyName} officeId={officeId} />

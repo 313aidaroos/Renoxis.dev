@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { LegalPage } from "@/components/LegalPage";
+import { monthlyPlanCopy, payChoiceCopy, startFeeCopy } from "@/lib/renoxis/billing";
+import { JOB_IXIS, closedDealFeeLabel } from "@/lib/renoxis/pricing";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Renoxis",
@@ -8,7 +11,8 @@ export const metadata: Metadata = {
     "Closed-beta terms for the Renoxis real-estate workspace and Cixy assistant.",
 };
 
-export default function TermsOfService() {
+export default async function TermsOfService() {
+  await connection();
   return (
     <LegalPage title="Terms of Service">
       <p>
@@ -78,10 +82,13 @@ export default function TermsOfService() {
         Outlook, MLS feeds, and external CRM sync are not part of this beta.
       </p>
       <p>
-        Buy Ixis and Wallet open Apixis Wallet. Renoxis does not run checkout,
-        store card details, or credit Ixis from a card payment. Cash credit
-        happens only on Apixis Wallet. No purchase is completed inside Renoxis.
-        A price marked “to be set” or “coming soon” is not an offer.
+        {startFeeCopy()} {monthlyPlanCopy()} {payChoiceCopy()} Renoxis does not
+        store card details and does not charge a card on this site. Ixis
+        payments open Apixis Wallet. Inside a brokerage, email ({JOB_IXIS.email}{" "}
+        Ixis), offer letters ({JOB_IXIS.offerLetter} Ixis), and property lookups
+        ({JOB_IXIS.propertyLookup} Ixis) are paid from the office Wallet. Apixis
+        keeps {closedDealFeeLabel()} of a closed-deal fee. A price marked “to be
+        set” or “coming soon” is not an offer.
       </p>
 
       <h2>No professional advice</h2>

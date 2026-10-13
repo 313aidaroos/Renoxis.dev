@@ -1,13 +1,14 @@
 # Renoxis billing
 
-Renoxis uses one personal Apixis Wallet. It does not keep an office balance or run Stripe Checkout.
+Renoxis does not keep its own Ixis balance and does not run card checkout. Ixis live in Apixis Wallet. The customer picks card or Ixis. Card subscription billing shows Coming soon. This repo has no Stripe code. Amounts live in `lib/renoxis/pricing.ts`.
 
-- Activation: 5,000 Ixis ($50), one time, SKU `renoxis.activate`.
-- Monthly access: 5,000 Ixis ($50), SKU `renoxis.agent.monthly`. Each purchase adds 30 days; it is not automatic renewal.
-- Activation and the first month are separate purchases: 10,000 Ixis ($100) to start.
-- Email draft: 50 Ixis, SKU `renoxis.email_draft`. Offer-letter draft: 100 Ixis, SKU `renoxis.offer_letter`.
-- Saving typed property facts and tracking contacts are free. There is no property-data lookup provider.
-- The person choosing a paid action pays from their shared Wallet. Office membership organizes records and drafts; it does not change who pays.
+- Start fee: 5,000 Ixis ($50), one time, SKU `renoxis.activate`.
+- Monthly plan: $50 / 5,000 Ixis (`renoxis.agent.monthly`, which exists today) from launch on 2027-01-01 midnight Central until 2027-02-01, then $100 / 10,000 Ixis on `renoxis.agent.monthly.10000` (Wallet Lead is publishing that id). It renews every month. `getMonthlyPrice(now)` switches it. This repo does not change Apixis Wallet.
+- The start fee and the first month are separate. During the promo that is 10,000 Ixis ($100) to begin. After the promo it is 15,000 Ixis ($150).
+- Email draft: 50 Ixis. Offer letter: 100 Ixis. Property lookup: 25 Ixis.
+- Saving a contact is free.
+- Inside a brokerage, those Cixy jobs are paid from the office Wallet (the owner's Apixis Wallet), not from the agent who clicked. Someone with no brokerage still pays from their own Wallet.
+- Apixis keeps 5% of a closed-deal fee. It is recorded as pending.
 
 The Wallet catalog is the price authority. Renoxis uses the shared reserve → provision → capture SDK. Server-only entitlements gate paid workspace writes and AI. Browser state cannot grant access. Trusted beta grants remain server environment settings.
 

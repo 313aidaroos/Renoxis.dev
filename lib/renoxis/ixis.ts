@@ -1,12 +1,15 @@
-/** Firm Ixis prices. The same integers are enforced in supabase/brokerage.sql. */
+import { CLOSED_DEAL_FEE_BPS, JOB_IXIS } from "./pricing.ts";
+
+/** Firm Ixis prices. Integers come from pricing.ts. SQL in supabase/brokerage.sql mirrors them. */
+
 export const IXIS_SKU = {
-  property_lookup: 0, // saves what you type; no property-data source yet, so it is free
-  track_contact: 0,
-  email_draft: 50,
-  offer_letter: 100,
+  property_lookup: JOB_IXIS.propertyLookup,
+  track_contact: JOB_IXIS.trackContact,
+  email_draft: JOB_IXIS.email,
+  offer_letter: JOB_IXIS.offerLetter,
 } as const;
 export type IxisSku = keyof typeof IXIS_SKU;
-export const PLATFORM_COMMISSION_BPS = 500;
+export const PLATFORM_COMMISSION_BPS = CLOSED_DEAL_FEE_BPS;
 
 export function isSku(value: unknown): value is IxisSku {
   return typeof value === "string" && Object.hasOwn(IXIS_SKU, value);

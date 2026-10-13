@@ -41,6 +41,18 @@ Entry format:
 - Changed: the Cixy prompt now says "draws on Arab culture" (nothing religious; tests ban Muslim, insha'Allah, alhamdulillah, halal). Apixis ID is the only signup: the email link uses `shouldCreateUser: false` through `lib/renoxis/email-link.ts`, the /login, home dialog and Cixy help copy is updated, and a test was added. NOTES corrects the #42 attribution and logs the Vercel env changes (`APIXIS_WORLD_KEY` → sensitive, `ANTHROPIC_MODEL` → claude-sonnet-5) and the production redeploy.
 - Why: Awad's decisions after the 2026-10-04 lock audit.
 
+## 2026-10-06 — Grok
+- Changed: a working Brokerage tab (create or rename a brokerage, add and remove people, roster with status and Cixy spend, office Wallet balance with the existing Apixis Wallet link, recent jobs, and an agent view that says the office pays). Cixy jobs inside a brokerage bill the owner's Apixis Wallet. Property lookup is 25 Ixis. Displayed plan prices are a $50 start fee (5,000 Ixis) and a $100 monthly plan (10,000 Ixis). Migration `supabase/migrations/20261006120000_brokerage_office_wallet.sql` is in the repo and was not applied to production.
+- Why: Awad asked for a brokerage an office can use today, with jobs billed to the office, and for the new price lock.
+
 ## 2026-10-06 — Claude (family lead): AI Receptionist notes (D18)
 - Changed: AI Receptionist section in the family notes (see `docs/AI_RECEPTIONIST.md` in ApixisWallet); notes only, no code.
 - Why: Awad approved an AI Receptionist add-on at $100/month for every customer-facing family site and asked every bot and agent to follow one plan.
+
+## 2026-10-13 — Grok
+- Changed: locked prices now live in `lib/renoxis/pricing.ts`. Start fee stays $50 (5,000 Ixis, `renoxis.activate`). Monthly is $50 (5,000 Ixis, `renoxis.agent.monthly`) until one calendar month after `LAUNCH_DATE`, then $100 (10,000 Ixis) on a SKU id Awad still has to set. Pages, tour, terms, and seat redeem read that module. The customer picks Ixis or card; Ixis uses the existing Wallet redeem, including Buy Ixis when the balance is short. Card subscription billing shows Coming soon. No Stripe. The Cixy system prompt was not edited. Migration `supabase/migrations/20261006120000_brokerage_office_wallet.sql` is still not applied.
+- Why: Awad locked the launch promo on 2026-10-13 and asked for one config so the price switches by itself. Production merge and deploy stay with Awad.
+
+## 2026-10-13 — Grok
+- Changed: `LAUNCH_DATE` is now `2027-01-01T06:00:00.000Z` (midnight Central on 2027-01-01). The launch-date TODO is gone. `getMonthlyPrice` switches to $100/month (10,000 Ixis, SKU `renoxis.agent.monthly.10000`) at `2027-02-01T06:00:00.000Z`. Wallet Lead is publishing that SKU id, so the id stays.
+- Why: Awad set the official launch date. Production merge stays with Awad.

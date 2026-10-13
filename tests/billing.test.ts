@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
+import { PROMO_END } from "../lib/renoxis/pricing.ts";
 import {
   ACTIVATE_IXIS,
-  MONTHLY_IXIS,
   WALLET_SKU,
   WALLET_SKU_ALIAS,
   activateWalletHref,
@@ -17,14 +17,14 @@ import {
   type Entitlement,
 } from "../lib/renoxis/billing.ts";
 
-test("pricing lock is 5000 Ixis activate and monthly", () => {
+test("pricing lock is 5000 Ixis to start", () => {
   assert.equal(ACTIVATE_IXIS, 5000);
-  assert.equal(MONTHLY_IXIS, 5000);
 });
 
-test("Wallet SKUs are activate + agent.monthly (not seat.monthly)", () => {
+test("Wallet SKUs are activate + agent.monthly, with a separate standard id", () => {
   assert.equal(WALLET_SKU.activate, "renoxis.activate");
-  assert.equal(WALLET_SKU.monthly, "renoxis.agent.monthly");
+  assert.equal(WALLET_SKU.monthlyPromo, "renoxis.agent.monthly");
+  assert.match(WALLET_SKU.monthlyStandard, /10000/);
   assert.equal(WALLET_SKU_ALIAS.activate, "renoxis-activate");
   assert.equal(WALLET_SKU_ALIAS.monthly, "renoxis-monthly");
 });
@@ -78,8 +78,10 @@ test("idempotency keys follow hub lock", () => {
 });
 
 test("redeem copy keeps entitlement empty until capture", () => {
-  assert.match(redeemAwaitingCaptureCopy("activate"), /renoxis\.activate/);
-  assert.match(redeemAwaitingCaptureCopy("renew"), /renoxis\.agent\.monthly/);
+  const duringPromo = new Date(PROMO_END.getTime() - 1);
+  assert.match(redeemAwaitingCaptureCopy("activate", duringPromo), /renoxis\.activate/);
+  assert.match(redeemAwaitingCaptureCopy("renew", duringPromo), /renoxis\.agent\.monthly · 5,000/);
+  assert.match(redeemAwaitingCaptureCopy("renew", PROMO_END), /renoxis\.agent\.monthly\.10000 · 10,000/);
   assert.match(redeemAwaitingCaptureCopy("activate"), /catalog is live/);
   assert.match(redeemAwaitingCaptureCopy("activate"), /empty until then/);
 });

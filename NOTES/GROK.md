@@ -204,6 +204,28 @@ Recorded by Grok (Developer Bot, notes and status sync at 9:25 PM CT). Every cha
 Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5). Each change below either has its own detailed entry earlier in this file (written by whoever made it) or is described here. Commits under the shared `313aidaroos` account were made by the bot or lead named in the detailed entry. Every production deployment for this repo was Ready at the time of this sync. Text only, no code or settings changed.
 
 - Oct 4 10:30 PM, PR #45, `957b644`: notes: re-verified Apixis ID-only signup (no code change). Undo: nothing to undo in code; edit or delete the note text.
+## 2026-10-06 — Grok: Brokerage tab and price lock
+- What: Signed-in sidebar gains a Brokerage tab in the same desk. An owner or manager can name the brokerage, add people by email (they join now if they already have an account, otherwise a share link is created and mail is not sent), remove them, see each person's status and Cixy spend, see the office Wallet balance, and open Apixis Wallet to add Ixis. Agents see which brokerage they are in and that email (50), offer letters (100), and property lookups (25) are paid by the office. Apixis keeps 5% of a closed-deal fee, shown on that tab and where deal fees already appear. Confirmed accounts alaidaroosawad@gmail.com and awad@apixis.dev can open and manage every brokerage. Other people only see a brokerage they belong to. The small Cixy Help button on the tab lists the steps for that page.
+- Billing: the office Wallet is the brokerage owner's Apixis Wallet. Renoxis still does not store its own Ixis balance. `brokerages.ixis_balance` is not used for these charges. A missing office Wallet blocks the job instead of charging the agent.
+- Prices shown in the app and on the pricing and tour pages: $50 one-time start fee (5,000 Ixis) and $100/month (10,000 Ixis), renewing every month, pay by card or with Ixis. The existing Ixis activate and monthly redeem buttons are unchanged. Card checkout was not built. The Wallet catalog key `renoxis.agent.monthly` must be updated to 10,000 Ixis in Apixis Wallet. `renoxis.property_lookup` must be 25 Ixis there if that product is not already priced. This repo does not edit the Wallet.
+- Database: add `supabase/migrations/20261006120000_brokerage_office_wallet.sql` in Supabase when you are ready. It was not applied from here. It sets the old SQL property-lookup price to 25 and lets a manager remove an agent or assistant. Apply `supabase/brokerage.sql` first if that office schema is not already on the project.
+- Checks: `npm test` (80 passing), `npm run lint` (no new errors), `npm run build`.
+- Who: Grok, for Awad.
+- Undo: revert this PR's merge commit.
+
 ## 2026-10-06 — Pricing locked
 - Prices for Renoxis were locked by Awad. See NOTES/PRICING.md.
 - The site/code still needs updating to match NOTES/PRICING.md where it does not.
+
+## 2026-10-13 — Grok: launch promo prices and Ixis checkout
+- What: One price module, `lib/renoxis/pricing.ts`. $50 start fee (5,000 Ixis). Monthly is $50 / 5,000 Ixis until `PROMO_END` (launch date plus one calendar month), then $100 / 10,000 Ixis. `getMonthlyPrice(now)` does the switch. Job prices stay email 50, offer letter 100, property lookup 25. The office Wallet pays brokerage jobs. Apixis keeps 5% of a closed-deal fee. The customer picks Pay with Ixis or Pay by card. Ixis redeems through the existing Apixis Wallet flow. A short Wallet shows Buy Ixis to `/buy?product=renoxis&return_url=...`. Card says Coming soon. No Stripe keys and no Stripe code. Signup stays Apixis ID only. The 1,000 Ixis signup grant is not granted here.
+- Where: `lib/renoxis/pricing.ts`, `lib/renoxis/billing.ts`, `lib/renoxis/ixis.ts`, `lib/renoxis/seat-purchase.ts`, `lib/renoxis/redeem-seat.ts`, `lib/renoxis/tour.ts`, `components/SeatPay.tsx`, `components/PricingCheckout.tsx`, `components/CommandDesk.tsx`, `components/WelcomeExperience.tsx`, `components/BrokerageDesk.tsx`, `components/TeamDesk.tsx`, `components/CixyChat.tsx`, `app/pricing/page.tsx`, `app/terms/page.tsx`, `tests/pricing.test.ts`, `tests/billing.test.ts`, `NOTES/PRICING.md`, `docs/BILLING_SOFT_GATE.md`, `docs/APIXIS_FAMILY.md`, `docs/LAUNCH_STATUS.md`, `docs/CIXY_BRAIN.md`. The Cixy system prompt (`lib/renoxis/cixy-prompts.ts`) was not edited.
+- Who: Grok, for Awad. Placeholder launch date and the 10,000 Ixis SKU id are marked TODO for Awad.
+- Not done: not applied to the live database, not merged, not deployed. Awad must approve production.
+- Undo: revert this commit. The price switch itself is the `LAUNCH_DATE` constant; set that date, or revert the file, to undo the promo.
+
+## 2026-10-13 — Grok: official launch date
+- What: Awad set the Renoxis launch to 2027-01-01 at midnight Central. `LAUNCH_DATE` is `2027-01-01T06:00:00.000Z`. The $50/month promo runs until `2027-02-01T06:00:00.000Z`, then the monthly price is $100. The launch-date TODO is removed. The 10,000 Ixis SKU stays `renoxis.agent.monthly.10000`; Wallet Lead is publishing that id.
+- Where: `lib/renoxis/pricing.ts`, `lib/renoxis/billing.ts`, `tests/pricing.test.ts`, `NOTES/PRICING.md`, `docs/BILLING_SOFT_GATE.md`, `docs/LAUNCH_STATUS.md`, `docs/CIXY_BRAIN.md`, `docs/APIXIS_FAMILY.md`.
+- Who: Grok, for Awad.
+- Undo: set `LAUNCH_DATE` back, or revert this commit. Do not merge to production from here.

@@ -8,7 +8,7 @@ import {
 import { requireServerEntitlement } from "@/lib/renoxis/entitlements";
 import { notReady, officesOf } from "@/lib/renoxis/firm-store";
 import { body, failure, json, session } from "@/lib/renoxis/http";
-import { chargeFromWallet } from "@/lib/renoxis/wallet-charge";
+import { chargeOfficeJob } from "@/lib/renoxis/office-billing";
 import { randomUUID } from "node:crypto";
 
 export async function POST(request: Request) {
@@ -60,13 +60,13 @@ export async function POST(request: Request) {
         .eq("ref", ref)
         .maybeSingle();
       if (!existing) {
-        // Paid from the person's one Apixis Wallet balance (no office ledger).
         const subject = wrapped.title.slice(0, 200);
-        const charge = await chargeFromWallet(
-          user,
-          kind,
+        const charge = await chargeOfficeJob({
+          actor: user,
+          sku: kind,
           ref,
-          async () => {
+          brokerageId: office.id,
+          provision: async () => {
             const { data, error } = await db
               .from("renoxis_outbox")
               .insert({
@@ -86,10 +86,10 @@ export async function POST(request: Request) {
             if (error) throw new Error("The draft did not save. Nothing was charged. Try again.");
             return data;
           },
-          async (row) => {
+          unprovision: async (row) => {
             await db.from("renoxis_outbox").delete().eq("id", row.id);
           },
-        );
+        });
         if (!charge.ok) return json({ ...charge.body, sent: false, disclaimer: DRAFT_DISCLAIMER }, charge.status);
         cost = charge.cost;
         const outbox = charge.result;

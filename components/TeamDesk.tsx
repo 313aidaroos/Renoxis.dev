@@ -7,6 +7,7 @@ import {
 } from "@/lib/renoxis/access";
 import type { Office } from "@/lib/renoxis/brokerage";
 import { IXIS_SKU } from "@/lib/renoxis/ixis";
+import { CLOSED_DEAL_FEE_BPS, closedDealFeeLabel } from "@/lib/renoxis/pricing";
 import { WalletLinks } from "./WalletLinks";
 import { useWalletBalance } from "@/lib/renoxis/use-wallet-balance";
 
@@ -48,6 +49,24 @@ export type FirmDesk = {
     amount: number;
     status: string;
   }[];
+  access?: {
+    masterAdmin: boolean;
+    canRename: boolean;
+    canInvite: boolean;
+    canRemove: boolean;
+    canViewSpend: boolean;
+  };
+  activity?: {
+    id: string;
+    sku: string;
+    label: string;
+    amount: number;
+    email: string;
+    at: string;
+  }[];
+  spendByUser?: Record<string, { spent: number; jobs: number }>;
+  wallet?: { available: number | null; buy: string } | null;
+  billedToOffice?: boolean;
 };
 
 async function call(url: string, init?: RequestInit) {
@@ -119,7 +138,7 @@ export function TeamDesk({
         <div className="empty">
           <span className="empty-symbol">✧</span>
           <strong>Sign in to open an office</strong>
-          <p>Invites and team drafts live with your account. Paid actions use your personal Apixis Wallet.</p>
+          <p>Invites and team drafts live with your account. In a brokerage, paid Cixy jobs use the office Wallet.</p>
         </div>
       </Panel>
     );
@@ -196,7 +215,7 @@ export function TeamDesk({
         )}
         <p className="muted">
           Your role is {office.role}.{" "}
-          {`Your Apixis Wallet: ${walletIxis === null ? "—" : walletIxis.toLocaleString()} Ixis. Drafts are paid from your own Wallet. Buy Ixis opens Apixis Wallet and brings you back here.`}
+          {`Your personal Apixis Wallet: ${walletIxis === null ? "—" : walletIxis.toLocaleString()} Ixis. In this office, email, offer letters, and property lookups are paid from the office Wallet. Open Brokerage to see it.`}
         </p>
         <WalletLinks href={walletHref} />
         {canRollup(office.role) && (
@@ -341,13 +360,13 @@ export function TeamDesk({
       </Panel>
       <Panel title="Office actions">
         <p className="muted">
-          Email draft {IXIS_SKU.email_draft} · Offer letter {IXIS_SKU.offer_letter}
-          Ixis, paid from your personal Apixis Wallet. Saving a property
-          and tracking a contact are free — Renoxis has no property-data source yet,
-          so a “lookup” only saves what you type. Nothing here sends mail or invents comps.
+          Email draft {IXIS_SKU.email_draft} · Offer letter {IXIS_SKU.offer_letter} ·
+          Property lookup {IXIS_SKU.property_lookup} Ixis, paid from the office Wallet.
+          Saving a contact is free. A property lookup saves the facts you type.
+          Nothing here sends mail or invents comps.
         </p>
         <ActionForm
-          title="Save a property (what you know — no data lookup yet)"
+          title="Property lookup"
           cost={IXIS_SKU.property_lookup}
           locked={locked}
           fields={["title", "city"]}
@@ -548,7 +567,7 @@ export function TeamDesk({
       </Panel>
       <Panel title="Platform commission">
         <p className="muted">
-          Closed deals record a 5% (500 bps) platform cut as pending. Nothing is
+          Closed deals record a {closedDealFeeLabel()} ({CLOSED_DEAL_FEE_BPS} bps) platform cut as pending. Nothing is
           collected until a hub wallet exists.
         </p>
         {firm.commissions.length ? (
@@ -597,7 +616,7 @@ function ActionForm({
         const warning =
           cost === 0
             ? `${title}? This is free; no Ixis is spent.`
-            : `${title}? This debits ${cost} Ixis from your personal Apixis Wallet.`;
+            : `${title}? This uses ${cost} Ixis from the office Wallet.`;
         if (!confirm(warning)) return;
         onSubmit(data);
         form.reset();
@@ -635,7 +654,7 @@ function DraftForm({
         event.preventDefault();
         const form = event.currentTarget;
         const data = new FormData(form);
-        if (!confirm(`${title}? This debits ${cost} Ixis from your personal Apixis Wallet and does not send.`)) return;
+        if (!confirm(`${title}? This uses ${cost} Ixis from the office Wallet and does not send.`)) return;
         onSubmit({
           subject: String(data.get("subject") || ""),
           email: String(data.get("email") || ""),

@@ -13,16 +13,16 @@ Renoxis does **not** maintain a second brain. Knowledge comes from the Apixis hu
 | Audience | Agents, developers, brokerages |
 | Origin | `https://renoxis.dev` |
 | Auth story | "Log in with Apixis ID" first (Wallet SSO, one ID for every Apixis company); Renoxis email link + password tab also exist |
-| Activate | 5,000 Ixis one-time (Wallet) |
-| Keep running | 5,000 Ixis / mo (Wallet) |
-| Property lookup | **0 Ixis** (typed facts; no paid data source yet) |
-| Email draft | 50 Ixis from the person’s shared Apixis Wallet |
-| Offer letter | 100 Ixis from the person’s shared Apixis Wallet |
+| Start fee | $50 · 5,000 Ixis one time (Wallet) |
+| Monthly plan | Launch 2027-01-01 midnight Central. Promo $50 · 5,000 Ixis (`renoxis.agent.monthly`) through that first month, then $100 · 10,000 Ixis on `renoxis.agent.monthly.10000` from 2027-02-01. See `lib/renoxis/pricing.ts`. Renews every month. |
+| Property lookup | **25 Ixis**, billed to the office Wallet inside a brokerage |
+| Email draft | 50 Ixis, office Wallet inside a brokerage |
+| Offer letter | 100 Ixis, office Wallet inside a brokerage |
 | Track contact | 0 Ixis |
 | Platform cut | 5% (500 bps) pending on closed-deal fees |
 | Ixis peg | 100 Ixis = $1; cash buy on Wallet; closed-loop |
 
-In-app Cixy prompt (`lib/renoxis/cixy-prompts.ts`) and `IXIS_SKU` / ApixisWallet `lib/catalog.ts` must stay aligned with the hub pack. Prefer hub pack updates over inventing product-local prices.
+`IXIS_SKU` reads `lib/renoxis/pricing.ts`. The in-app Cixy system prompt was left unchanged on 2026-10-13, so it still states the later $100 monthly figure. Prefer hub pack updates over inventing product-local prices.
 
 ## Applied 2026-09-27 (hub full refresh)
 

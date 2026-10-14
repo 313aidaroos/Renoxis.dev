@@ -16,12 +16,14 @@ export function ListingForm() {
     highlights: "",
   });
   const [result, setResult] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setResult("");
+    setError("");
 
     try {
       const response = await fetch("/api/listings/generate", {
@@ -37,10 +39,8 @@ export function ListingForm() {
 
       const data = await response.json();
       setResult(data.listing);
-    } catch (error) {
-      setResult(
-        `Error: ${error instanceof Error ? error.message : "Failed to generate listing"}`
-      );
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Failed to generate listing");
     } finally {
       setLoading(false);
     }
@@ -206,13 +206,14 @@ export function ListingForm() {
 
       <div className="border border-zinc-300 dark:border-zinc-700 rounded-lg p-6">
         <h3 className="text-xl font-bold mb-4">Generated Listing Copy</h3>
+        {error ? <p role="alert">{error}</p> : null}
         {result ? (
           <div className="prose dark:prose-invert max-w-none">
             <pre className="whitespace-pre-wrap text-sm bg-zinc-50 dark:bg-zinc-900 p-4 rounded">
               {result}
             </pre>
           </div>
-        ) : (
+        ) : error ? null : (
           <p className="text-zinc-600 dark:text-zinc-400 text-sm">
             Fill out the form and click Generate to see your listing copy here.
           </p>

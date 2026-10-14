@@ -16,7 +16,7 @@ export default function FeedPage() {
         <Link href="/" className="welcome-brand" aria-label="Renoxis home"><span className="welcome-monogram">R</span><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
         <nav aria-label="Welcome navigation">
           <Link href="/tour">Explore with Cixy</Link>
-          <Link href="/companies">Apixis Companies</Link>
+          <Link className="nav-keep" href="/companies">Apixis Companies</Link>
           <Link href="/feed" aria-current="page">Feed</Link>
           <Link className="primary" href="/dashboard">Open dashboard <span aria-hidden="true">↗</span></Link>
         </nav>

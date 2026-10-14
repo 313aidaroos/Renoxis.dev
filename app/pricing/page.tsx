@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FooterSocial } from "@/components/FooterSocial";
+import { OtherIxisCompanies } from "@/components/OtherIxisCompanies";
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { payChoiceCopy, startFeeCopy } from "@/lib/renoxis/billing";
@@ -105,6 +106,7 @@ export default async function PricingPage() {
       <footer className="welcome-footer">
         <span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span>
         <div><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link><FooterSocial /></div>
+        <OtherIxisCompanies />
       </footer>
     </div>
   );

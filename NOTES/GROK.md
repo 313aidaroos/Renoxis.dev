@@ -246,6 +246,12 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 
 ## 2026-10-14 — Grok: launch checklist and safe gaps
 - What: Wrote `docs/LAUNCH_CHECKLIST_2027-01-01.md` from `main` `499c218`, open PRs #32, #49, and #51, and the code those docs point at. Fixed the phone header (Sign in and Open dashboard were `display: none` under 700px), the `/support` cancel sentence (there is no cancel control), document upload/delete seat checks, and the listing-copy comment that said to reserve 1,000 Ixis. Listing failures use `role="alert"`. `engines.node` is `>=22`.
-- Not done: no merge, no production deploy, no live SQL, no Stripe, no email, no local Ixis grant, no second Cixy prompt edit. #51 is now on `main` (`7f28d23`); its note stays above. #32 is closed. The 11-company footer is draft #53. This work is draft #52.
+- Not done: no merge, no production deploy, no live SQL, no Stripe, no email, no local Ixis grant, no second Cixy prompt edit. #51 is now on `main` (`7f28d23`); its note stays above. #32 is closed. The 11-company footer is #53. This work is #52, now merged.
+- Who: Grok 4.7, for Awad.
+- Undo: revert this commit.
+
+## 2026-10-14 — Grok: rebase the other-Ixis footer
+- What: Brought #32 forward onto current `main` (`658c737`, which includes the Cixy brief and merged #52). The public welcome footers (home, tour, pricing, login, support, feed) list 11 other Ixis companies, each an https link in a new tab. URLs match `/companies` for those 11. Pinixis, Launchixis, and Ominix stay on `/companies` only, which is how #32 left the extras out. No SVG file. No theme change.
+- Not done: #32 is closed. This branch does not merge. The signed-in Command Desk footer and the legal pages use a different footer, so they do not get this row.
 - Who: Grok 4.7, for Awad.
 - Undo: revert this commit.

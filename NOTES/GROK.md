@@ -229,3 +229,9 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Where: `lib/renoxis/pricing.ts`, `lib/renoxis/billing.ts`, `tests/pricing.test.ts`, `NOTES/PRICING.md`, `docs/BILLING_SOFT_GATE.md`, `docs/LAUNCH_STATUS.md`, `docs/CIXY_BRAIN.md`, `docs/APIXIS_FAMILY.md`.
 - Who: Grok, for Awad.
 - Undo: set `LAUNCH_DATE` back, or revert this commit. Do not merge to production from here.
+
+## 2026-10-14 — Grok: Cixy prompt knowledge
+- What: Cixy's system prompt quotes the pricing module: $50 start, $50/month for the first month after public launch on 2027-01-01 (early beta before that), then $100/month from 2027-02-01. Extra jobs stay email 50, offer letter 100, property lookup 25. Card or Ixis, and card billing is coming soon. If asked about the Oct 15 deadline, she explains the PHA-only EHV estimate-correction window closing 2026-10-15 11:59:59 PM ET (PIH 2026-25), not a household signup, and tells them to verify with the local PHA. EHV to HCV/PBV transitions end 2026-11-01; all EHV converts to TPV by 2026-12-31; she does not promise funding after that. Wholesale users are sent to the statute or local counsel. Delaware disclosures and the 21-day cancellation have been in effect since 2026-08-30, and the Delaware license is required from 2027-02-26. Rhode Island requires a license and cancellation from 2027-01-01. NC HB 797 is not law. HUD's Wells Fargo matter is an investigation only: no liability claim, and she points people to their lender and a local attorney. The prompt stays secular.
+- Where: `lib/renoxis/cixy-prompts.ts`, `tests/cixy-prompts.test.ts`.
+- Who: Grok, for Awad.
+- Undo: revert this commit. Do not merge to production from here.

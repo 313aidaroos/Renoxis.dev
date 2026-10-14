@@ -116,7 +116,8 @@ test("paid server routes enforce server entitlement", async () => {
   // Regression: this route once called hasServerEntitlement without await (always-truthy Promise → paywall open).
   assert.match(listings, /await hasServerEntitlement\(user/);
   assert.doesNotMatch(listings, /redeem\(/);
-  assert.doesNotMatch(listings, /1,000 Ixis|1000 Ixis/);
+  assert.doesNotMatch(listings, /TODO: Call Apixis Wallet/);
+  assert.match(listings, /Do not invent one or charge locally/);
   assert.equal(
     documents.match(/await requireServerEntitlement\(user\)/g)?.length,
     2,

@@ -53,10 +53,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // No Wallet redeem on this route. The old note said "reserve 1,000 Ixis".
-    // 1,000 is the Apixis signup grant, not a Renoxis job price. Locked jobs are
-    // email 50, offer letter 100, and property lookup 25 (lib/renoxis/pricing.ts).
-    // A listing-copy SKU does not exist. Do not invent one or charge locally.
+    // No Wallet redeem on this route. An old note said to reserve the signup grant.
+    // That grant is not a Renoxis job price. Locked jobs are email 50, offer letter
+    // 100, and property lookup 25 (lib/renoxis/pricing.ts). There is no listing-copy
+    // SKU. Do not invent one or charge locally.
 
     const { data: allowed, error: limitError } = await supabase.rpc('renoxis_take_ai_slot');
     if (limitError) return NextResponse.json({error:'AI request limits are unavailable. Please retry later.'},{status:503});

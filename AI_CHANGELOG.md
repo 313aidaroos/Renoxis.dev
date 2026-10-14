@@ -66,5 +66,5 @@ Entry format:
 - Why: Awad asked Cixy to use the locked prices and the 10-08 / EHV / wholesale briefs. No redesign. Production merge stays with Awad.
 
 ## 2026-10-14 — Grok 4.7
-- Changed: `docs/LAUNCH_CHECKLIST_2027-01-01.md` (done / to do without Awad / needs Awad). Phone header keeps Sign in, Open dashboard, Companies, and Feed. `/support` no longer claims a cancel button. Document upload and delete require a server seat. Listing copy does not reserve 1,000 Ixis. Listing errors use an alert. `package.json` asks for Node 22.
-- Why: Launch audit for 2027-01-01. These items do not need a secret, a live charge, a merge, or a production database change.
+- Changed: `docs/LAUNCH_CHECKLIST_2027-01-01.md` (done / to do without Awad / needs Awad). Phone header keeps Sign in, Open dashboard, Companies, and Feed. `/support` no longer claims a cancel button, and the page no longer has unescaped apostrophes. Document upload and delete require a server seat. Listing copy does not redeem and does not name a 1,000 Ixis charge. Listing errors use an alert. `package.json` asks for Node 22.
+- Why: Launch audit for 2027-01-01. These items do not need a secret, a live charge, a merge, or a production database change. Draft: https://github.com/313aidaroos/Renoxis.dev/pull/52. The footer rebase is https://github.com/313aidaroos/Renoxis.dev/pull/53.

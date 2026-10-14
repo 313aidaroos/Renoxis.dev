@@ -36,10 +36,10 @@ export default async function SupportPage() {
           <h1>
             Need help?
             <br />
-            <em>We're here.</em>
+            <em>We are here.</em>
           </h1>
           <p>
-            Whether you're getting started, troubleshooting an issue, or have a
+            Whether you are getting started, troubleshooting an issue, or have a
             question about your workspace, reach out to the Renoxis team.
           </p>
         </section>
@@ -58,7 +58,7 @@ export default async function SupportPage() {
           <article>
             <h3>Cixy help</h3>
             <p>
-              Once you're signed in, ask Cixy directly from your Command Desk.
+              Once you are signed in, ask Cixy directly from your Command Desk.
               Cixy can help with workspace questions, walk you through features,
               and answer real estate workflow questions.
             </p>

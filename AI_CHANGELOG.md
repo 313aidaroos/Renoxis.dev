@@ -64,3 +64,7 @@ Entry format:
 ## 2026-10-14 — Grok
 - Changed: `lib/renoxis/cixy-prompts.ts` now reads seat and job prices from `lib/renoxis/pricing.ts`. Cixy quotes a $50 start fee and $50/month for the first month after the 2027-01-01 public launch, then $100/month from 2027-02-01, with card billing as coming soon. The prompt also covers the PHA-only EHV Oct 15 estimate-correction window (PIH 2026-25), the Delaware and Rhode Island wholesale dates, that NC HB 797 is not law, and that HUD's Wells Fargo matter is an investigation only. The prompt stays secular. `tests/cixy-prompts.test.ts` covers those lines.
 - Why: Awad asked Cixy to use the locked prices and the 10-08 / EHV / wholesale briefs. No redesign. Production merge stays with Awad.
+
+## 2026-10-14 — Grok 4.7
+- Changed: rebased the “Other Ixis companies” footer from #32 onto current `main`. One list (`lib/renoxis/ixis-companies.ts`), one row (`components/OtherIxisCompanies.tsx`) on the home, tour, pricing, login, support, and feed footers. The same 11 https links. Pinixis, Launchixis, Ominix, Qahwah World, and Nursery Toons stay off this row.
+- Why: #32 is closed. This brings that row onto current `main`, which already has the Cixy brief. Support and feed did not exist when #32 opened, so the row is on those footers too.

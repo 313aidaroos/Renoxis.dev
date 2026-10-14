@@ -2,6 +2,7 @@
 // same header, fonts and colours as the Renoxis home page, plus the Cixy sign-in help card.
 import Link from "next/link";
 import { FooterSocial } from "./FooterSocial";
+import { OtherIxisCompanies } from "./OtherIxisCompanies";
 import { CixyHelp } from "./CixyHelp";
 import "./command-desk.css";
 import "./welcome.css";
@@ -35,6 +36,7 @@ export function AuthShell({ children, help = true }: { children: React.ReactNode
           <Link href="/tour">Tour with Cixy</Link>
           <FooterSocial />
         </div>
+        <OtherIxisCompanies />
       </footer>
     </div>
   );

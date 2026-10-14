@@ -243,3 +243,9 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Where: `lib/renoxis/cixy-prompts.ts`, `tests/cixy-prompts.test.ts`.
 - Who: Grok, for Awad.
 - Undo: revert this commit. Do not merge to production from here.
+
+## 2026-10-14 — Grok: rebase the other-Ixis footer
+- What: Brought #32 forward onto current `main` (`7f28d23`, which includes the Cixy brief). The public welcome footers (home, tour, pricing, login, support, feed) list 11 other Ixis companies, each an https link in a new tab. URLs match `/companies` for those 11. Pinixis, Launchixis, and Ominix stay on `/companies` only, which is how #32 left the extras out. No SVG file. No theme change.
+- Not done: #32 is closed. This branch does not merge. The signed-in Command Desk footer and the legal pages use a different footer, so they do not get this row.
+- Who: Grok 4.7, for Awad.
+- Undo: revert this commit.

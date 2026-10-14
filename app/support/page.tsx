@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FooterSocial } from "@/components/FooterSocial";
+import { OtherIxisCompanies } from "@/components/OtherIxisCompanies";
 import { connection } from "next/server";
 import "@/components/welcome.css";
 
@@ -131,6 +132,7 @@ export default async function SupportPage() {
           <Link href="/tour">Tour with Cixy</Link>
         </div>
         <FooterSocial />
+        <OtherIxisCompanies />
       </footer>
     </div>
   );

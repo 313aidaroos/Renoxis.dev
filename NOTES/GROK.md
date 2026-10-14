@@ -246,6 +246,6 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 
 ## 2026-10-14 — Grok: launch checklist and safe gaps
 - What: Wrote `docs/LAUNCH_CHECKLIST_2027-01-01.md` from `main` `499c218`, open PRs #32, #49, and #51, and the code those docs point at. Fixed the phone header (Sign in and Open dashboard were `display: none` under 700px), the `/support` cancel sentence (there is no cancel control), document upload/delete seat checks, and the listing-copy comment that said to reserve 1,000 Ixis. Listing failures use `role="alert"`. `engines.node` is `>=22`.
-- Not done: no merge, no production deploy, no live SQL, no Stripe, no email, no local Ixis grant, no Cixy prompt edit (#51 already has that draft). The 11-company footer is draft #53 because #32 conflicts. This work is draft #52.
+- Not done: no merge, no production deploy, no live SQL, no Stripe, no email, no local Ixis grant, no second Cixy prompt edit. #51 is now on `main` (`7f28d23`); its note stays above. #32 is closed. The 11-company footer is draft #53. This work is draft #52.
 - Who: Grok 4.7, for Awad.
 - Undo: revert this commit.

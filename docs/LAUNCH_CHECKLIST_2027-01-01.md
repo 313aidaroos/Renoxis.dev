@@ -1,10 +1,10 @@
 # Renoxis launch checklist — public launch 2027-01-01
 
-Audited 2026-10-14 against `main` at `499c218` (https://renoxis.dev). Launch instant is midnight Central on 2027-01-01 (`2027-01-01T06:00:00.000Z` in `lib/renoxis/pricing.ts`). The site is in beta until then.
+Audited 2026-10-14, then refreshed onto `main` at `7f28d23` (https://renoxis.dev). Launch instant is midnight Central on 2027-01-01 (`2027-01-01T06:00:00.000Z` in `lib/renoxis/pricing.ts`). The site is in beta until then.
 
 This file is the launch list. `docs/LAUNCH_STATUS.md` (refreshed 2026-09-27, prices patched later) is history. Where they disagree, this file and `NOTES/PRICING.md` win.
 
-Open pull requests on that date: [#32](https://github.com/313aidaroos/Renoxis.dev/pull/32) (footer, conflicts with `main`), [#49](https://github.com/313aidaroos/Renoxis.dev/pull/49) (Apixis Orbit docs, draft), [#51](https://github.com/313aidaroos/Renoxis.dev/pull/51) (Cixy brief, draft).
+#51 (Cixy brief) is merged as `7f28d23`. #32 (footer) is closed. Still open: [#49](https://github.com/313aidaroos/Renoxis.dev/pull/49) (Apixis Orbit docs, draft), [#52](https://github.com/313aidaroos/Renoxis.dev/pull/52) (this checklist), [#53](https://github.com/313aidaroos/Renoxis.dev/pull/53) (footer rebase, draft).
 
 ## DONE
 
@@ -20,7 +20,7 @@ Evidence is a file, a test, or a merged pull request. Nothing below was treated 
 - **Paid drafts.** Email 50 and offer letter 100 go through `chargeOfficeJob` / the person's Wallet. The draft is removed if the charge fails (`app/api/cixy/draft/route.ts`). `/api/brokerage/grant` returns 410 (the office ledger grant is retired).
 - **Brokerage tab, in the repo.** Create or rename an office, add people without sending mail, roster, and office-Wallet billing in `lib/renoxis/office-billing.ts`. The office pays for email, offer letters, and property lookups (25). Closed-deal cut is 5% pending. The follow-up SQL file is in the repo and is not applied. See NEEDS AWAD.
 - **World-agent code.** First Command Desk load can call Apixis `POST /api/agent/provision` once and store `app_metadata.apixis_world_agent_at` (`lib/renoxis/world-agent.ts`). Copy says 1,000 Ixis. The grant is on Apixis, not here. A live check of exactly one agent is still in NEEDS AWAD.
-- **Cixy stays secular.** `lib/renoxis/cixy-prompts.ts` says the character draws on Arab culture. `tests/cixy-prompts.test.ts` bans religious wording. No second Cixy knowledge base was added in this audit.
+- **Cixy stays secular, and the launch brief is on `main`.** `lib/renoxis/cixy-prompts.ts` says the character draws on Arab culture. `tests/cixy-prompts.test.ts` bans religious wording. #51 (`7f28d23`) teaches the locked prices, the EHV window, and the wholesale dates from that same prompt. No second Cixy knowledge base.
 - **Badge and tour copy from the 2026-09-27 bug list are already fixed on `main`.** Public shells say “A Apixis Company” (header small-caps and footer). The tour wallet stop says the office Wallet, not an office ledger (`lib/renoxis/tour.ts`). `checkBalance` / `insufficientMessage` are gone from `lib/renoxis/ixis.ts`.
 - **CI.** `.github/workflows/ci.yml` calls the shared Node workflow on push and pull request (#34).
 
@@ -40,17 +40,16 @@ Done in draft [#52](https://github.com/313aidaroos/Renoxis.dev/pull/52) (branch 
 Still open, and still not an Awad blocker:
 
 - **Real iPhone Safari.** This pass is a 390px and 1280px browser check of the public pages. It is not a physical phone, Add to Home Screen, or the signed-in Command Desk. The desk already has a menu button under 650px (`components/command-desk.css`).
-- **Footer of other Ixis companies.** #32 conflicts with `main` (DIRTY). The same 11 links are rebased in draft [#53](https://github.com/313aidaroos/Renoxis.dev/pull/53). Do not merge #32. Pinixis, Launchixis, and Ominix are on `/companies` and were left out of that row on purpose in #32 (Awad’s exclusion list from 2026-09-30 also dropped Qahwah World and Nursery Toons). Changing that list is a decision, so it stays out of the rebase.
+- **Footer of other Ixis companies.** #32 is closed. The same 11 links are in draft [#53](https://github.com/313aidaroos/Renoxis.dev/pull/53). Pinixis, Launchixis, and Ominix are on `/companies` and were left out of that row on purpose in #32 (Awad’s exclusion list from 2026-09-30 also dropped Qahwah World and Nursery Toons). Changing that list is a decision, so it stays out of the rebase.
 - **`docs/LAUNCH_STATUS.md` progress percents and the 2026-09-27 bug table are stale.** This checklist replaces them for launch. Rewriting the old file is optional.
 - **Listing generator chrome.** `/listings/generate` still uses a plain page, not the Command Desk. Aligning it would be a restyle. Left alone.
-- **Cixy prompt price line on `main`.** One bullet still says the monthly plan is $100 only and skips the $50 launch month (`lib/renoxis/cixy-prompts.ts`). Draft #51 already teaches the promo, the EHV window, and the wholesale dates, and it keeps the prompt secular. Do not open a second prompt edit.
 
 ## NEEDS AWAD
 
 True blockers only: secrets, a sign-in, a real spend or send, a decision, a merge, or SQL on the live database.
 
 - **Apply `supabase/migrations/20261006120000_brokerage_office_wallet.sql` to project `loyjbfqpanskcecvpolt`.** Not applied. It sets the SQL property-lookup price to 25 and lets a manager remove an agent or assistant. Do not run it from the app or from an agent.
-- **Merge the drafts, or close them.** #32 conflicts and should be closed in favor of [#53](https://github.com/313aidaroos/Renoxis.dev/pull/53) once that rebase is accepted. [#52](https://github.com/313aidaroos/Renoxis.dev/pull/52) is the checklist and the safe fixes. #49 is Orbit docs only (`runtimeConnected: false`); merging it does not turn Orbit on, and it still needs a yes. #51 is the Cixy brief; the prompt change needs a yes. None of these were merged here.
+- **Merge the remaining drafts, or close them.** #51 is merged. #32 is closed. [#52](https://github.com/313aidaroos/Renoxis.dev/pull/52) is this checklist and the safe fixes. [#53](https://github.com/313aidaroos/Renoxis.dev/pull/53) is the footer rebase. #49 is Orbit docs only (`runtimeConnected: false`); merging it does not turn Orbit on, and it still needs a yes. None of #49, #52, or #53 were merged here.
 - **Signed-in Apixis ID smoke on production.** Confirm one new Apixis ID lands on `/dashboard` with the shared Wallet balance, the 1,000 Ixis grant visible from the Wallet (not granted by Renoxis), and exactly one world agent. Needs a real sign-in. Last recorded smoke is 2026-10-04 (`NOTES/GROK.md`) and did not re-check the grant or the single-agent rule after later deploys.
 - **Live Wallet redeem rehearsal.** Activate (`renoxis.activate`, 5,000), monthly (`renoxis.agent.monthly`, 5,000 until 2027-02-01), email draft (50), offer letter (100), and the insufficient-funds path (402, then Buy Ixis, then return). That spends real Ixis. The code path is in DONE. The browser rehearsal is not.
 - **Publish `renoxis.agent.monthly.10000` in the Wallet catalog** before 2027-02-01. Wallet Lead owns that id. This repo must not point the $100 price at `renoxis.agent.monthly` (that row is 5,000).

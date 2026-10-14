@@ -53,9 +53,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // TODO: Call Apixis Wallet API to reserve 1,000 Ixis before generation
-    // POST /api/v1/quotes → /reservations → capture on success / release on failure
-    // For now, proceeding without actual redemption (waiting on Wallet integration docs)
+    // No Wallet redeem on this route. The old note said "reserve 1,000 Ixis".
+    // 1,000 is the Apixis signup grant, not a Renoxis job price. Locked jobs are
+    // email 50, offer letter 100, and property lookup 25 (lib/renoxis/pricing.ts).
+    // A listing-copy SKU does not exist. Do not invent one or charge locally.
 
     const { data: allowed, error: limitError } = await supabase.rpc('renoxis_take_ai_slot');
     if (limitError) return NextResponse.json({error:'AI request limits are unavailable. Please retry later.'},{status:503});
@@ -84,8 +85,6 @@ export async function POST(request: Request) {
     if (!listingCopy || listingCopy.type !== "text") {
       throw new Error("Unexpected response type");
     }
-
-    // TODO: Capture the 1,000 Ixis reservation on success
 
     return NextResponse.json({ listing: listingCopy.text });
   } catch (error) {

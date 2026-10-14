@@ -101,10 +101,12 @@ export default async function SupportPage() {
 
               <dt>Can I cancel?</dt>
               <dd>
-                Yes. Your monthly plan renews automatically, but you can cancel
-                anytime from your workspace settings. Contact{" "}
+                The monthly plan is meant to renew every month. Card auto-renew
+                is not available yet. With Ixis, renew from your workspace when
+                the paid month is due. There is no cancel button in settings.
+                Email{" "}
                 <a href="mailto:renoxis@apixis.dev">renoxis@apixis.dev</a> if
-                you need help.
+                you need help with a charge.
               </dd>
 
               <dt>Is my data secure?</dt>

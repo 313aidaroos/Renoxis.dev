@@ -64,3 +64,7 @@ Entry format:
 ## 2026-10-14 — Grok
 - Changed: `lib/renoxis/cixy-prompts.ts` now reads seat and job prices from `lib/renoxis/pricing.ts`. Cixy quotes a $50 start fee and $50/month for the first month after the 2027-01-01 public launch, then $100/month from 2027-02-01, with card billing as coming soon. The prompt also covers the PHA-only EHV Oct 15 estimate-correction window (PIH 2026-25), the Delaware and Rhode Island wholesale dates, that NC HB 797 is not law, and that HUD's Wells Fargo matter is an investigation only. The prompt stays secular. `tests/cixy-prompts.test.ts` covers those lines.
 - Why: Awad asked Cixy to use the locked prices and the 10-08 / EHV / wholesale briefs. No redesign. Production merge stays with Awad.
+
+## 2026-10-14 — Grok 4.7
+- Changed: `docs/LAUNCH_CHECKLIST_2027-01-01.md` (done / to do without Awad / needs Awad). Phone header keeps Sign in, Open dashboard, Companies, and Feed. `/support` no longer claims a cancel button. Document upload and delete require a server seat. Listing copy does not reserve 1,000 Ixis. Listing errors use an alert. `package.json` asks for Node 22.
+- Why: Launch audit for 2027-01-01. These items do not need a secret, a live charge, a merge, or a production database change.

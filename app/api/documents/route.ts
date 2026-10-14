@@ -1,3 +1,4 @@
+import { requireServerEntitlement } from "@/lib/renoxis/entitlements";
 import { session, json, failure } from "@/lib/renoxis/http";
 export async function GET(request: Request) {
   try {
@@ -27,6 +28,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const { db, user } = await session(request);
+    await requireServerEntitlement(user);
     if (Number(request.headers.get("content-length") || 0) > 4500000)
       return json({ error: "Maximum file size is 4 MB." }, 413);
     const form = await request.formData();
@@ -53,6 +55,7 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { db, user } = await session(request);
+    await requireServerEntitlement(user);
     const { path } = await request.json();
     if (
       typeof path !== "string" ||

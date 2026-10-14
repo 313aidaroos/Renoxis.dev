@@ -102,16 +102,24 @@ test("client has no self-confirm or local billing unlock path", async () => {
 
 
 test("paid server routes enforce server entitlement", async () => {
-  const [records, chat, listings] = await Promise.all([
+  const [records, chat, listings, documents] = await Promise.all([
     readFile(new URL("../app/api/records/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/chat/route.ts", import.meta.url), "utf8"),
     readFile(
       new URL("../app/api/listings/generate/route.ts", import.meta.url),
       "utf8",
     ),
+    readFile(new URL("../app/api/documents/route.ts", import.meta.url), "utf8"),
   ]);
   assert.match(records, /await requireServerEntitlement\(user/);
   assert.match(chat, /await hasServerEntitlement\(user/);
   // Regression: this route once called hasServerEntitlement without await (always-truthy Promise → paywall open).
   assert.match(listings, /await hasServerEntitlement\(user/);
+  assert.doesNotMatch(listings, /redeem\(/);
+  assert.doesNotMatch(listings, /TODO: Call Apixis Wallet/);
+  assert.match(listings, /Do not invent one or charge locally/);
+  assert.equal(
+    documents.match(/await requireServerEntitlement\(user\)/g)?.length,
+    2,
+  );
 });

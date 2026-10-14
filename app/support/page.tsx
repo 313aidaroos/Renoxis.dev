@@ -35,10 +35,10 @@ export default async function SupportPage() {
           <h1>
             Need help?
             <br />
-            <em>We're here.</em>
+            <em>We are here.</em>
           </h1>
           <p>
-            Whether you're getting started, troubleshooting an issue, or have a
+            Whether you are getting started, troubleshooting an issue, or have a
             question about your workspace, reach out to the Renoxis team.
           </p>
         </section>
@@ -57,7 +57,7 @@ export default async function SupportPage() {
           <article>
             <h3>Cixy help</h3>
             <p>
-              Once you're signed in, ask Cixy directly from your Command Desk.
+              Once you are signed in, ask Cixy directly from your Command Desk.
               Cixy can help with workspace questions, walk you through features,
               and answer real estate workflow questions.
             </p>
@@ -101,10 +101,12 @@ export default async function SupportPage() {
 
               <dt>Can I cancel?</dt>
               <dd>
-                Yes. Your monthly plan renews automatically, but you can cancel
-                anytime from your workspace settings. Contact{" "}
+                The monthly plan is meant to renew every month. Card auto-renew
+                is not available yet. With Ixis, renew from your workspace when
+                the paid month is due. There is no cancel button in settings.
+                Email{" "}
                 <a href="mailto:renoxis@apixis.dev">renoxis@apixis.dev</a> if
-                you need help.
+                you need help with a charge.
               </dd>
 
               <dt>Is my data secure?</dt>

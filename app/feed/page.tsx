@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FooterSocial } from "@/components/FooterSocial";
 import { RenoxisFeed } from "./RenoxisFeed";
 import "@/components/command-desk.css";
 import "@/components/welcome.css";
@@ -26,7 +27,7 @@ export default function FeedPage() {
         </div>
         <RenoxisFeed />
       </main>
-      <footer className="welcome-footer"><span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span><div><Link href="/pricing">Pricing</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link></div></footer>
+      <footer className="welcome-footer"><span>RENOXIS <b>·</b> A Apixis Company <b>·</b> People. Properties. A brighter tomorrow.</span><div><Link href="/pricing">Pricing</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/tour">Tour with Cixy</Link><FooterSocial /></div></footer>
     </div>
   );
 }

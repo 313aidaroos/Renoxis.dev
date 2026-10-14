@@ -230,6 +230,14 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Who: Grok, for Awad.
 - Undo: set `LAUNCH_DATE` back, or revert this commit. Do not merge to production from here.
 
+## 2026-10-13 — Grok: footer Instagram link
+- What: an Instagram icon in the existing footers (welcome, pricing, feed, auth, legal, Command Desk). Same footer layout and colors. The icon is inline JSX, colored with the footer link color. Link: https://www.instagram.com/renoxis.dev/ (`target="_blank"`, `rel="noopener noreferrer"`, `aria-label="Renoxis on Instagram"`).
+- Verified: Instagram oEmbed `https://www.instagram.com/api/v1/oembed/?url=https://www.instagram.com/renoxis.dev/` returned title “Renoxis RE Company's (@renoxis.dev) profile on Instagram” and author_url `https://www.instagram.com/renoxis.dev`. A nonexistent handle returns HTTP 404 “No Media Match”. The public profile page itself redirects to login, so the oEmbed title is the confirmation.
+- Left out: Facebook. `https://www.facebook.com/renoxis.dev` redirects to a login wall. Graph API `renoxis.dev` returns error subcode 33 (object does not exist or cannot be loaded); a real page such as `natgeo` returns a different error (`#200 Provide valid app ID`). Page search for “Renoxis.dev” showed Not Found. Web search only finds a different firm, Renoxis at renoxis.co, which is not this brand. No Facebook icon was added.
+- Where: `components/FooterSocial.tsx`, `components/footer-social.css`, `components/WelcomeExperience.tsx`, `components/AuthShell.tsx`, `components/LegalPage.tsx`, `components/CommandDesk.tsx`, `app/feed/page.tsx`, `app/pricing/page.tsx`.
+- Who: Grok, for Awad.
+- Undo: revert this commit.
+
 ## 2026-10-14 — Grok: Cixy prompt knowledge
 - What: Cixy's system prompt quotes the pricing module: $50 start, $50/month for the first month after public launch on 2027-01-01 (early beta before that), then $100/month from 2027-02-01. Extra jobs stay email 50, offer letter 100, property lookup 25. Card or Ixis, and card billing is coming soon. If asked about the Oct 15 deadline, she explains the PHA-only EHV estimate-correction window closing 2026-10-15 11:59:59 PM ET (PIH 2026-25), not a household signup, and tells them to verify with the local PHA. EHV to HCV/PBV transitions end 2026-11-01; all EHV converts to TPV by 2026-12-31; she does not promise funding after that. Wholesale users are sent to the statute or local counsel. Delaware disclosures and the 21-day cancellation have been in effect since 2026-08-30, and the Delaware license is required from 2027-02-26. Rhode Island requires a license and cancellation from 2027-01-01. NC HB 797 is not law. HUD's Wells Fargo matter is an investigation only: no liability claim, and she points people to their lender and a local attorney. The prompt stays secular.
 - Where: `lib/renoxis/cixy-prompts.ts`, `tests/cixy-prompts.test.ts`.

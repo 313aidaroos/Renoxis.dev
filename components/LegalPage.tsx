@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FooterSocial } from "./FooterSocial";
 import type { ReactNode } from "react";
 import "./command-desk.css";
 
@@ -49,6 +50,7 @@ export function LegalPage({
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
           <Link href="/">Home</Link>
+          <FooterSocial />
         </div>
       </footer>
     </div>

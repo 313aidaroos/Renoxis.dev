@@ -7,7 +7,7 @@ import { OtherIxisCompanies } from './OtherIxisCompanies';
 import CixyAvatar, { type Mood } from './CixyAvatar';
 import { LoginForm } from './LoginForm';
 import { CixyHelp } from './CixyHelp';
-import { paintedSignatureLook } from '@/lib/renoxis/customization';
+import { defaultLook } from '@/lib/renoxis/customization';
 import { orderedTour } from '@/lib/renoxis/tour';
 import { IXIS_PER_USD, JOB_IXIS, PROMO_END, START_FEE, beginCharge, formatIxis, getMonthlyPrice } from '@/lib/renoxis/pricing';
 import './command-desk.css';
@@ -59,11 +59,11 @@ export default function WelcomeExperience({ startInTour = false, destination = '
     mark();
   }
   function signIn() { dialog.current?.showModal(); }
-  const avatar = <CixyAvatar look={{...paintedSignatureLook, motion}} mood={mood} />;
+  const avatar = <CixyAvatar look={{...defaultLook, motion}} mood={mood} />;
   return <div className="renoxis welcome-shell">
     <a className="skip-link" href="#welcome-main">Skip to content</a>
     <header className="welcome-header">
-      <Link href="/" className="welcome-brand" aria-label="Renoxis home"><span className="welcome-monogram">R</span><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
+      <Link href="/" className="welcome-brand" aria-label="Renoxis home"><img className="welcome-monogram" src="/brand/icon-192.png" alt="" width={48} height={48} /><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
       <nav aria-label="Welcome navigation">
         <Link href="/tour">Explore with Cixy</Link>
         <Link className="nav-keep" href="/companies">Apixis Companies</Link>

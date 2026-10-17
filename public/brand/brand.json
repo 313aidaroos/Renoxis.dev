@@ -1,0 +1,32 @@
+{
+  "name": "Renoxis",
+  "domain": "renoxis.dev",
+  "tagline": "Your real estate workspace",
+  "colors": {
+    "primary": "#1854D0",
+    "accent": "#D83030",
+    "background": "#F5F7FB",
+    "text": "#0F1B33"
+  },
+  "fonts": [
+    "Montserrat (headings, 600\u2013800)",
+    "Inter (body)"
+  ],
+  "files": {
+    "logo_full": "/brand/logo-full.png",
+    "logo_full_white": "/brand/logo-full-white.png",
+    "mark": "/brand/mark.png",
+    "mark_white": "/brand/mark-white.png",
+    "favicon": "/brand/favicon.ico",
+    "favicon_32": "/brand/favicon-32.png",
+    "apple_touch_icon": "/brand/apple-touch-icon.png",
+    "icon_192": "/brand/icon-192.png",
+    "icon_512": "/brand/icon-512.png",
+    "og_image": "/brand/og-image.png",
+    "banner": "/brand/banner.png",
+    "facebook_cover": "/brand/facebook-cover.png",
+    "facebook_profile": "/brand/facebook-profile.png",
+    "readme": "/brand/README.md",
+    "brand_json": "/brand/brand.json"
+  }
+}

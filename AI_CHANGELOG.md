@@ -72,3 +72,7 @@ Entry format:
 ## 2026-10-14 — Grok 4.7
 - Changed: rebased the “Other Ixis companies” footer from #32 onto current `main`. One list (`lib/renoxis/ixis-companies.ts`), one row (`components/OtherIxisCompanies.tsx`) on the home, tour, pricing, login, support, and feed footers. The same 11 https links. Pinixis, Launchixis, Ominix, Qahwah World, and Nursery Toons stay off this row.
 - Why: #32 is closed. This brings that row onto current `main`, which already has the Cixy brief and the merged launch-checklist work from #52. Support and feed did not exist when #32 opened, so the row is on those footers too.
+
+## 2026-10-17 — Grok 4.7
+- Changed: `lib/renoxis/cixy-prompts.ts` and `tests/cixy-prompts.test.ts`. The PHA-only EHV estimate-correction window is now past tense (closed 2026-10-15 11:59:59 PM ET). Nov 1 and Dec 31 are unchanged, with December 2026 HAP only. Iowa Code §543B.6A wholesaling facts from the 2026-10-16 brief are in the same prompt. Cixy stays secular, one shared brain. `reports/2026-10-17-renoxis.md` is a read-only launch status. `NOTES/GROK.md` records the prompt change.
+- Why: The 2026-10-16 Cixy brief says that correction window closed on 2026-10-15, and Iowa §543B.6A was verified. No env, Stripe, migration, email, or merge.

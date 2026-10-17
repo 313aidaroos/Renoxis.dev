@@ -255,3 +255,11 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Not done: #32 is closed. This branch does not merge. The signed-in Command Desk footer and the legal pages use a different footer, so they do not get this row.
 - Who: Grok 4.7, for Awad.
 - Undo: revert this commit.
+
+## 2026-10-17 — Grok: Cixy brief (EHV closed, Iowa §543B.6A) and launch status
+- What: The system prompt now speaks of the PHA-only EHV estimate-correction window in the past tense. It closed 2026-10-15 11:59:59 PM ET (PIH 2026-25; PHAs emailed EHV@hud.gov). It was not a household signup or application deadline. HUD's estimate stands unless a PHA already filed. Still ahead: EHV to HCV/PBV transitions end 2026-11-01, and all EHV families convert to EHV-TPV by 2026-12-31, then EHV ends. December 2026 HAP only; later renewals depend on appropriations. She still never promises funding after 2026-12-31. Iowa Code §543B.6A (2024 Acts ch 1040) is now a dated wholesale point: licensed broker or represented by one; written disclosures (identities, equitable interest only, may not convey title) and an executed agency agreement to all parties before contracting; missing disclosure lets the seller or buyer cancel any time before closing without penalty and keep earnest money the wholesaler paid; civil penalty up to the greater of $10,000 or 10% of the sale price per property. Statute text verified 2026-10-16. Still verify in the statute or with local counsel. Delaware, Rhode Island, and North Carolina lines are unchanged. One shared brain. Secular rules unchanged (draws on Arab culture; the religious-word ban in the test still holds).
+- Status report: `reports/2026-10-17-renoxis.md`. Read-only. Production `renoxis.dev` is Vercel `dpl_5hJ7c4N8YrU3TYkpX9ydGJ5Rb4MD`, main `24259b6` (merge of #53), READY 2026-10-14 22:46 UTC. Live Supabase `loyjbfqpanskcecvpolt` still does not have `20261006120000`.
+- Where: `lib/renoxis/cixy-prompts.ts`, `tests/cixy-prompts.test.ts`, `reports/2026-10-17-renoxis.md`, `AI_CHANGELOG.md`.
+- Not done: no merge, no production deploy from this branch, no env edit, no Stripe, no live SQL, no email, no local Ixis grant.
+- Who: Grok 4.7, for Awad.
+- Undo: revert this commit.

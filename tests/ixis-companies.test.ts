@@ -3,8 +3,8 @@ import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { OTHER_IXIS_COMPANIES } from "../lib/renoxis/ixis-companies.ts";
 
-test("footer lists the 11 other Ixis companies with https URLs, no duplicates", () => {
-  assert.equal(OTHER_IXIS_COMPANIES.length, 11);
+test("footer lists the other Ixis companies with https URLs, no duplicates", () => {
+  assert.equal(OTHER_IXIS_COMPANIES.length, 15);
   const urls = OTHER_IXIS_COMPANIES.map((company) => company.url);
   assert.equal(new Set(urls).size, urls.length);
   for (const company of OTHER_IXIS_COMPANIES) {
@@ -19,9 +19,6 @@ test("footer leaves out Renoxis and the excluded projects", () => {
     "renoxis",
     "nexxis",
     "omnixis",
-    "launchixis",
-    "pinixis",
-    "ominix",
     "personalcontentbot",
     "awadbot",
     "qahwah",

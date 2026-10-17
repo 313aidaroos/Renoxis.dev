@@ -54,7 +54,7 @@ test("legacy illustrated looks load as signature preferences", () => {
 
 test("default look is red coat; painted sheet stays emerald natural", () => {
   assert.equal(defaultLook.hairstyle, "long");
-  assert.equal(defaultLook.outfit, "#b91c1c");
+  assert.equal(defaultLook.outfit, "#e23c40");
   assert.equal(DEFAULT_THEME, "red");
   assert.equal(isNaturalSignature(defaultLook), false);
   assert.equal(isNaturalSignature(paintedSignatureLook), true);
@@ -205,7 +205,7 @@ test("prefs migrate legacy look and keep Essentials owned", () => {
 
 
 test("desk themes map coat and persist on prefs", () => {
-  assert.equal(themes.red.coat, "#b91c1c");
+  assert.equal(themes.red.coat, "#e23c40");
   assert.equal(themes.emerald.coat, "#075d4b");
   assert.equal(normalizeTheme("sunset"), "sunset");
   assert.equal(normalizeTheme("nope"), "red");
@@ -234,7 +234,8 @@ test("desk themes map coat and persist on prefs", () => {
 
 
 test("syncThemeAndCoat snaps blazer to nearest theme both ways", () => {
-  assert.equal(nearestTheme("#b91c1c"), "red");
+  assert.equal(nearestTheme("#b91c1c"), "red"); // legacy coat
+  assert.equal(nearestTheme("#e23c40"), "red");
   assert.equal(nearestTheme("#aa2222"), "red");
   assert.equal(nearestTheme("#0a6050"), "emerald");
   assert.equal(nearestTheme("#1e40af"), "night");

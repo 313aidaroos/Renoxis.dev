@@ -16,7 +16,7 @@ export default async function SupportPage() {
     <div className="welcome-shell">
       <header className="welcome-header">
         <Link className="welcome-brand" href="/">
-          <span className="welcome-monogram">R</span>
+          <img className="welcome-monogram" src="/brand/icon-192.png" alt="" width={48} height={48} />
           <span>
             RENOXIS<small>A APIXIS COMPANY</small>
           </span>

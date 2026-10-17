@@ -2,6 +2,7 @@
 
 Claim work here before you start so Claude, Hermes, Codex and Grok don't collide. One dated line per task; mark it done (with PR link) when finished.
 
+- 2026-10-17 (CT) Grok 4.7: launch status report for 2026-10-17, and Cixy prompt update for the closed EHV window plus Iowa §543B.6A. Read-only on production. No merge, no env, no Stripe, no live SQL, no email. Branch `cursor/launch-status-cixy-brief-1a38`.
 - 2026-10-14 (CT) Grok 4.7: launch checklist for 2027-01-01, plus safe gaps (phone header, support cancel copy, document seat check, listing-copy charge note). No merge, no live SQL, no Wallet spend. Done: https://github.com/313aidaroos/Renoxis.dev/pull/52
 - 2026-10-14 (CT) Grok 4.7: rebase #32 other-Ixis footer onto main, then onto merged #52. Do not merge this branch. #32 is closed. Branch `cursor/footer-other-ixis-b653`. https://github.com/313aidaroos/Renoxis.dev/pull/53
 

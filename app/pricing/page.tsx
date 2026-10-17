@@ -42,7 +42,7 @@ export default async function PricingPage() {
   return (
     <div className="welcome-shell">
       <header className="welcome-header">
-        <Link className="welcome-brand" href="/"><img className="welcome-monogram" src="/brand/icon-192.png" alt="" width={48} height={48} /><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
+        <Link className="welcome-brand" href="/"><img className="welcome-monogram" src="/brand/mark.png" alt="" width={48} height={48} /><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
         <nav><Link href="/tour">Tour with Cixy</Link><Link className="primary" href={start}>{signedIn ? "Open dashboard ↗" : "Sign in ↗"}</Link></nav>
       </header>
 

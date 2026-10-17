@@ -17,7 +17,7 @@ export function LegalPage({
       </a>
       <header className="legal-bar">
         <Link className="brand" href="/">
-          <img className="brand-mark" src="/brand/icon-192.png" alt="" width={56} height={56} />
+          <img className="brand-mark" src="/brand/mark.png" alt="" width={56} height={56} />
           <span>
             <strong>RENOXIS</strong>
             <small>People. Properties. A brighter tomorrow.</small>

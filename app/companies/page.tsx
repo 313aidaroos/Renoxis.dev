@@ -55,5 +55,5 @@ function CompaniesDirectory({ host }: { host: string }) {
 }
 
 export default function CompaniesPage() {
-  return (<><header className="ix-host-header"><Link href="/" aria-label="Renoxis home"><img src="/brand/icon-white-256.png" alt="" width={32} height={32} /><span>RENOXIS</span></Link><nav aria-label="Main navigation"><Link href="/">Home</Link><Link href="/tour">Tour</Link><Link href="/companies" aria-current="page">Companies</Link></nav></header><CompaniesDirectory host="renoxis" /></>);
+  return (<><header className="ix-host-header"><Link href="/" aria-label="Renoxis home"><img src="/brand/mark-white.png" alt="" width={32} height={32} /><span>RENOXIS</span></Link><nav aria-label="Main navigation"><Link href="/">Home</Link><Link href="/tour">Tour</Link><Link href="/companies" aria-current="page">Companies</Link></nav></header><CompaniesDirectory host="renoxis" /></>);
 }

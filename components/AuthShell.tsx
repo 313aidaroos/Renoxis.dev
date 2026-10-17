@@ -14,7 +14,7 @@ export function AuthShell({ children, help = true }: { children: React.ReactNode
       <a className="skip-link" href="#auth-main">Skip to content</a>
       <header className="welcome-header">
         <Link href="/" className="welcome-brand" aria-label="Renoxis home">
-          <img className="welcome-monogram" src="/brand/icon-192.png" alt="" width={48} height={48} />
+          <img className="welcome-monogram" src="/brand/mark.png" alt="" width={48} height={48} />
           <span>RENOXIS<small>A APIXIS COMPANY</small></span>
         </Link>
         <nav aria-label="Main navigation">

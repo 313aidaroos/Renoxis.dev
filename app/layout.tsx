@@ -9,7 +9,15 @@ export const metadata: Metadata = {
   title: "Renoxis — Your Real Estate Workspace",
   description:
     "People. Properties. A brighter tomorrow. Meet Cixy, your real estate assistant.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://renoxis.dev"),
   applicationName: "Renoxis",
+  openGraph: {
+    title: "Renoxis — Your Real Estate Workspace",
+    description: "People. Properties. A brighter tomorrow. Meet Cixy, your real estate assistant.",
+    siteName: "Renoxis",
+    images: [{ url: "/brand/og-image.png", width: 1200, height: 630, alt: "Renoxis" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/brand/og-image.png"] },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Renoxis" },
   icons: {
     icon: [

@@ -13,7 +13,7 @@ export default function FeedPage() {
     <div className="renoxis welcome-shell">
       <a className="skip-link" href="#feed-main">Skip to content</a>
       <header className="welcome-header">
-        <Link href="/" className="welcome-brand" aria-label="Renoxis home"><img className="welcome-monogram" src="/brand/icon-192.png" alt="" width={48} height={48} /><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
+        <Link href="/" className="welcome-brand" aria-label="Renoxis home"><img className="welcome-monogram" src="/brand/mark.png" alt="" width={48} height={48} /><span>RENOXIS<small>A APIXIS COMPANY</small></span></Link>
         <nav aria-label="Welcome navigation">
           <Link href="/tour">Explore with Cixy</Link>
           <Link className="nav-keep" href="/companies">Apixis Companies</Link>

@@ -1,6 +1,6 @@
 /* "Your agent is ready" card (Grok Developer Bot, 2026-09-28). Builds on .desk-tour-entry and the desk
    theme vars (--mint/--line/--green/--muted), so it follows the Renoxis look in every desk theme. */
-.apixis-agent-card { position:relative;align-items:stretch;background:linear-gradient(135deg,var(--mint),#fff 78%);border-color:#c9e3d6;box-shadow:0 6px 18px #0a5c4312; }
+.apixis-agent-card { position:relative;align-items:stretch;background:linear-gradient(135deg,var(--mint),#fff 78%);border-color:#c8d1e4;box-shadow:0 6px 18px #08235e12; }
 .apixis-agent-card::before { content:"";position:absolute;inset:0 auto 0 0;width:4px;border-radius:12px 0 0 12px;background:linear-gradient(180deg,#d8b45a,var(--green)); }
 .apixis-agent-guide { display:flex;flex-direction:column;align-items:center;gap:6px;width:86px;overflow:visible; }
 .apixis-agent-guide > :first-child { width:76px;border-radius:12px;overflow:hidden; }

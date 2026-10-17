@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Browsers request /favicon.ico directly; the only logo files live in public/brand/.
+  async rewrites() {
+    return [{ source: "/favicon.ico", destination: "/brand/favicon.ico" }];
+  },
   async redirects() {
     return [
       {

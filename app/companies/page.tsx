@@ -9,7 +9,7 @@ const companies = [
   { name: "Socixis", url: "https://socixis.dev", description: "Your own personal marketer, automated posts and advertisements.", kind: "social", color: "#bd83e6", path: "M8 12h32v23H22l-8 7v-7H8zM16 21h16M16 27h10m12-12 3-6m-9 4 2-8" },
   { name: "Lyrixis", url: "https://lyrixis.vercel.app", description: "Voice and media/music metadata.", kind: "music", color: "#a998ff", path: "M18 33V13l20-4v20M18 33c-3-2-8-1-8 3s5 5 8 2m20-9c-3-2-8-1-8 3s5 5 8 2M18 20l20-4" },
   { name: "Pinixis", url: "https://pinixis.vercel.app", description: "Collectible marketplace and arcade.", kind: "arcade", color: "#ffbd55", path: "M10 17h28l5 21H5zM18 24v10m-5-5h10m11-4h.1m-3 7h.1M16 17l3-8h10l3 8" },
-  { name: "Renoxis", url: "https://renoxis.dev", description: "Your real estate AI. Deals, clients, commissions on autopilot.", kind: "home", color: "#63cfab", path: "M5 24 24 8l19 16M10 22v20h28V22M19 42V29h10v13m-15-21 10-8 10 8" },
+  { name: "Renoxis", url: "https://renoxis.dev", description: "Your real estate AI. Deals, clients, commissions on autopilot.", kind: "home", color: "#6f97ea", path: "M5 24 24 8l19 16M10 22v20h28V22M19 42V29h10v13m-15-21 10-8 10 8" },
   { name: "Contraxis", url: "https://contraxis-dev.vercel.app", description: "The everything-marketplace. Find pros for any job.", kind: "tools", color: "#eea46c", path: "M11 36 34 13m-21-2 6 6m17 19-6-6M9 31l8 8m-3-29 8 8m18 13-8 8M29 11l8 8" },
   { name: "Deduxis", url: "https://deduxis.vercel.app", description: "Snap a receipt. AI extracts, categorizes, exports your taxes.", kind: "receipt", color: "#8bdbca", path: "M12 6h24v36l-4-3-4 3-4-3-4 3-4-3-4 3zM18 17h12M18 24h12M18 31h7" },
   { name: "Rawixis", url: "https://rawixis.vercel.app", description: "B2B market for critical raw materials.", kind: "crystal", color: "#d6b476", path: "m24 6 16 16-16 20L8 22 24 6Zm-16 16h32M24 6l-6 16 6 20 6-20-6-16Z" },
@@ -55,5 +55,5 @@ function CompaniesDirectory({ host }: { host: string }) {
 }
 
 export default function CompaniesPage() {
-  return (<><header className="ix-host-header"><Link href="/" aria-label="Renoxis home"><strong>R</strong><span>RENOXIS</span></Link><nav aria-label="Main navigation"><Link href="/">Home</Link><Link href="/tour">Tour</Link><Link href="/companies" aria-current="page">Companies</Link></nav></header><CompaniesDirectory host="renoxis" /></>);
+  return (<><header className="ix-host-header"><Link href="/" aria-label="Renoxis home"><img src="/brand/mark-white.png" alt="" width={32} height={32} /><span>RENOXIS</span></Link><nav aria-label="Main navigation"><Link href="/">Home</Link><Link href="/tour">Tour</Link><Link href="/companies" aria-current="page">Companies</Link></nav></header><CompaniesDirectory host="renoxis" /></>);
 }

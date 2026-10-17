@@ -91,10 +91,14 @@ export const paintedSignatureLook: Look = {
   motion: true,
 };
 
-/** Product default: red coat. Recolor runs until the sheet itself is red. */
+/** Product default: red coat in the Renoxis logo red (#e23c40). Recolor runs until the sheet itself is red. */
+export const BRAND_RED = "#e23c40";
+/** Coats saved before the 2026-10-17 logo refresh; still read as the red theme. */
+const LEGACY_COATS: Record<string, DeskTheme> = { "#b91c1c": "red" };
+
 export const defaultLook: Look = {
   ...paintedSignatureLook,
-  outfit: "#b91c1c",
+  outfit: BRAND_RED,
 };
 
 export type DeskTheme = "red" | "emerald" | "sunset" | "night";
@@ -112,10 +116,10 @@ export const themes: Record<DeskTheme, ThemeSpec> = {
   red: {
     id: "red",
     label: "Red",
-    coat: "#b91c1c",
-    accent: "#b91c1c",
-    accentDark: "#7f1d1d",
-    soft: "#fef2f2",
+    coat: BRAND_RED,
+    accent: BRAND_RED,
+    accentDark: "#b8262b",
+    soft: "#fdecec",
   },
   emerald: {
     id: "emerald",
@@ -155,7 +159,7 @@ export function themeFromOutfit(outfit: string): DeskTheme {
   for (const spec of Object.values(themes)) {
     if (spec.coat === hex) return spec.id;
   }
-  return DEFAULT_THEME;
+  return LEGACY_COATS[hex] ?? DEFAULT_THEME;
 }
 
 export function applyThemeCoat(look: Look, theme: DeskTheme): Look {
@@ -171,16 +175,20 @@ function hexToRgb(hex: string): [number, number, number] {
 /** Exact coat match, else nearest theme coat by RGB distance. */
 export function nearestTheme(hex: string): DeskTheme {
   const exact = themeFromOutfit(hex);
-  if (themes[exact].coat === hex.toLowerCase()) return exact;
+  if (themes[exact].coat === hex.toLowerCase() || LEGACY_COATS[hex.toLowerCase()]) return exact;
   const [r, g, b] = hexToRgb(hex);
   let best: DeskTheme = DEFAULT_THEME;
   let bestDist = Number.POSITIVE_INFINITY;
-  for (const spec of Object.values(themes)) {
-    const [tr, tg, tb] = hexToRgb(spec.coat);
+  const candidates: [string, DeskTheme][] = [
+    ...Object.values(themes).map((s): [string, DeskTheme] => [s.coat, s.id]),
+    ...Object.entries(LEGACY_COATS),
+  ];
+  for (const [coat, id] of candidates) {
+    const [tr, tg, tb] = hexToRgb(coat);
     const d = (r - tr) ** 2 + (g - tg) ** 2 + (b - tb) ** 2;
     if (d < bestDist) {
       bestDist = d;
-      best = spec.id;
+      best = id;
     }
   }
   return best;

@@ -1,30 +1,30 @@
 /* Renoxis feed: maps the shared feed layout onto Renoxis's own look (command-desk.css / welcome.css). */
 .rx-feed-main { padding-top: 34px; padding-bottom: 40px; }
 .rx-feed-head { margin-bottom: 20px; }
-.rx-feed-head h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(30px, 3vw, 44px); font-weight: 400; letter-spacing: -1.2px; line-height: 1.15; margin: 14px 0 0; }
+.rx-feed-head h1 { font-family:var(--font-heading),Arial,sans-serif; font-size: clamp(30px, 3vw, 44px); font-weight:800; letter-spacing: -1.2px; line-height: 1.15; margin: 14px 0 0; }
 .rx-feed-head h1 em { color: var(--green); font-weight: 400; }
 .welcome-header nav a[aria-current="page"] { font-weight: 700; box-shadow: inset 0 -2px var(--green); }
 .fx-root {
   --fx-ink: var(--ink);
   --fx-accent: var(--green);
-  --fx-on-accent: #d4ebd8;
+  --fx-on-accent: #d3dbec;
   --fx-link: var(--green);
-  --fx-media-bg: #e2ece3;
-  --fx-scrim: #142e2c66;
+  --fx-media-bg: #e2e5ec;
+  --fx-scrim: #14203a66;
   --fx-avatar-radius: 13px 13px 3px 3px;
   --fx-media-radius: 9px;
   --fx-gap: 14px;
   --fx-offset: 250px;
   --fx-offset-mobile: 230px;
 }
-.fx-root .fx-avatar { font-family: Georgia, serif; }
-.fx-root .workspace-tabs { padding: 0 6px; border-radius: 10px; border: 1px solid #e5ede7; flex: 1 1 auto; }
+.fx-root .fx-avatar { font-family:var(--font-heading),Arial,sans-serif; font-weight:800}
+.fx-root .workspace-tabs { padding: 0 6px; border-radius: 10px; border: 1px solid #e5e7ed; flex: 1 1 auto; }
 .fx-root .desk-panel { margin-bottom: 0; }
-.fx-root .desk-panel > h2, .fx-root .fx-sheet-head h2, .fx-root .fx-profile-text h2, .fx-root .fx-subhead h2 { font-family: Georgia, serif; font-weight: 400; font-size: 20px; letter-spacing: -0.4px; }
-.fx-root .fx-post-head { border-bottom: 1px solid #eef3ef; padding-bottom: 10px; }
+.fx-root .desk-panel > h2, .fx-root .fx-sheet-head h2, .fx-root .fx-profile-text h2, .fx-root .fx-subhead h2 { font-family:var(--font-heading),Arial,sans-serif; font-weight:800; font-size: 20px; letter-spacing: -0.4px; }
+.fx-root .fx-post-head { border-bottom: 1px solid #eef0f3; padding-bottom: 10px; }
 .fx-root .rx-muted { color: var(--muted); }
 .fx-root .rx-ai { background: #fff6dc; color: #8a6514; }
-.fx-root .rx-input { border: 1px solid #cfded4; border-radius: 7px; padding: 10px 12px; background: #fff; color: var(--ink); width: 100%; min-width: 0; }
+.fx-root .rx-input { border: 1px solid #cfd4de; border-radius: 7px; padding: 10px 12px; background: #fff; color: var(--ink); width: 100%; min-width: 0; }
 .fx-root .notice { display: block; }
 .fx-root .lead-row { display: flex; }
 .fx-root .fx-comment.lead-row { display: block; }

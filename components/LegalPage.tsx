@@ -17,15 +17,7 @@ export function LegalPage({
       </a>
       <header className="legal-bar">
         <Link className="brand" href="/">
-          <svg viewBox="0 0 64 60" aria-hidden="true">
-            <path
-              d="M10 53V20L32 5l22 15v33M22 45V25h12q17 0 8 13l10 13M23 38h12"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="5"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <img className="brand-mark" src="/brand/mark.png" alt="" width={56} height={56} />
           <span>
             <strong>RENOXIS</strong>
             <small>People. Properties. A brighter tomorrow.</small>

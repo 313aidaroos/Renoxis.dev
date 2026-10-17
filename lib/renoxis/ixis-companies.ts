@@ -1,19 +1,23 @@
 // Other Ixis companies in the public Renoxis footer.
 // Swap names and URLs here only. Every footer reads this list.
-// Left out on purpose (Awad, 2026-09-30, PR #32): Renoxis itself, Launchixis,
-// Qahwah World, and Nursery Toons. Pinixis and Ominix live on /companies.
+// 2026-10-17 (Awad): list every Apixis-family company except Renoxis itself.
+// Qahwah World and Nursery Toons stay out.
 export type IxisCompany = { name: string; url: string };
 
 export const OTHER_IXIS_COMPANIES: readonly IxisCompany[] = [
   { name: "Apixis", url: "https://www.apixis.dev" },
-  { name: "Apixis Wallet", url: "https://apixis-wallet.vercel.app" },
+  { name: "Apixis Wallet", url: "https://wallet.apixis.dev" },
   { name: "Socixis", url: "https://socixis.dev" },
-  { name: "Rawixis", url: "https://rawixis.vercel.app" },
-  { name: "Contraxis", url: "https://contraxis-dev.vercel.app" },
-  { name: "Lyrixis", url: "https://lyrixis.vercel.app" },
-  { name: "Halaxis", url: "https://halaxis.vercel.app" },
+  { name: "Rawixis", url: "https://rawixis.dev" },
+  { name: "Contraxis", url: "https://contraxis.dev" },
+  { name: "Lyrixis", url: "https://lyrixis.apixis.dev" },
+  { name: "Halaxis", url: "https://halaxis.apixis.dev" },
   { name: "Recovra", url: "https://recovra-three.vercel.app" },
-  { name: "Deduxis", url: "https://deduxis.vercel.app" },
-  { name: "Geoxis", url: "https://spatial-dashboard-xi.vercel.app" },
-  { name: "Wattixis", url: "https://wattixis.vercel.app" },
+  { name: "Deduxis", url: "https://deduxis.apixis.dev" },
+  { name: "Geoxis", url: "https://geoxis.apixis.dev" },
+  { name: "Wattixis", url: "https://wattixis.apixis.dev" },
+  { name: "Newsxis", url: "https://newsxis.apixis.dev" },
+  { name: "Pinixis", url: "https://pinixis.dev" },
+  { name: "Launchixis", url: "https://launchixis.apixis.dev" },
+  { name: "Ominixis", url: "https://ominixis.apixis.dev" },
 ];

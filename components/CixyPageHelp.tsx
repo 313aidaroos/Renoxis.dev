@@ -20,7 +20,7 @@ export function CixyPageHelp({
         aria-haspopup="dialog"
         onClick={() => dialog.current?.showModal()}
       >
-        <Image src="/cixy/cixy-combo-a-avatar.webp" alt="" width={28} height={28} />
+        <Image src="/cixy/cixy-renoxis-avatar.webp" alt="" width={28} height={28} />
         Help
       </button>
       <dialog ref={dialog} className="cixy-page-help-dialog" aria-labelledby="cixy-page-help-title">

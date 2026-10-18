@@ -23,7 +23,7 @@ export function CixyHelp({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <div className="cixy-help cixy-help-compact">
-        <img src="/cixy/cixy-combo-a-avatar.webp" alt="Cixy, your Renoxis guide" width={48} height={48} />
+        <img src="/cixy/cixy-renoxis-avatar.webp" alt="Cixy, your Renoxis guide" width={48} height={48} />
         <p>
           Need help signing in?{" "}
           <a href="/login#cixy-help">Ask Cixy</a>
@@ -34,7 +34,7 @@ export function CixyHelp({ compact = false }: { compact?: boolean }) {
   return (
     <section className="cixy-help" id="cixy-help" aria-labelledby="cixy-help-title">
       <div className="cixy-help-head">
-        <img src="/cixy/cixy-combo-a-avatar.webp" alt="Cixy, your Renoxis guide" width={72} height={72} />
+        <img src="/cixy/cixy-renoxis-avatar.webp" alt="Cixy, your Renoxis guide" width={72} height={72} />
         <div>
           <span className="welcome-kicker"><i /> CIXY · SIGN-IN HELP</span>
           <h2 id="cixy-help-title">Need help signing in?</h2>

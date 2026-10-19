@@ -86,24 +86,24 @@ test("launch is midnight Central on 2027-01-01 and $100 starts 2027-02-01", asyn
   assert.equal(MONTHLY_STANDARD_SKU, "renoxis.agent.monthly.10000");
   const source = await readFile(new URL("../lib/renoxis/pricing.ts", import.meta.url), "utf8");
   assert.doesNotMatch(source, /TODO\(Awad\): set the real launch/);
-  assert.match(CARD_BILLING_COPY, /coming soon/i);
+  assert.match(CARD_BILLING_COPY, /Stripe Checkout/);
+  assert.doesNotMatch(CARD_BILLING_COPY, /coming soon/i);
 });
 
-test("seat payment does not add Stripe", async () => {
-  for (const file of [
-    "../lib/renoxis/pricing.ts",
-    "../lib/renoxis/billing.ts",
-    "../lib/renoxis/seat-purchase.ts",
-    "../lib/renoxis/redeem-seat.ts",
-    "../components/SeatPay.tsx",
-    "../components/PricingCheckout.tsx",
-  ]) {
-    const source = await readFile(new URL(file, import.meta.url), "utf8");
-    assert.doesNotMatch(source, /STRIPE_|sk_live|sk_test|from ["']stripe|@stripe\/stripe-js/);
-  }
+test("seat payment keeps Ixis redeem and adds Stripe Checkout", async () => {
   const purchase = await readFile(new URL("../lib/renoxis/seat-purchase.ts", import.meta.url), "utf8");
   assert.match(purchase, /seatProductKey\(input\.intent\)/);
   const pay = await readFile(new URL("../components/SeatPay.tsx", import.meta.url), "utf8");
-  assert.match(pay, /Coming soon/);
   assert.match(pay, /Buy Ixis/);
+  assert.match(pay, /CardCheckout/);
+  assert.doesNotMatch(pay, /Coming soon/);
+  assert.doesNotMatch(pay, /sk_live|sk_test|whsec_/);
+  const prices = await readFile(new URL("../lib/renoxis/stripe-prices.ts", import.meta.url), "utf8");
+  assert.match(prices, /STRIPE_PRICE_START_FEE/);
+  assert.match(prices, /STRIPE_PRICE_MONTHLY_PROMO/);
+  assert.match(prices, /STRIPE_PRICE_MONTHLY_STANDARD/);
+  assert.match(prices, /getMonthlyPrice/);
+  assert.match(prices, /PROMO_END/);
+  assert.doesNotMatch(prices, /price_[A-Za-z0-9]{8,}/);
+  assert.doesNotMatch(prices, /sk_live|sk_test|whsec_/);
 });

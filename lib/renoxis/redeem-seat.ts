@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { WalletError, buyIxisUrl } from "@/lib/apixis-wallet";
+import { WalletError } from "@/lib/apixis-wallet";
 import { walletOwner } from "@/lib/renoxis/wallet-charge";
 import { seatBuyReturnUrl } from "./pricing";
+import { walletBuyUrl } from "./wallet-link";
 import { purchaseSeat, type SeatIntent, type SeatStore } from "./seat-purchase";
 
 const APP_URL = process.env.APP_URL || "https://renoxis.dev";
@@ -50,7 +51,7 @@ export async function redeemSeat(intent: SeatIntent, body: unknown) {
     if (!outcome.ok) return NextResponse.json({
       error: `Not enough Ixis — this is ${outcome.needed.toLocaleString()} Ixis. Buy Ixis, then come back.`,
       insufficient: true, retrySameAttempt: false,
-      buyUrl: buyIxisUrl("renoxis", seatBuyReturnUrl(APP_URL, intent)),
+      buyUrl: walletBuyUrl(seatBuyReturnUrl(APP_URL, intent)),
     }, { status: 402 });
     return NextResponse.json({ success: true, receiptId: outcome.receiptId, entitlement: outcome.result, retrySameAttempt: false });
   } catch (error) {

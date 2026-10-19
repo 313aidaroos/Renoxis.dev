@@ -16,6 +16,7 @@ import {
   getMonthlyPrice,
 } from "@/lib/renoxis/pricing";
 import { walletBuyUrl } from "@/lib/renoxis/wallet-link";
+import { cardCheckoutConfigured } from "@/lib/renoxis/stripe-prices";
 import { PricingCheckout } from "@/components/PricingCheckout";
 import "@/components/welcome.css";
 
@@ -25,7 +26,12 @@ export async function generateMetadata() {
   return { title: `Renoxis pricing — $${START_FEE.usd} to start, $${monthly.usd} a month` };
 }
 
-export default async function PricingPage() {
+export default async function PricingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ pay?: string }>;
+}) {
+  const params = await searchParams;
   await connection();
   let signedIn = false;
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -71,7 +77,7 @@ export default async function PricingPage() {
             <li>Pay with Ixis. After you sign in, Renoxis redeems the seat from Apixis Wallet. If the Wallet is short, Buy Ixis opens Apixis Wallet and brings you back.</li>
             <li>Pay by card: {CARD_BILLING_COPY}</li>
           </ul>
-          <PricingCheckout startHref={start} buyHref={buyHref} renewHref={signedIn ? "/dashboard?board=Connections&billing=renew" : "/login?next=%2Fdashboard%3Fboard%3DConnections%26billing%3Drenew"} />
+          <PricingCheckout startHref={start} buyHref={buyHref} cardReady={cardCheckoutConfigured()} initialMethod={params.pay === "card" ? "card" : "ixis"} renewHref={signedIn ? "/dashboard?board=Connections&billing=renew" : "/login?next=%2Fdashboard%3Fboard%3DConnections%26billing%3Drenew"} />
         </section>
 
         <section className="welcome-how">
@@ -91,7 +97,7 @@ export default async function PricingPage() {
           <ul>
             <li>Send email or publish posts for you — drafts are yours to review and send.</li>
             <li>Import MLS listings, look up property data, or generate renovation images.</li>
-            <li>Charge a card for the subscription. Card billing is coming soon.</li>
+            <li>Charge a card before you sign in. Sign in with Apixis ID, then Pay by card opens Stripe Checkout.</li>
           </ul>
         </section>
 

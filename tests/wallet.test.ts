@@ -19,7 +19,8 @@ function returnTarget(href: string) {
 test("buy link is /buy with product=renoxis and a studio return", () => {
   const href = walletEntryUrl();
   const { url, back } = returnTarget(href);
-  assert.equal(url.origin, APIXIS_WALLET_HOME);
+  assert.equal(APIXIS_WALLET_HOME, "https://wallet.apixis.dev");
+  assert.equal(url.origin, "https://wallet.apixis.dev");
   assert.equal(url.pathname, "/buy");
   assert.equal(url.searchParams.get("product"), "renoxis");
   assert.equal(url.searchParams.get("origin"), null);

@@ -8,7 +8,7 @@
 - All paid plans renew monthly automatically.
 - Customers pay by card OR with Ixis (100 Ixis = $1).
 - Signups via Apixis ID get 1,000 Ixis and an agent sent into Apixis. That grant lives in the shared Wallet. Renoxis does not grant it.
-- The shared Apixis Stripe account sells Ixis packs today. Renoxis does not add Stripe keys or Stripe code. Card subscription billing on this site shows **Coming soon**.
+- The shared Apixis.dev Stripe account sells Ixis packs and, on this site, the seat start fee and monthly plan. Price ids are env vars (`STRIPE_PRICE_START_FEE`, `STRIPE_PRICE_MONTHLY_PROMO`, `STRIPE_PRICE_MONTHLY_STANDARD`). Renoxis does not grant Ixis. Buy Ixis opens https://wallet.apixis.dev.
 
 ## Renoxis pricing
 - $50 one-time start fee (5,000 Ixis). Wallet SKU `renoxis.activate` (exists today).

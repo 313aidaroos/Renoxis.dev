@@ -72,7 +72,7 @@ const ownerFirm: FirmDesk = {
   },
   wallet: {
     available: 8400,
-    buy: "https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2F%3Fboard%3DBrokerage",
+    buy: "https://wallet.apixis.dev/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2F%3Fboard%3DBrokerage",
   },
   spendByUser: {
     "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa": { spent: 175, jobs: 3 },
@@ -132,16 +132,23 @@ export default async function BrokerageShots({
   if (process.env.NODE_ENV === "production") notFound();
   const params = await searchParams;
   const agent = params.view === "agent";
+  const seat = params.view === "seat";
   return (
     <CommandDesk
       account={agent ? "Maya Chen" : "Jordan Hale"}
-      entitlement={{
-        activatedAt: "2026-10-01T00:00:00.000Z",
-        seatPeriodEnd: "2027-10-01T00:00:00.000Z",
-        source: "wallet_capture",
-      }}
-      demo={{ firm: agent ? agentFirm : ownerFirm, board: "Brokerage" }}
-      walletHref="https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2F%3Fboard%3DBrokerage"
+      entitlement={
+        seat
+          ? { activatedAt: null, seatPeriodEnd: null, source: "none" }
+          : {
+              activatedAt: "2026-10-01T00:00:00.000Z",
+              seatPeriodEnd: "2027-10-01T00:00:00.000Z",
+              source: "wallet_capture",
+            }
+      }
+      demo={{ firm: agent ? agentFirm : ownerFirm, board: seat ? "Connections" : "Brokerage" }}
+      payMethod={seat ? "card" : "ixis"}
+      cardReady={false}
+      walletHref="https://wallet.apixis.dev/buy?product=renoxis&return_url=https%3A%2F%2Frenoxis.dev%2F%3Fboard%3DBrokerage"
     />
   );
 }

@@ -55,6 +55,12 @@ test("seatStatus trusts only server entitlement sources", () => {
   assert.equal(canUseWorkspace("signed_inactive"), false);
   assert.equal(canUseCixyChat("active"), true);
   assert.equal(canUseCixyChat("activated_lapsed"), false);
+  const card: Entitlement = {
+    activatedAt: "2026-09-01T00:00:00Z",
+    seatPeriodEnd: "2026-10-01T00:00:00Z",
+    source: "card",
+  };
+  assert.equal(seatStatus(false, card, Date.parse("2026-09-15T00:00:00Z")), "active");
 });
 
 test("Wallet CTAs are product=renoxis buy with billing return", () => {

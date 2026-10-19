@@ -1,7 +1,8 @@
 /**
  * Locked Renoxis prices (Awad, 2026-10-13).
  * Pages, pricing copy, and server-side charges read this module.
- * 100 Ixis = $1. This site does not grant Ixis and does not run Stripe.
+ * 100 Ixis = $1. This site does not grant Ixis.
+ * Card checkout reads these amounts. Price ids stay in env.
  */
 
 /** Midnight Central time on 2027-01-01 (CST, UTC−6). Set by Awad on 2026-10-13. */
@@ -119,6 +120,6 @@ export function beginCharge(now: Date = new Date()) {
   };
 }
 
-/** Shown on the card choice. There is no card form and no Stripe code here. */
+/** Shown wherever card and Ixis are both offered. */
 export const CARD_BILLING_COPY =
-  "Card subscription billing is coming soon. The shared Apixis account sells Ixis packs today.";
+  "Pay by card through Stripe Checkout on the shared Apixis account. Ixis stay in Apixis Wallet and are never granted here.";

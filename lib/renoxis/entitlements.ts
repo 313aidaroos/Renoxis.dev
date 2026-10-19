@@ -18,8 +18,8 @@ function csv(name: string) {
  * Server-only entitlement lookup.
  *
  * Source of truth for ACCESS is `renoxis_entitlements` — a table no customer role can read or
- * write (RLS on, zero policies, service role only). The redeem route is the only writer, and it
- * writes only inside a Wallet reserve→capture. The Wallet remains proof of purchase.
+ * write (RLS on, zero policies, service role only). The Wallet redeem route and the Stripe
+ * webhook are the writers. The Wallet remains proof of an Ixis purchase. Card rows use source card.
  *
  * The old design cached this in `renoxis_records` (customer-writable) and trusted the row;
  * a customer could have granted themselves a seat. That kind is gone from the CHECK constraint.
@@ -39,7 +39,7 @@ export async function serverEntitlement(user: UserIdentity): Promise<Entitlement
       return {
         activatedAt: data.activated_at,
         seatPeriodEnd: data.seat_period_end,
-        source: "wallet_capture",
+        source: data.source === "card" ? "card" : "wallet_capture",
       };
     }
   } catch (e) {

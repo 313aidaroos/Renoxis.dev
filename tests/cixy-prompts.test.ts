@@ -74,7 +74,8 @@ test("Cixy quotes the launch price schedule, EHV window, wholesale dates, and th
   assert.match(prompt, /\$100\/month \(10,000 Ixis\) from 2027-02-01/);
   assert.match(prompt, /Public launch is 2027-01-01/);
   assert.match(prompt, /early beta/i);
-  assert.match(prompt, /coming soon/i);
+  assert.match(prompt, /Stripe Checkout/);
+  assert.doesNotMatch(prompt, /coming soon/i);
   assert.match(prompt, /email draft \*\*50\*\*/);
   assert.match(prompt, /offer letter \*\*100\*\*/);
   assert.match(prompt, /Oct 15 deadline/);

@@ -45,7 +45,7 @@ function withLivePrices(stop: TourStop): TourStop {
       : `a $${monthly.usd} monthly plan (${formatIxis(monthly.ixis)} Ixis)`;
     return {
       ...stop,
-      explanation: `Connect supported services, review workspace preferences, and manage access here. Renoxis has a $${START_FEE.usd} one-time start fee (${formatIxis(START_FEE.ixis)} Ixis) and ${month} that renews every month. Pay with Ixis through Apixis Wallet. Card billing is coming soon. Setup and provider availability determine which connected tools work.`,
+      explanation: `Connect supported services, review workspace preferences, and manage access here. Renoxis has a $${START_FEE.usd} one-time start fee (${formatIxis(START_FEE.ixis)} Ixis) and ${month} that renews every month. Pay with Ixis through Apixis Wallet, or by card through Stripe Checkout. Setup and provider availability determine which connected tools work.`,
       example: `Access · $${START_FEE.usd} start · $${monthly.usd} each month`,
     };
   }

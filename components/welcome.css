@@ -10,3 +10,4 @@
 .welcome-shell .seat-pay{margin:8px 0 4px}
 .welcome-shell .seat-pay button{background:#fff;color:var(--ink);border:1px solid #dde3ee;border-radius:8px;padding:11px 16px;font-weight:600;font-size:13px;cursor:pointer}
 .welcome-shell .seat-pay button.primary,.welcome-shell .seat-pay button[aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}
+.welcome-shell .seat-pay button:disabled{opacity:.55;cursor:not-allowed}

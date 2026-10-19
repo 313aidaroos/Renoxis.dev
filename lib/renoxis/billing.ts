@@ -1,6 +1,7 @@
 /**
  * Soft-launch billing for Renoxis.
- * Amounts and SKUs live in pricing.ts (Awad, 2026-10-13). No Renoxis Stripe.
+ * Amounts and SKUs live in pricing.ts (Awad, 2026-10-13).
+ * Ixis redeem stays on the Wallet. Card checkout is Stripe, and it writes the same seat fields.
  * Cixy jobs inside a brokerage bill the office owner's Apixis Wallet (see office-billing.ts).
  * Entitlements stay empty until redeem capture — do not invent balances.
  */
@@ -42,7 +43,7 @@ export type Entitlement = {
   activatedAt: string | null;
   seatPeriodEnd: string | null;
   /** Server-provisioned only. Client/local values never grant access. */
-  source: "none" | "admin_beta" | "wallet_capture";
+  source: "none" | "admin_beta" | "wallet_capture" | "card";
 };
 
 export const emptyEntitlement = (): Entitlement => ({
@@ -57,7 +58,7 @@ export function isActivated(e: Entitlement) {
 
 export function isSeatCurrent(e: Entitlement, now = Date.now()) {
   if (e.source === "admin_beta") return true;
-  if (e.source !== "wallet_capture" || !e.activatedAt || !e.seatPeriodEnd) return false;
+  if ((e.source !== "wallet_capture" && e.source !== "card") || !e.activatedAt || !e.seatPeriodEnd) return false;
   const end = Date.parse(e.seatPeriodEnd);
   return Number.isFinite(end) && end > now;
 }
@@ -122,7 +123,7 @@ export function monthlyPlanCopy(now = new Date()) {
 
 /** Shown wherever the start fee or monthly plan is offered. No card form here. */
 export function payChoiceCopy() {
-  return `Pay with Ixis now. Card subscription billing is coming soon. ${IXIS_PER_USD} Ixis = $1.`;
+  return `Pay with Ixis or by card. ${IXIS_PER_USD} Ixis = $1.`;
 }
 
 /** Copy after Wallet return — catalog live; entitlement empty until capture. */

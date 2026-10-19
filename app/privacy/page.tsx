@@ -82,10 +82,10 @@ export default function PrivacyPolicy() {
         one is added later, would have to wait for your explicit approval.
       </p>
       <p>
-        Buy Ixis leaves this site for Apixis Wallet. The link opens Wallet
-        buy for Renoxis and returns to this site’s Cixy Studio. It does not send
-        your records, email, or office balance. Renoxis does not receive card
-        numbers and does not complete a purchase. Licensed MLS feeds, Outlook,
+        Buy Ixis leaves this site for Apixis Wallet at https://wallet.apixis.dev.
+        The link opens Wallet buy for Renoxis and returns here. It does not send
+        your records, email, or office balance. Seat and plan card checkout
+        opens Stripe Checkout. Renoxis does not receive card numbers. Licensed MLS feeds, Outlook,
         external CRM sync, social publishing, and renovation image generation are not
         connected. A public listing link you save is only the link you typed.
         Commission figures are numbers you enter, not a cash balance.

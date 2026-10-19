@@ -2,7 +2,7 @@
  * Outbound Apixis Wallet buy link.
  *
  * Contract: ApixisWallet `docs/WALLET_EMBED.md`.
- * `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=<https>`
+ * `https://wallet.apixis.dev/buy?product=renoxis&return_url=<https>`
  *
  * `return_url` is https on `renoxis.dev` exactly, opening Cixy Studio.
  * Wallet rejects preview hosts. Credit stays on Wallet (Stripe webhook there).

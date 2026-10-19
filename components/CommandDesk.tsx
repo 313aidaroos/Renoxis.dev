@@ -219,7 +219,7 @@ const faqs = [
   ],
   [
     "What are Ixis and how much do outfits cost?",
-    `Ixis is the Apixis points unit. ${IXIS_PER_USD} Ixis = $1. ${startFeeCopy()} ${monthlyPlanCopy()} Email drafts are ${JOB_IXIS.email} Ixis, offer letters are ${JOB_IXIS.offerLetter}, and a property lookup is ${JOB_IXIS.propertyLookup}. In a brokerage those jobs are paid by the office Wallet. Saving a contact is free. Premium outfits have no Ixis price yet. Add Ixis on Apixis Wallet. Card billing is coming soon.`,
+    `Ixis is the Apixis points unit. ${IXIS_PER_USD} Ixis = $1. ${startFeeCopy()} ${monthlyPlanCopy()} Email drafts are ${JOB_IXIS.email} Ixis, offer letters are ${JOB_IXIS.offerLetter}, and a property lookup is ${JOB_IXIS.propertyLookup}. In a brokerage those jobs are paid by the office Wallet. Saving a contact is free. Premium outfits have no Ixis price yet. Add Ixis on Apixis Wallet. Pay the seat by card through Stripe Checkout or with Ixis.`,
   ],
   [
     "How do I install the app?",
@@ -246,6 +246,8 @@ export default function CommandDesk({
   entitlement = emptyEntitlement(),
   worldAgent,
   demo,
+  cardReady = false,
+  payMethod = "ixis",
 }: {
   preview?: boolean;
   account?: string;
@@ -256,6 +258,9 @@ export default function CommandDesk({
   worldAgent?: WorldAgentView;
   /** Signed-in fixture for local screenshots. Not used by the live dashboard. */
   demo?: { firm: FirmDesk; board?: Board };
+  /** True only when the Stripe price env vars are set. The card button stays disabled otherwise. */
+  cardReady?: boolean;
+  payMethod?: "ixis" | "card";
 }) {
   const [board, setBoard] = useState<Board>(demo?.board || "Overview");
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -1360,6 +1365,8 @@ export default function CommandDesk({
                 busy={busy}
                 buyHref={walletHref}
                 shortfall={shortfall}
+                cardReady={cardReady}
+                initialMethod={payMethod}
                 actions={
                   seat === "signed_inactive"
                     ? [{ id: "activate", label: activateCopy(), onRedeem: handleActivate }]
@@ -1367,8 +1374,8 @@ export default function CommandDesk({
                 }
               />
               <p className="muted">
-                Ixis are redeemed on Apixis Wallet ({IXIS_PER_USD} Ixis = $1). Your seat unlocks the
-                moment the redeem is captured. Card subscription billing is coming soon.
+                Ixis are redeemed on Apixis Wallet ({IXIS_PER_USD} Ixis = $1). Your seat unlocks when
+                the Ixis redeem is captured, or when Stripe confirms the card payment.
               </p>
             </section>
           )}
@@ -2063,6 +2070,8 @@ export default function CommandDesk({
                   disabled={preview}
                   buyHref={walletHref}
                   shortfall={shortfall}
+                  cardReady={cardReady}
+                  initialMethod={payMethod}
                   actions={[
                     { id: "activate", label: activateCopy(), onRedeem: handleActivate },
                     { id: "monthly", label: renewCopy(), onRedeem: handleRenew },
@@ -2363,6 +2372,8 @@ export default function CommandDesk({
               busy={busy}
               buyHref={walletHref}
               shortfall={shortfall}
+              cardReady={cardReady}
+              initialMethod={payMethod}
               actions={
                 seat === "signed_inactive"
                   ? [{ id: "activate", label: activateCopy(), onRedeem: handleActivate }]

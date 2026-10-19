@@ -11,7 +11,7 @@ const skin: FeedSkin = {
   chip: "tag", aiChip: "tag rx-ai", input: "rx-input", label: "",
   muted: "rx-muted", alert: "notice", notice: "notice", empty: "empty", listRow: "lead-row",
   signInUrl: "/auth/apixis/start?next=%2Ffeed",
-  buyIxisUrl: "https://apixis-wallet.vercel.app/buy?product=renoxis",
+  buyIxisUrl: "https://wallet.apixis.dev/buy?product=renoxis",
 };
 
 export function RenoxisFeed() {

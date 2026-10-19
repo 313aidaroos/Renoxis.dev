@@ -2,19 +2,23 @@
 
 import { useState } from "react";
 import { activateCopy, renewCopy } from "@/lib/renoxis/billing";
-import { CARD_BILLING_COPY } from "@/lib/renoxis/pricing";
+import { CardCheckout } from "./CardCheckout";
 
-/** Public checkout choice. Ixis continues into sign-in and the Wallet redeem. Card does not charge. */
+/** Public checkout choice. Ixis continues into sign-in and the Wallet redeem. Card opens Stripe Checkout. */
 export function PricingCheckout({
   startHref,
   renewHref,
   buyHref,
+  cardReady = false,
+  initialMethod = "ixis",
 }: {
   startHref: string;
   renewHref: string;
   buyHref: string;
+  cardReady?: boolean;
+  initialMethod?: "ixis" | "card";
 }) {
-  const [method, setMethod] = useState<"ixis" | "card">("ixis");
+  const [method, setMethod] = useState<"ixis" | "card">(initialMethod);
   return (
     <div className="seat-pay" id="pay">
       <div className="welcome-actions" role="group" aria-label="How to pay">
@@ -26,7 +30,7 @@ export function PricingCheckout({
         </button>
       </div>
       {method === "card" ? (
-        <p role="status"><strong>Coming soon.</strong> {CARD_BILLING_COPY}</p>
+        <CardCheckout intents={["activate", "monthly"]} cardReady={cardReady} />
       ) : (
         <div className="welcome-actions">
           <a className="primary" href={startHref}>{activateCopy()}</a>

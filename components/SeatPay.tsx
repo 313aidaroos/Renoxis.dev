@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CARD_BILLING_COPY } from "@/lib/renoxis/pricing";
+import { CardCheckout } from "./CardCheckout";
+import type { CardIntent } from "@/lib/renoxis/stripe-prices";
 
 export type SeatPayAction = {
   id: string;
@@ -11,7 +12,7 @@ export type SeatPayAction = {
 
 /**
  * The customer picks Ixis or card. Ixis calls the existing Wallet redeem.
- * Card stays "Coming soon" — this site does not run Stripe.
+ * Card opens Stripe Checkout. A missing Stripe env disables that button.
  */
 export function SeatPay({
   actions,
@@ -19,15 +20,22 @@ export function SeatPay({
   disabled = false,
   buyHref,
   shortfall,
+  cardReady = false,
+  initialMethod = "ixis",
 }: {
   actions: SeatPayAction[];
   busy: boolean;
   disabled?: boolean;
   buyHref: string;
   shortfall: { message: string; buyUrl: string } | null;
+  cardReady?: boolean;
+  initialMethod?: "ixis" | "card";
 }) {
-  const [method, setMethod] = useState<"ixis" | "card">("ixis");
+  const [method, setMethod] = useState<"ixis" | "card">(initialMethod);
   const buy = shortfall?.buyUrl || buyHref;
+  const cardIntents = actions
+    .map((action) => action.id)
+    .filter((id): id is CardIntent => id === "activate" || id === "monthly");
   return (
     <div className="seat-pay">
       <div className="actions" role="group" aria-label="How to pay">
@@ -49,10 +57,7 @@ export function SeatPay({
         </button>
       </div>
       {method === "card" ? (
-        <p className="muted" role="status">
-          <span className="coming-soon">Coming soon</span>
-          {CARD_BILLING_COPY}
-        </p>
+        <CardCheckout intents={cardIntents} cardReady={cardReady} disabled={disabled} />
       ) : (
         <>
           <div className="actions">

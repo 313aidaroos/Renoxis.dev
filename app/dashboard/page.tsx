@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/LogoutButton";
 import CommandDesk from "@/components/CommandDesk";
 import { walletEntryUrl } from "@/lib/renoxis/wallet";
+import { cardCheckoutConfigured } from "@/lib/renoxis/stripe-prices";
 import { serverEntitlement } from "@/lib/renoxis/entitlements";
 import { ensureRenoxisWorldAgent } from "@/lib/renoxis/world-agent-server";
 
@@ -20,6 +21,7 @@ export default async function Dashboard() {
       account={user.email ?? "Your account"}
       accountControl={<LogoutButton />}
       walletHref={walletEntryUrl(process.env.APP_URL)}
+      cardReady={cardCheckoutConfigured()}
       entitlement={entitlement}
       worldAgent={worldAgent}
     />

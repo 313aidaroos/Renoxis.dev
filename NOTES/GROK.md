@@ -263,3 +263,10 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Not done: no merge, no production deploy from this branch, no env edit, no Stripe, no live SQL, no email, no local Ixis grant.
 - Who: Grok 4.7, for Awad.
 - Undo: revert this commit.
+
+## 2026-10-19 — Grok: card checkout beside Ixis
+- What: Seat pay and the public pricing choice now have a Stripe Checkout button for the $50 start fee and the monthly plan. The monthly price is $50 until `PROMO_END` (launch date plus one calendar month, 2027-02-01 06:00 UTC) and $100 after that. Those amounts stay in `lib/renoxis/pricing.ts`. Price ids are `STRIPE_PRICE_START_FEE`, `STRIPE_PRICE_MONTHLY_PROMO`, and `STRIPE_PRICE_MONTHLY_STANDARD`. The Ixis redeem path is unchanged. Buy Ixis opens https://wallet.apixis.dev. If the Stripe env is missing, the card button is disabled and the page still loads. Card checkout requires Apixis ID. The webhook verifies `STRIPE_WEBHOOK_SECRET`, ignores events that are not `product=renoxis`, and grants or revokes `renoxis_entitlements` (`activated_at`, `seat_period_end`, `source`, `last_receipt_id`). The same event id does not apply twice. A promo subscription is scheduled onto the standard price at `PROMO_END`. Nothing here grants Ixis.
+- Where: `components/SeatPay.tsx`, `components/CardCheckout.tsx`, `components/PricingCheckout.tsx`, `app/api/stripe/checkout/route.ts`, `app/api/stripe/webhook/route.ts`, `lib/renoxis/stripe-prices.ts`, `lib/renoxis/stripe-webhook.ts`, `lib/renoxis/stripe-seat-store.ts`, `supabase/migrations/20261019120000_stripe_seat_card.sql`, `tests/stripe-webhook.test.ts`, `tests/stripe-checkout.test.ts`.
+- Not done: migration not applied. No Stripe Product, Price, or webhook was created. No env var was set. Not merged.
+- Who: Grok 4.7, for Awad.
+- Undo: revert this commit.

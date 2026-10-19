@@ -38,7 +38,7 @@ Keep consistent character proportions, face and lighting. Deliver named transpar
 5. Provide purchase history, owned-item filtering, balance from the wallet API, insufficient-points errors and refund/revocation handling.
 6. Enable checkout only after wallet sandbox integration and concurrent-purchase tests pass.
 
-Never mark premium items owned in localStorage, invent a balance, or enable a fake purchase button. While `price` is null the card stays Coming soon. **Buy Ixis** opens `https://apixis-wallet.vercel.app/buy?product=renoxis&return_url=…` and returns to Cixy Studio. It does not unlock the collection on this device.
+Never mark premium items owned in localStorage, invent a balance, or enable a fake purchase button. While `price` is null the card stays Coming soon. **Buy Ixis** opens `https://wallet.apixis.dev/buy?product=renoxis&return_url=…` and returns to Cixy Studio. It does not unlock the collection on this device.
 
 ## Native Cixy operator prompts
 

@@ -270,3 +270,9 @@ Recorded by Grok (Developer Bot, notes and status sync at 12:25 AM CT on Oct 5).
 - Not done: migration not applied. No Stripe Product, Price, or webhook was created. No env var was set. Not merged.
 - Who: Grok 4.7, for Awad.
 - Undo: revert this commit.
+
+## 2026-10-19 — Grok: brand red and blue
+- What: Default identity stays brand blue `#1854D0`. Accent and CTA move from the old logo-pixel red `#e23c40` and the emerald button utilities to brand.json accent `#D83030`. Hover and small red text stay `#b8262b` (AA on `#F5F7FB`). Ink is brand text `#0F1B33`. Cixy’s red coat is `#d83030`; `#e23c40` remains a legacy coat that still selects the red theme. Painted green `#075d4b` is unchanged. Emerald, Sunset, and Night stay as optional desk themes. No SVG, no logo redraw, no env, no Stripe logic, no migration.
+- Where: `app/globals.css`, `components/command-desk.css`, `components/welcome.css`, `components/auth.css`, `components/LoginForm.tsx`, `components/IxisCompanies.tsx`, `app/feed/feed.css`, `lib/renoxis/customization.ts`, `tests/customization.test.ts`, `README.md`, `docs/LAUNCH_STATUS.md`.
+- Who: Grok 4.7, for Awad.
+- Undo: revert this commit.

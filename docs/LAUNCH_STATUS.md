@@ -15,7 +15,7 @@ This file replaces the Sep 20 brief. It records only what was checked on 2026-09
 - **Platform cut:** closed-deal fees record a 5% (500 bps) cut as pending.
 - **Apixis Bank (2026-09-27):** Apixis takes 5% of every transaction in the Apixis universe, including in-world Ixis transfers, trades, purchases and agent-to-agent deals. That fee is applied by Apixis Wallet / Apixis.dev, not by Renoxis code.
 - **Apixis world agent (2026-09-27):** every signup gets their own Apixis world agent through Apixis ID (Wallet SSO). Entry: `https://www.apixis.dev/enter?from=renoxis`. Cixy stays the guide, not the user's avatar. Arrivals start with 1,000 in-world Ixis on Apixis.dev. Rollout order: Apixis.dev, then Renoxis, then other products.
-- "A Apixis Company" badge on every surface including mobile. Emerald CommandDesk theme is a hard rule.
+- "A Apixis Company" badge on every surface including mobile. Primary identity is brand blue `#1854D0` and accent/CTA is brand red `#D83030`, both from `public/brand/brand.json`.
 
 ## Done (live on production)
 

@@ -91,10 +91,10 @@ export const paintedSignatureLook: Look = {
   motion: true,
 };
 
-/** Product default: red coat in the Renoxis logo red (#e23c40). Recolor runs until the sheet itself is red. */
-export const BRAND_RED = "#e23c40";
-/** Coats saved before the 2026-10-17 logo refresh; still read as the red theme. */
-const LEGACY_COATS: Record<string, DeskTheme> = { "#b91c1c": "red" };
+/** Product default: red coat from brand.json accent (#D83030). Recolor runs until the sheet itself is red. */
+export const BRAND_RED = "#d83030";
+/** Coats saved before the brand.json accent; still read as the red theme. */
+const LEGACY_COATS: Record<string, DeskTheme> = { "#b91c1c": "red", "#e23c40": "red" };
 
 export const defaultLook: Look = {
   ...paintedSignatureLook,

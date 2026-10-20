@@ -45,7 +45,7 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-400 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        className="w-full text-white font-bold py-3 px-8 rounded-lg transition-colors"
       >
         {loading ? "Sending..." : "Send Magic Link"}
       </button>
@@ -53,7 +53,7 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
       {message && (
         <p
           className={`text-sm text-center ${
-            message.includes("Check") ? "text-green-600" : "text-red-600"
+            message.includes("Check") ? "text-[#1854D0]" : "text-[#b8262b]"
           }`}
         >
           {message}

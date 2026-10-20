@@ -22,7 +22,7 @@ export const IXIS_COMPANIES: readonly IxisCompany[] = [
   { name: "Newsxis", brief: "Real-time news from every place on Earth.", url: "https://newsxis.apixis.dev" },
 ];
 
-const THEME = { "--ixis-bg": "#ffffff", "--ixis-fg": "#14203a", "--ixis-muted": "#56607a", "--ixis-accent": "#1854d0", "--ixis-hover": "#eef2fa", "--ixis-line": "#dde3ee" };
+const THEME = { "--ixis-bg": "#ffffff", "--ixis-fg": "#0F1B33", "--ixis-muted": "#56607a", "--ixis-accent": "#1854d0", "--ixis-hover": "#eef2fa", "--ixis-line": "#dde3ee" };
 
 const CSS = `
 .ixis-menu.ixis-menu{position:relative;display:inline-block;font:inherit}

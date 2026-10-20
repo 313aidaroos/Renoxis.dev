@@ -1,7 +1,7 @@
 .renoxis {
   --green: #1854d0;
   --dark: #0f3a8f;
-  --ink: #14203a;
+  --ink: #0F1B33;
   --muted: #56607a;
   --line: #dde3ee;
   --mint: #e7eefc;
@@ -46,7 +46,7 @@
   cursor: not-allowed;
 }
 .renoxis :focus-visible {
-  outline: 3px solid #e23c40;
+  outline: 3px solid #D83030;
   outline-offset: 3px;
 }
 .renoxis a {
@@ -71,26 +71,28 @@
   font-size: 11px;
 }
 .renoxis .primary {
-  background: linear-gradient(135deg, #2563eb, #1854d0);
+  background: #D83030;
   color: white;
-  border-color: #1854d0;
-  box-shadow: 0 4px 10px #1854d033;
+  border-color: #D83030;
+  box-shadow: 0 4px 10px #D8303033;
 }
 .renoxis .primary:hover {
-  background: #0f3a8f;
+  background: #b8262b;
+  border-color: #b8262b;
 }
 .renoxis a.primary {
   display: inline-block;
-  border: 1px solid #1854d0;
+  border: 1px solid #D83030;
   border-radius: 8px;
   padding: 8px 13px;
-  background: linear-gradient(135deg, #2563eb, #1854d0);
+  background: #D83030;
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 10px #1854d033;
+  box-shadow: 0 4px 10px #D8303033;
 }
 .renoxis a.primary:hover {
-  background: #0f3a8f;
+  background: #b8262b;
+  border-color: #b8262b;
   color: white;
 }
 .renoxis .soft-button {
@@ -2169,7 +2171,7 @@
   background: var(--green);
   box-shadow: inset 0 0 0 1px #00000022;
 }
-.theme-swatch.theme-red .swatch-dot { background: #e23c40; }
+.theme-swatch.theme-red .swatch-dot { background: #D83030; }
 .theme-swatch.theme-emerald .swatch-dot { background: #1854d0; }
 .theme-swatch.theme-sunset .swatch-dot { background: #ea580c; }
 .theme-swatch.theme-night .swatch-dot { background: #1d4ed8; }
@@ -2186,7 +2188,7 @@
   --dark: #0f3a8f;
   --mint: #e7eefc;
   --line: #dde3ee;
-  --accent: #e23c40;
+  --accent: #D83030;
   background: #f5f7fb;
 }
 .renoxis[data-theme="red"] .sidebar {
@@ -2197,12 +2199,12 @@
 .renoxis[data-theme="red"] .sidebar nav button.current {
   background: linear-gradient(90deg, #2563eb, #1648b4);
   color: #fff;
-  box-shadow: inset 3px 0 #e23c40;
+  box-shadow: inset 3px 0 #D83030;
 }
-.renoxis[data-theme="red"] .sidebar-quote hr { border-top-color: #e23c40; }
+.renoxis[data-theme="red"] .sidebar-quote hr { border-top-color: #D83030; }
 .renoxis[data-theme="red"] .theme-swatch.current {
   border-color: #ff8a8d;
-  box-shadow: 0 0 0 2px #e23c4055;
+  box-shadow: 0 0 0 2px #D8303055;
 }
 
 .renoxis[data-theme="emerald"] {
